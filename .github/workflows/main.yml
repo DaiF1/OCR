@@ -48,7 +48,7 @@ jobs:
       
       steps:
       - name: Deploy to gitlab
-      - uses: wei/git-sync@v3
+        uses: wei/git-sync@v3
         with:
           source-repo: git@github.com:DaiF1/OCR.git
           source-branch: main
