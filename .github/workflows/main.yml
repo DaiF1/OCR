@@ -50,9 +50,9 @@ jobs:
       - name: Deploy to gitlab
         uses: wei/git-sync@v3
         with:
-          source-repo: git@github.com:DaiF1/OCR.git
-          source-branch: main
-          destination-repo: julie.fiadino@git.cri.epita.fr:p/2026-prs-s3-project/julie.fiadino.git
-          destination-branch: master
+          source_repo: git@github.com:DaiF1/OCR.git
+          source_branch: main
+          destination_repo: julie.fiadino@git.cri.epita.fr:p/2026-prs-s3-project/julie.fiadino.git
+          destination_branch: master
           ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
           
