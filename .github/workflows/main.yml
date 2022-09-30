@@ -27,7 +27,7 @@ jobs:
 
       # Build main.c
       - name: make main.c
-        run: gcc src/main.c -o main
+        run: make
 
   # Test job
   test:
@@ -39,8 +39,8 @@ jobs:
       # Build test.c and run it
       - name: Run unit tests
         run: |
-          gcc tests/test.c -o test
-          ./test
+          make test
+          ./tests/test
           
   deploy:
       runs-on: ubuntu-latest
