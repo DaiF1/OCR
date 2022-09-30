@@ -29,8 +29,22 @@ jobs:
       - name: make main.c
         run: gcc main.c -o main
 
+  # Test job
+  test:
+      runs-on: ubuntu-latest
+      needs: build
+      
+      steps:
       # Build test.c and run it
-      - name: Run a multi-line script
+      - name: Run unit tests
         run: |
           gcc test.c -o test
           ./test
+          
+  deploy:
+      runs-on: ubuntu-latest
+      needs: test
+      
+      steps:
+        - name: Deploy to gitlab
+          run: echo "Deploying to gitlab..."
