@@ -1,1 +1,14 @@
 # OCR
+
+Sudoku solver with Optical Character Recognition.
+
+This project was realized for the third semester's project of Epita.
+
+## Build
+
+The project is compiled with the `-Wall -Wextra` flags.
+
+To build the project, run `make` at the root of the repository.
+It can be build using the `make debug` to compile the project with debug flags.
+
+To build the test executable, run `make test` at the root of the project.
