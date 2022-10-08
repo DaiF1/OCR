@@ -4,7 +4,7 @@ CFLAGS = -Wall -Wextra -Werror
 LDFLAGS =
 LDLIBS = `pkg-config --libs sdl2 SDL2_image` -lm
 
-all: src/main
+all: main
 
 # main build
 
@@ -15,12 +15,15 @@ $(OBJ): $(notdir %.o): %.c
 
 src/loader.o: CFLAGS += `pkg-config --cflags sdl2 SDL2_image`
 
-src/main: ${OBJ} 
+src/main: ${OBJ}
+
+main: src/main
+	mv src/main .
 
 # debug build
 
 debug: CFLAGS += -g
-debug: src/main
+debug: main
 
 # test build
 
@@ -30,11 +33,12 @@ OBJ_TEST = ${SRC_TEST:.c=.o}
 tests/test: CFLAGS += -g
 tests/test: ${OBJ_TEST}
 test: tests/test
+	mv tests/test .
 
 # clean
 
 clean:
 	${RM} ${OBJ}
 	${RM} ${OBJ_TEST}
-	${RM} src/main
-	${RM} tests/test
+	${RM} main
+	${RM} test
