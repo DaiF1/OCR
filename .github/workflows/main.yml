@@ -25,6 +25,12 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
 
+      # Install sdl2
+      - name: install dependencies
+        run: |
+          sudo apt-get update -y -qq
+          sudo apt-get install libsdl2-dev libsdl-image1.2 libsdl-image1.2-dev
+
       # Build main.c
       - name: make main.c
         run: make
@@ -36,6 +42,13 @@ jobs:
       
       steps:
       - uses: actions/checkout@v3
+
+        # Install sdl2
+      - name: install dependencies
+        run: |
+          sudo apt-get update -y -qq
+          sudo apt-get install libsdl2-dev libsdl-image1.2 libsdl-image1.2-dev
+
       # Build test.c and run it
       - name: Run unit tests
         run: |
