@@ -53,7 +53,7 @@ jobs:
       - name: Run unit tests
         run: |
           make test
-          ./tests/test
+          ./test
           
   deploy:
       runs-on: ubuntu-latest
