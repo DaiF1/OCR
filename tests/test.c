@@ -16,7 +16,8 @@
 
 int main()
 {
-    t_image img = load_img("img/000.png");
-    assert(img.pixels);
+    t_image *img = load_img("img/000.png");
+    //DEBUG_display_image(img);
+    assert(img->pixels);
     return EXIT_SUCCESS; 
 }

@@ -31,7 +31,7 @@ typedef struct s_image t_image;
  * param path: the path to the image
  * return: the image as a t_image
 */
-t_image load_img(const char *path);
+t_image *load_img(const char *path);
 
 /*
  * DEBUG_display_image(img): Display the image on an SDL window
