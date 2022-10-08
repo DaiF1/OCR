@@ -28,7 +28,7 @@ t_image *load_img(const char *path)
     return result;
 }
 
-void DEBUG_display_image(t_image *img)
+void DEBUG_display_image(const t_image *img)
 {
     // Initializes the SDL.
     if (SDL_Init(SDL_INIT_VIDEO) != 0)

@@ -38,4 +38,4 @@ t_image *load_img(const char *path);
  *
  * param img: t_image to display
 */
-void DEBUG_display_image(t_image *img);
+void DEBUG_display_image(const t_image *img);
