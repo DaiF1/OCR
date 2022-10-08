@@ -1,8 +1,8 @@
 CC = gcc
-CPPFLAGS = -MMD -I include/
+CPPFLAGS = -I include/ -I include/imgprocess
 CFLAGS = -Wall -Wextra -Werror
 LDFLAGS =
-LDLIBS =
+LDLIBS = `pkg-config --libs sdl2 SDL2_image` -lm
 
 all: src/main
 
@@ -12,6 +12,8 @@ SRC = $(wildcard src/*.c)
 OBJ = ${SRC:.c=.o}
 
 $(OBJ): $(notdir %.o): %.c
+
+src/loader.o: CFLAGS += `pkg-config --cflags sdl2 SDL2_image`
 
 src/main: ${OBJ} 
 
