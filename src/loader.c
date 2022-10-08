@@ -6,6 +6,9 @@ t_image load_img(const char *path)
     t_image result = {};
     SDL_Surface *surface = IMG_Load(path);
 
+    if (!surface)
+        errx(EXIT_FAILURE, "%s", SDL_GetError());
+
     result.pixels = surface->pixels;
     result.width = surface->w;
     result.height = surface->h;
