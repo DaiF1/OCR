@@ -27,6 +27,7 @@ debug: src/main
 SRC_TEST = $(filter-out src/main.c,$(wildcard src/*.c)) $(wildcard tests/*.c)
 OBJ_TEST = ${SRC_TEST:.c=.o}
 
+tests/test: CFLAGS += -g
 tests/test: ${OBJ_TEST}
 test: tests/test
 
