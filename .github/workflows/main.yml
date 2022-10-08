@@ -29,7 +29,7 @@ jobs:
       - name: install dependencies
         run: |
           sudo apt-get update -y -qq
-          sudo apt-get install libsdl2-dev libsdl-image libsdl-image-dev
+          sudo apt-get install libsdl2-dev libsdl2-image-dev
 
       # Build main.c
       - name: make main.c
