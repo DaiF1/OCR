@@ -5,7 +5,7 @@
  * File for morphological operations
  *
  * Started on  08/10 julie.fiadino
- * Last Update 08/10 julie.fiadino
+ * Last Update 09/10 julie.fiadino
 */
 
 #pragma once
@@ -17,9 +17,9 @@
  * circle_element(r): Build structuring element for morphological operations
  *
  * param r: radius of the circle
- * return: a matrix of size 2r * 2r
+ * return: a matrix of size (2r + 1) * (2r + 1)
 */
-int8 **circle_element(const int8 r);
+int32 **circle_element(const int32 r);
 
 /*
  * morpho_erosion(img): Perform erosion on given image
