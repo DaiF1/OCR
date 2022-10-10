@@ -2,6 +2,16 @@
 #include "count_remaining_cases.h"
 #include "rules.h"
 
+/*
+ * recursive_solver(grill[9][9], x, y, possibilities[9][9][9], case_remaining): resolve the grill by the fastest way.
+ *
+ * param grill[9][9]: the sudoku grill
+ * param x: the x coordinate of the last replaced case
+ * param y: the y coordinate of the last replaced case
+ * param possibilities[9][9][9]: the possibilities on a case
+ *
+ * return: if the sudoku is valid
+ */
 int recursive_solver(int grill[9][9], size_t x, size_t y, int possibilities[9][9][9], int cases_remaining)
 {
     // Ends

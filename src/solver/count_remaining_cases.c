@@ -2,6 +2,15 @@
 #include <err.h>
 #include <stdlib.h>
 
+/*
+ * count_remaining_cases(grill[9][9], possibilities[9][9][9]): count the remaining cases.
+ *
+ * param grill[9][9]: the sudoku grill
+ * param possibilities[9][9][9]: the possibilities on each cases.
+ *
+ * return: the number of remaining case.
+ */
+
 int count_remaining_cases(int grill[9][9], int possibilities[9][9][9])
 {
     int nbr = 0;
@@ -24,9 +33,9 @@ int count_remaining_cases(int grill[9][9], int possibilities[9][9][9])
             }
             else if (grill[i][j] || v)
             {
-                errx(EXIT_FAILURE, "solver: count_remaining_cases: grill and possibilities are not equal.")
+                errx(EXIT_FAILURE, "solver: count_remaining_cases: grill and possibilities are not equal.");
             }
         }
     }
-    return nbr
+    return nbr;
 }

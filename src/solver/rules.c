@@ -1,5 +1,14 @@
 #include <stdio.h>
 
+/*
+ * is_correct(grill[9][9], x, y): verify if a case is valid in a line.
+ *
+ * param grill[9][9]: the sudoku grill
+ * param x: the x coordinate of the case
+ * param y: the y coordinate of the case
+ *
+ * return: if it's correct
+ */
 int is_line_correct(int grill[9][9], size_t x, size_t y)
 {
     int v = grill[y][x];
@@ -14,6 +23,15 @@ int is_line_correct(int grill[9][9], size_t x, size_t y)
     return 1;
 }
 
+/*
+ * is_correct(grill[9][9], x, y): verify if a case is valid in a column.
+ *
+ * param grill[9][9]: the sudoku grill
+ * param x: the x coordinate of the case
+ * param y: the y coordinate of the case
+ *
+ * return: if it's correct
+ */
 int is_column_correct(int grill[9][9], size_t x, size_t y)
 {
     int v = grill[y][x];
@@ -28,6 +46,15 @@ int is_column_correct(int grill[9][9], size_t x, size_t y)
     return 1;
 }
 
+/*
+ * is_correct(grill[9][9], x, y): verify if a case is valid in a square.
+ *
+ * param grill[9][9]: the sudoku grill
+ * param x: the x coordinate of the case
+ * param y: the y coordinate of the case
+ *
+ * return: if it's correct
+ */
 int is_square_correct(int grill[9][9], size_t x, size_t y)
 {
     int v = grill[y][x];
@@ -45,6 +72,16 @@ int is_square_correct(int grill[9][9], size_t x, size_t y)
     return 1;
 }
 
+
+/*
+ * is_correct(grill[9][9], x, y): verify if a case is valid.
+ *
+ * param grill[9][9]: the sudoku grill
+ * param x: the x coordinate of the case
+ * param y: the y coordinate of the case
+ *
+ * return: if it's correct
+ */
 int is_correct(int grill[9][9], size_t x, size_t y)
 {
     return is_column_correct(grill, x, y) && is_line_correct(grill, x, y) && is_square_correct(grill, x, y);

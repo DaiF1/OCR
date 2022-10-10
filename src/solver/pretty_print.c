@@ -3,6 +3,7 @@
 /* pretty_print(grid): print the grid for the debug
  *
  *param grid: a matrix 9 times 9
+ * return: some magic and happiness
 */
 void pretty_print(int grid[9][9])
 {
