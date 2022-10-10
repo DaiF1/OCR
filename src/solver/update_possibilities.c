@@ -1,5 +1,16 @@
 #include <stdio.h>
 
+
+/*
+ * update_possibilities(grill[9][9], x, y, possibilities[9][9][9]): update the possible number on a case for a line.
+ *
+ * param grill[9][9]: the sudoku grill
+ * param x: the x coordinate of the case
+ * param y: the y coordinate of the case
+ * param possibilities[9][9][9]: the possibilities of the grill
+ *
+ * return: if there is an update
+ */
 int update_line(int grill[9][9], size_t x, size_t y, int possibilities[9][9][9])
 {
     int r = 0;
@@ -14,6 +25,16 @@ int update_line(int grill[9][9], size_t x, size_t y, int possibilities[9][9][9])
     return r;
 }
 
+/*
+ * update_possibilities(grill[9][9], x, y, possibilities[9][9][9]): update the possible number on a case for column.
+ *
+ * param grill[9][9]: the sudoku grill
+ * param x: the x coordinate of the case
+ * param y: the y coordinate of the case
+ * param possibilities[9][9][9]: the possibilities of the grill
+ *
+ * return: if there is an update
+ */
 int update_column(int grill[9][9], size_t x, size_t y, int possibilities[9][9][9])
 {
     int r = 0;
@@ -28,7 +49,16 @@ int update_column(int grill[9][9], size_t x, size_t y, int possibilities[9][9][9
     return r;
 }
 
-
+/*
+ * update_possibilities(grill[9][9], x, y, possibilities[9][9][9]): update the possible number on a case for a square.
+ *
+ * param grill[9][9]: the sudoku grill
+ * param x: the x coordinate of the case
+ * param y: the y coordinate of the case
+ * param possibilities[9][9][9]: the possibilities of the grill
+ *
+ * return: if there is an update
+ */
 int update_square(int grill[9][9], size_t x, size_t y, int possibilities[9][9][9])
 {
     int r = 0;
@@ -43,8 +73,17 @@ int update_square(int grill[9][9], size_t x, size_t y, int possibilities[9][9][9
     return r;
 }
 
-
-int update_possibilites(int grill[9][9], size_t x, size_t y, int possibilities[9][9][9])
+/*
+ * update_possibilities(grill[9][9], x, y, possibilities[9][9][9]): update the possible number on a case.
+ *
+ * param grill[9][9]: the sudoku grill
+ * param x: the x coordinate of the case
+ * param y: the y coordinate of the case
+ * param possibilities[9][9][9]: the possibilities of the grill
+ *
+ * return: if there is an update
+ */
+int update_possibilities(int grill[9][9], size_t x, size_t y, int possibilities[9][9][9])
 {
     for (int i = 0; i < 9; ++i)
     {
