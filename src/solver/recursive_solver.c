@@ -15,6 +15,24 @@
 #include "evident_solver.h"
 
 /*
+ * next_free_case(rill[9][9], *x, *y):
+ */
+int next_free_case(int grill[9][9],  size_t* x, size_t* y)
+{
+    for (size_t i = *y; i < 9 ; ++i) {
+        for (size_t j = *x; j < 9 ; ++j) {
+            if(grill[i][j] == -1)
+            {
+                *x = j;
+                *y = i;
+                return 1;
+            }
+        }
+    }
+    return 0;
+}
+
+/*
  * recursive_solver(grill[9][9], x, y, possibilities[9][9][9], case_remaining): resolve the grill by the fastest way.
  *
  * param grill[9][9]: the sudoku grill
@@ -39,8 +57,28 @@ int recursive_solver(int grill[9][9], size_t x, size_t y, int possibilities[9][9
     {
         return 1;
     }
+    // Evident solution
     int tmp = 1;
      while(tmp)
          tmp = evident_solver(grill, &x, &y, possibilities);
+     // recursive solution
+    size_t previous_x = x, previous_y = y;
+    tmp = 0;
+    while(1)
+    {
+        tmp = next_free_case(grill, &x, &y);
+        if(!tmp)
+        {
+            return 0;
+        }
+        for (int i = 0; i < 10; ++i) {
+            grill[y][x] = i;
+            tmp = recursive_solver(grill, x, y, possibilities, cases_remaining-1);
+            if(tmp)
+            {
+                return 1;
+            }
+        }
+    }
 
 }
