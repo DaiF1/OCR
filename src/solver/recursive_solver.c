@@ -12,6 +12,7 @@
 #include <stdio.h>
 #include "count_remaining_cases.h"
 #include "rules.h"
+#include "evident_solver.h"
 
 /*
  * recursive_solver(grill[9][9], x, y, possibilities[9][9][9], case_remaining): resolve the grill by the fastest way.
@@ -38,5 +39,8 @@ int recursive_solver(int grill[9][9], size_t x, size_t y, int possibilities[9][9
     {
         return 1;
     }
+    int tmp = 1;
+     while(tmp)
+         tmp = evident_solver(grill, &x, &y, possibilities);
 
 }
