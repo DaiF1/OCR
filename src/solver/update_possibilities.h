@@ -1,3 +1,14 @@
+/*
+ * update_possibilities.h in src/solver/
+ *
+ * Made by Oscar Chevalier
+ *
+ * Search the evident cases
+ *
+ * Started on 10/10 oscar.chevalier
+ * Last update 11/10 oscar.chevalier
+ */
+
 #pragma once
 #include <stdio.h>
 

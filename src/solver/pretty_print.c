@@ -1,3 +1,15 @@
+/*
+ * pretty_print.c in src/solver/
+ *
+ * Made by Oscar Chevalier
+ *
+ * pretty print a grill
+ *
+ * Started on 10/10 oscar.chevalier
+ * Last update 11/10 oscar.chevalier
+ */
+
+
 #include <stdio.h>
 
 /* pretty_print(grid): print the grid for the debug

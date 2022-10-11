@@ -1,3 +1,15 @@
+/*
+ * count_remainin_cases.c in src/solver/
+ *
+ * Made by Oscar Chevalier
+ *
+ * Count the remaining cases
+ *
+ * Started on 10/10 oscar.chevalier
+ * Last update 11/10 oscar.chevalier
+ */
+
+
 #include <stdio.h>
 #include <err.h>
 #include <stdlib.h>
