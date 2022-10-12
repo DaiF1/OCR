@@ -12,4 +12,4 @@
 #pragma once
 #include <stdio.h>
 
-int recursive_solver(int grill[9][9], size_t x, size_t y, int possibilities[9][9][9], int cases_remainin);
+int recursive_solver(int grill[9][9], size_t x, size_t y, int possibilities[9][9][9], int cases_remainin, int debug);
