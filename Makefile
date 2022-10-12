@@ -1,15 +1,16 @@
 CC = gcc
-CPPFLAGS =
+CPPFLAGS = -I include/ -I include/solver
 CFLAGS = -Wall -Wextra -Werror
 LDFLAGS =
 LDLIBS =
 
 all: src/main
 
-SRC = $(wildcard src/*.c)
+SRC = $(wildcard src/*.c) $(wildcard src/solver/*.c)
 OBJ = ${SRC:.c=.o}
 
-SRC_TEST = $(filter-out src/main.c,$(wildcard src/*.c)) $(wildcard tests/*.c)
+SRC_TEST = $(filter-out src/main.c,$(wildcard src/*.c)) \
+	$(wildcard src/solver/*.c) $(wildcard tests/*.c)
 OBJ_TEST = ${SRC_TEST:.c=.o}
 
 $(OBJ): $(notdir %.o): %.c
