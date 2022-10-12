@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include "pretty_print.h"
+#include "solver.h"
 
 int test_solver()
 {
@@ -16,10 +17,15 @@ int test_solver()
                     {3,  7 , -1, -1, -1, -1, -1, 9,  1}
             };
     pretty_print(grill);
+    if(solver(grill, 1)){
+        return EXIT_FAILURE;
+    }
+    pretty_print(grill);
     return EXIT_SUCCESS;
 }
 
 int main()
 {
+    test_solver();
   return EXIT_SUCCESS; 
 }

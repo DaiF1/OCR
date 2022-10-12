@@ -14,10 +14,12 @@
 #include "count_remaining_cases.h"
 #include "update_possibilities.h"
 
-void solver(int grill[9][9])
+int solver(int grill[9][9], int debug)
 {
     int possibilities[9][9][9];
-    update_all_possibilites(grill, possibilities);
+    update_all_possibilities(grill, possibilities, debug);
     int n = count_remaining_cases(grill, possibilities);
-    recursive_solver(grill, 0, 0, possibilities, n);
+    if(debug)
+        printf("solver:remaining_cases: %i\n", n);
+    return recursive_solver(grill, 0, 0, possibilities, n);
 }

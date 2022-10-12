@@ -65,8 +65,7 @@ int recursive_solver(int grill[9][9], size_t x, size_t y, int possibilities[9][9
      while(tmp)
          tmp = evident_solver(grill, &x, &y, possibilities);
      // recursive solution
-    size_t previous_x = x, previous_y = y;
-    tmp = 0;
+    //size_t previous_x = x, previous_y = y;
     while(1)
     {
         tmp = next_free_case(grill, &x, &y);

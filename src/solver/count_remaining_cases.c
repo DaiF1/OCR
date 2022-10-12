@@ -23,12 +23,12 @@
  * return: the number of remaining case.
  */
 
-int count_remaining_cases(int grill[9][9], int possibilities[9][9][9])
+int count_remaining_cases(int grill[9][9], int possibilities[9][9][9], int debug)
 {
     int nbr = 0;
-    for (int i = 0; i < 9; ++i)
+    for (size_t i = 0; i < 9; ++i)
     {
-        for (int j = 0; j < 9; ++j)
+        for (size_t j = 0; j < 9; ++j)
         {
             int v = 0;
             for (int k = 0; k < 9; ++k)
@@ -39,13 +39,16 @@ int count_remaining_cases(int grill[9][9], int possibilities[9][9][9])
                     break;
                 }
             }
-            if (grill[i][j] && v)
+            if (grill[i][j] <= 0 && v)
             {
+                if (debug)
+                    printf("solver:count_remaining_cases: (%zu, %zu) %i\n", j, i, v);
                 nbr++;
             }
-            else if (grill[i][j] || v)
+            else if (grill[i][j] <= 0 || !v)
             {
-                errx(EXIT_FAILURE, "solver: count_remaining_cases: grill and possibilities are not equal.");
+                errx(EXIT_FAILURE, "solver:count_remaining_cases: grill and possibilities are not equal. "
+                                   "(%zu, %zu)\n", j, i);
             }
         }
     }

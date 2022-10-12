@@ -98,6 +98,14 @@ int update_square(int grill[9][9], size_t x, size_t y, int possibilities[9][9][9
  */
 int update_possibilities(int grill[9][9], size_t x, size_t y, int possibilities[9][9][9])
 {
+    if(grill[y][x] > 0)
+    {
+        for (int i = 0; i < 9; ++i)
+        {
+            possibilities[y][x][i] = 0;
+        }
+        return 0;
+    }
     for (int i = 0; i < 9; ++i)
     {
         possibilities[y][x][i] = 1;
@@ -118,14 +126,17 @@ int update_possibilities(int grill[9][9], size_t x, size_t y, int possibilities[
  *
  * return: if there is an update
  */
-int update_all_possibilities(int grill[9][9], int possibilities[9][9][9])
+int update_all_possibilities(int grill[9][9], int possibilities[9][9][9], int debug)
 {
     int v = 0;
     for (size_t i = 0; i < 9; ++i)
     {
         for (size_t j = 0; j < 9; ++j)
         {
-            v = v || update_possibilities(grill, j, i, possibilities);
+            int v2 = update_possibilities(grill, j, i, possibilities);
+            if(debug)
+                printf("solver:update_all_possibilities: (%zu, %zu) %i\n", j, i, v2);
+            v = v || v2;
         }
     }
     return v;

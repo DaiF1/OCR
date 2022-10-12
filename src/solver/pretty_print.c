@@ -23,16 +23,22 @@ void pretty_print(int grid[9][9])
         {
             for(size_t j = 0; j < 8; j++)
             {
-                printf("%i", grid[i][j]);
-                if(j % 3 == 0)
+                if(grid[i][j] <= 0)
+                    printf(" ");
+                else
+                    printf("%i", grid[i][j]);
+                if(j % 3 == 2)
                     printf(" | ");
                 else
                     printf(" ");
             }
-            printf("%i\n", grid[i][8]);
-            if(i % 3 == 0)
-                printf("------+-------+------\n");
+            if(grid[i][8] <= 0)
+                printf(" \n");
             else
-                printf("      |       |\n");
+                printf("%i\n", grid[i][8]);
+            if(i % 3 == 2 && i != 8)
+                printf("------+-------+------\n");
+            //else
+              //  printf("      |       |\n");
         }
 }

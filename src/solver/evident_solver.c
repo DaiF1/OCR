@@ -39,7 +39,7 @@ int evident_solver(int grill[9][9], size_t* x, size_t* y, int possibilities[9][9
                     grill[i][j] = index;
                     *y = i;
                     *x = j;
-                    update_possibilites(grill, *x, *y, possibilities);
+                    update_possibilities(grill, *x, *y, possibilities);
                     return 1;
                 }
             }
