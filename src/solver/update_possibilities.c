@@ -110,3 +110,23 @@ int update_possibilities(int grill[9][9], size_t x, size_t y, int possibilities[
     }
     return 0;
 }
+/*
+ * update_all_possibilities(grill[9][9], possibilities[9][9][9]): update all the cases.
+ *
+ * param grill[9][9]: the sudoku grill
+ * param possibilities[9][9][9]: the possibilities of the grill
+ *
+ * return: if there is an update
+ */
+int update_all_possibilities(int grill[9][9], int possibilities[9][9][9])
+{
+    int v = 0;
+    for (size_t i = 0; i < 9; ++i)
+    {
+        for (size_t j = 0; j < 9; ++j)
+        {
+            v = v || update_possibilities(grill, j, i, possibilities);
+        }
+    }
+    return v;
+}
