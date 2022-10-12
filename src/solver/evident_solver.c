@@ -17,7 +17,8 @@ int evident_solver(int grill[9][9], size_t* x, size_t* y, int possibilities[9][9
 {
     for (int i = 0; i < 9; ++i)
     {
-        for (int j = 0; j < 9; ++j) {
+        for (int j = 0; j < 9; ++j)
+        {
             if(grill[i][j] == -1)
             {
                 int index = -1;

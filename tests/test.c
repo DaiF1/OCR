@@ -15,7 +15,8 @@ int test_solver()
                     {-1, -1, 2,  1,  -1, 9,  4,  -1, -1},
                     {3,  7 , -1, -1, -1, -1, -1, 9,  1}
             };
-
+    pretty_print(grill);
+    return EXIT_SUCCESS;
 }
 
 int main()

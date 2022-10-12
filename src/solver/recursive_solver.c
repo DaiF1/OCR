@@ -57,6 +57,9 @@ int recursive_solver(int grill[9][9], size_t x, size_t y, int possibilities[9][9
     {
         return 1;
     }
+    // Incorect grill
+    if(!is_correct(grill, x, y))
+        return 0;
     // Evident solution
     int tmp = 1;
      while(tmp)
