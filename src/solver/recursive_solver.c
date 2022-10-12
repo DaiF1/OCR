@@ -45,7 +45,8 @@ int next_free_case(int grill[9][9],  size_t* x, size_t* y)
  */
 int recursive_solver(int grill[9][9], size_t x, size_t y, int possibilities[9][9][9], int cases_remaining, int debug)
 {
-    pretty_print(grill);
+    if (debug)
+        pretty_print(grill);
     // Ends
     if( cases_remaining == 0)
     {
@@ -64,7 +65,7 @@ int recursive_solver(int grill[9][9], size_t x, size_t y, int possibilities[9][9
         return 1;
     }
     // Incorect grill
-    if(!is_correct(grill, x, y))
+    if(!is_correct(grill, x, y, debug))
     {
         if (debug)
             printf("solver:recursive_solver: is not correct.\n");
