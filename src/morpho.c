@@ -29,3 +29,33 @@ int32 *circle_element(const size_t r)
 
     return result;
 }
+
+t_image *morpho_dilation(const t_image *img, const int32 *s_el,
+        const size_t len)
+{
+    t_image *result = malloc(sizeof(t_image));
+    result->width = img->width;
+    result->height = img->height;
+    result->pixels = malloc(sizeof(uint32) * result->width * result->height);
+
+    printf("%u", s_el[len]);
+
+    uint32 *src = img->pixels;
+    uint32 *pixels = result->pixels;
+
+    for (size_t i = 0; i < (size_t)(result->width * result->height); i++)
+    {
+        *src = 0xffffff - *src;
+        if (*src < 0xaaaaaa)
+        {
+            *pixels++ = 0x000000;
+            src++;
+            continue;
+        }
+
+        *pixels++ = 0xffffff;
+        src++;
+    }
+
+    return result;
+}

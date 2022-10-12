@@ -64,6 +64,9 @@ int main()
 
         assert(compare_matrices(c, circle_element(1), 3));
     }
+    
+    t_image *dilation = morpho_dilation(img, circle_element(2), 5);
+    DEBUG_display_image(dilation);
 
     return EXIT_SUCCESS;
 }
