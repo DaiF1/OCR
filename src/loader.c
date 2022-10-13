@@ -6,26 +6,23 @@
  * Loader.h Implementation
  *
  * Started on  06/10 julie.fiadino
- * Last Update 08/10 julie.fiadino
+ * Last Update 13/10 julie.fiadino
 */
 
 #include <stdlib.h>
 #include <err.h>
 #include "loader.h"
 
-t_image *load_img(const char *path)
+void load_img(t_image *img, const char *path)
 {
-    t_image *result = malloc(sizeof(t_image));
     SDL_Surface *surface = IMG_Load(path);
 
     if (!surface)
         errx(EXIT_FAILURE, "%s", SDL_GetError());
 
-    result->pixels = surface->pixels;
-    result->width = surface->w;
-    result->height = surface->h;
-
-    return result;
+    img->pixels = surface->pixels;
+    img->width = surface->w;
+    img->height = surface->h;
 }
 
 void DEBUG_display_image(const t_image *img)
