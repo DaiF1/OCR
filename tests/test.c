@@ -38,8 +38,9 @@ bool compare_matrices(int32 *m1, int32 *m2, size_t len)
 int main()
 {
     // loader debug
-    t_image *img = load_img("img/000.png");
-    //DEBUG_display_image(img);
+    t_image *img = malloc(sizeof(t_image));
+    load_img(img, "img/000.png");
+    DEBUG_display_image(img);
     assert(img->pixels);
 
     // Morpho operations debug
@@ -52,7 +53,10 @@ int main()
             0, 0, 1, 0, 0,
         };
 
-        assert(compare_matrices(c, circle_element(2), 5));
+        int32 *ce = malloc(sizeof(int32) * 25);
+        circle_element(ce, 2);
+        assert(compare_matrices(c, ce, 5));
+        free(ce);
     }
 
     {
@@ -62,11 +66,35 @@ int main()
             0, 1, 0,
         };
 
-        assert(compare_matrices(c, circle_element(1), 3));
+        int32 *ce = malloc(sizeof(int32) * 9);
+        circle_element(ce, 1);
+        assert(compare_matrices(c, ce, 3));
+        free(ce);
     }
-    
-    t_image *dilation = morpho_dilation(img, circle_element(2), 5);
-    DEBUG_display_image(dilation);
+
+    t_image dilation = {
+        malloc(sizeof(uint32) * img->width * img->height),
+        img->width,
+        img->height
+    };
+    int32 *ce = malloc(sizeof(int32) * 25);
+    circle_element(ce, 2);
+
+    morpho_dilation(img, &dilation, ce, 5);
+    DEBUG_display_image(&dilation);
+
+    t_image erosion = {
+        malloc(sizeof(uint32) * img->width * img->height),
+        img->width,
+        img->height
+    };
+
+    morpho_erosion(img, &erosion, ce, 5);
+    DEBUG_display_image(&erosion);
+
+    free(img);
+    free(dilation.pixels);
+    free(erosion.pixels);
 
     return EXIT_SUCCESS;
 }

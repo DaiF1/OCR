@@ -10,10 +10,9 @@
 
 #include "morpho.h"
 
-int32 *circle_element(const size_t r)
+void circle_element(int32 *dest, const size_t r)
 {
     size_t len = 2 * r + 1;
-    int32 *result = malloc(sizeof(int32) * len * len);
 
     for (size_t y = 0; y < len; y++)
     {
@@ -21,41 +20,78 @@ int32 *circle_element(const size_t r)
         {
             int32 dist = (x - r) * (x - r) + (y - r) * (y - r);
             if (dist <= (int32)(r * r))
-                result[y * len + x] = 1;
+                dest[y * len + x] = 1;
             else
-                result[y * len + x] = 0;
+                dest[y * len + x] = 0;
         }
     }
-
-    return result;
 }
 
-t_image *morpho_dilation(const t_image *img, const int32 *s_el,
+void morpho_dilation(const t_image *src, const t_image *dest, const int32 *s_el,
         const size_t len)
 {
-    t_image *result = malloc(sizeof(t_image));
-    result->width = img->width;
-    result->height = img->height;
-    result->pixels = malloc(sizeof(uint32) * result->width * result->height);
+    uint32 *p_src = src->pixels;
+    uint32 *pixels = dest->pixels;
 
-    printf("%u", s_el[len]);
-
-    uint32 *src = img->pixels;
-    uint32 *pixels = result->pixels;
-
-    for (size_t i = 0; i < (size_t)(result->width * result->height); i++)
+    for (size_t i = 0; i < (size_t)(src->width * src->height); i++)
     {
-        *src = 0xffffff - *src;
-        if (*src < 0xaaaaaa)
+        size_t px = i % (size_t)src->width;
+        size_t py = i / (size_t)src->width;
+
+        size_t minx = (px >= len) ? px - len : 0;
+        size_t miny = (py >= len) ? py - len : 0;
+
+        size_t maxx = (px < src->width - len) ? px + len : (size_t)src->width;
+        size_t maxy = (py < src->height - len) ? py + len : (size_t)src->height;
+
+        uint32 maxp = 0x000000;
+
+        for (size_t y = miny; y < maxy; y++)
         {
-            *pixels++ = 0x000000;
-            src++;
-            continue;
+            for (size_t x = minx; x < maxx; x++)
+            {
+                uint32 p = p_src[y * src->width + x] & 
+                    (s_el[(y - miny) * len + x - minx]) * 0xffffff;
+
+                if (p > maxp)
+                    maxp = p;
+            }
         }
-
-        *pixels++ = 0xffffff;
-        src++;
+        
+        *pixels++ = maxp;
     }
+}
 
-    return result;
+void morpho_erosion(const t_image *src, const t_image *dest, const int32 *s_el,
+        const size_t len)
+{
+    uint32 *p_src = src->pixels;
+    uint32 *pixels = dest->pixels;
+
+    for (size_t i = 0; i < (size_t)(src->width * src->height); i++)
+    {
+        size_t px = i % (size_t)src->width;
+        size_t py = i / (size_t)src->width;
+
+        size_t minx = (px >= len) ? px - len : 0;
+        size_t miny = (py >= len) ? py - len : 0;
+
+        size_t maxx = (px < src->width - len) ? px + len : (size_t)src->width;
+        size_t maxy = (py < src->height - len) ? py + len : (size_t)src->height;
+
+        uint32 minp = 0xffffff;
+
+        for (size_t y = miny; y < maxy; y++)
+        {
+            for (size_t x = minx; x < maxx; x++)
+            {
+                uint32 p = p_src[y * src->width + x] & 
+                    (s_el[(y - miny) * len + x - minx]) * 0xffffff;
+                if (p < minp)
+                    minp = p;
+            }
+        }
+        
+        *pixels++ = minp;
+    }
 }
