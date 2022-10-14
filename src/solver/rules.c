@@ -58,7 +58,7 @@ int is_column_correct(int grill[9][9], size_t x, size_t y, int debug)
         return 1;
     for(size_t i = 0; i < 9; i++)
     {
-        if(i != x)
+        if(i != y)
         {
             if(v == grill[i][x])
             {
@@ -86,11 +86,11 @@ int is_square_correct(int grill[9][9], size_t x, size_t y, int debug)
     int v = grill[y][x];
     if (v <= 0)
         return 1;
-    for(size_t i = y % 3 * 3; i < (y % 3 + 1) * 3; i++)
+    for(size_t i = y / 3 * 3; i < (y / 3 + 1) * 3; i++)
     {
-        for(size_t j = x % 3 * 3; j < (x % 3 + 1) * 3; j++)
+        for(size_t j = x / 3 * 3; j < (x / 3 + 1) * 3; j++)
         {
-            if(i != x || j != y)
+            if(i != y || j != x)
             {
                 if(v == grill[i][j])
                 {

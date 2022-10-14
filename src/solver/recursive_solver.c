@@ -46,7 +46,23 @@ int next_free_case(int grill[9][9],  size_t* x, size_t* y)
 int recursive_solver(int grill[9][9], size_t x, size_t y, int possibilities[9][9][9], int cases_remaining, int debug)
 {
     if (debug)
+    {
+        printf("solver:recursive_solver: (%zu, %zu)\n", x, y);
         pretty_print(grill);
+    }
+    if(y == 9)
+    {
+        if (debug)
+            printf("solver:recursive_solver: x == 0 && y == 0.\n");
+        return 1;
+    }
+
+    if (x == 9)
+    {
+        y++;
+        x = 0;
+    }
+
     // Ends
     if( cases_remaining == 0)
     {
@@ -58,12 +74,6 @@ int recursive_solver(int grill[9][9], size_t x, size_t y, int possibilities[9][9
             return 1;
         }
     }
-    if(x == 0 && y == 9)
-    {
-        if (debug)
-            printf("solver:recursive_solver: x == 0 && y == 0.\n");
-        return 1;
-    }
     // Incorect grill
     if(!is_correct(grill, x, y, debug))
     {
@@ -71,28 +81,54 @@ int recursive_solver(int grill[9][9], size_t x, size_t y, int possibilities[9][9
             printf("solver:recursive_solver: is not correct.\n");
         return 0;
     }
-    // Evident solution
+    // evident solution
     int tmp = 1;
-     while(tmp)
-         tmp = evident_solver(grill, &x, &y, possibilities);
-     // recursive solution
-    //size_t previous_x = x, previous_y = y;
-    while(1)
+    while(tmp)
+        tmp = evident_solver(grill, &x, &y, possibilities);
+    // recursive solution
+    // fix to remove
+    if(grill[y][x] > 0)
     {
-        tmp = next_free_case(grill, &x, &y);
-        if(!tmp)
-        {
-            return 0;
-        }
-        for (int i = 0; i < 10; ++i) {
-            grill[y][x] = i;
-            tmp = recursive_solver(grill, x, y, possibilities, cases_remaining-1, debug);
-            if(tmp)
-            {
-                return 1;
-            }
-        }
-        grill[y][x] = -1;
+        if (debug)
+            printf("{\n");
+        tmp = recursive_solver(grill, x+1, y, possibilities, cases_remaining, debug);
+        if (debug)
+            printf("}\n");
+        return tmp;
     }
 
+    //size_t previous_x = x, previous_y = y;
+    // fix to remove
+    //while(1)
+    //{
+        // fix to remove
+        //tmp = next_free_case(grill, &x, &y);
+        //if(!tmp)
+        //{
+        //    return 0;
+        //}
+    for (int i = 1; i < 10; ++i)
+    {
+        grill[y][x] = i;
+        if (!is_correct(grill, x, y, debug))
+        {
+            grill[y][x] = -1;
+            continue;
+        }
+
+        if(debug)
+        {
+            printf("solver:recursive_solver: recursion (%zu, %zu) %i\n{\n", x, y, i);
+        }
+        tmp = recursive_solver(grill, x+1, y, possibilities, cases_remaining-1, debug);
+        if (debug)
+            printf("}\n");
+        if(tmp)
+        {
+            return 1;
+        }
+    }
+        grill[y][x] = -1;
+    //}
+    return 0;
 }
