@@ -5,7 +5,7 @@
  * File for morphological operations
  *
  * Started on  08/10 julie.fiadino
- * Last Update 13/10 julie.fiadino
+ * Last Update 14/10 julie.fiadino
 */
 
 #pragma once
@@ -31,7 +31,7 @@ void circle_element(int32 *dest, const size_t r);
  * param len: number of ligns in structuring element
  * return: the image after operation
 */
-void morpho_erosion(const t_image *src, const t_image *dest,
+void morpho_erosion(const t_image *src, t_image *dest,
         const int32 *s_el, const size_t len);
 
 /*
@@ -43,7 +43,7 @@ void morpho_erosion(const t_image *src, const t_image *dest,
  * param len: number of ligns in structuring element
  * return: the image after operation
 */
-void morpho_dilation(const t_image *src, const t_image *dest,
+void morpho_dilation(const t_image *src, t_image *dest,
         const int32 *s_el, const size_t len);
 
 /*
@@ -55,5 +55,5 @@ void morpho_dilation(const t_image *src, const t_image *dest,
  * param len: number of ligns in structuring element
  * return: the image after operation
 */
-void morpho_closing(const t_image *src, const t_image *dest,
+void morpho_closing(const t_image *src, t_image *dest,
         const int32 *s_el, const size_t len);

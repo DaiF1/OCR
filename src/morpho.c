@@ -27,7 +27,7 @@ void circle_element(int32 *dest, const size_t r)
     }
 }
 
-void morpho_dilation(const t_image *src, const t_image *dest, const int32 *s_el,
+void morpho_dilation(const t_image *src, t_image *dest, const int32 *s_el,
         const size_t len)
 {
     uint32 *p_src = src->pixels;
@@ -62,7 +62,7 @@ void morpho_dilation(const t_image *src, const t_image *dest, const int32 *s_el,
     }
 }
 
-void morpho_erosion(const t_image *src, const t_image *dest, const int32 *s_el,
+void morpho_erosion(const t_image *src, t_image *dest, const int32 *s_el,
         const size_t len)
 {
     uint32 *p_src = src->pixels;
