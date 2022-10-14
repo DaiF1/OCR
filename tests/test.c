@@ -39,8 +39,8 @@ int main()
 {
     // loader debug
     t_image *img = malloc(sizeof(t_image));
-    load_img(img, "img/000.png");
-    DEBUG_display_image(img);
+    load_img(img, "img/012.png");
+    //DEBUG_display_image(img);
     assert(img->pixels);
 
     // Morpho operations debug
@@ -79,10 +79,10 @@ int main()
         img->height,
     };
     int32 *ce = malloc(sizeof(int32) * 25);
-    circle_element(ce, 1);
+    circle_element(ce, 2);
 
-    morpho_dilation(img, &dilation, ce, 3);
-    DEBUG_display_image(&dilation);
+    morpho_dilation(img, &dilation, ce, 5);
+    //DEBUG_display_image(&dilation);
 
     t_image erosion = {
         malloc(sizeof(uint32) * img->width * img->height),
@@ -90,8 +90,18 @@ int main()
         img->height,
     };
 
-    morpho_erosion(img, &erosion, ce, 3);
-    DEBUG_display_image(&erosion);
+    morpho_erosion(img, &erosion, ce, 5);
+    //DEBUG_display_image(&erosion);
+
+    t_image closing = {
+        malloc(sizeof(uint32) * img->width * img->height),
+        img->width,
+        img->height,
+    };
+
+    morpho_closing(img, &closing, ce, 5);
+    //DEBUG_display_image(&closing);
+
 
     destroy_img(img);
     free(dilation.pixels);

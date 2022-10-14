@@ -97,3 +97,18 @@ void morpho_erosion(const t_image *src, t_image *dest, const int32 *s_el,
         *pixels++ = minp;
     }
 }
+
+void morpho_closing(const t_image *src, t_image *dest, const int32 *s_el,
+        const size_t len)
+{
+    t_image dilation = {
+        malloc(sizeof(uint32) * src->width * src->height),
+        src->width,
+        src->height,
+    };
+
+    morpho_dilation(src, &dilation, s_el, len);
+    morpho_erosion(&dilation, dest, s_el, len);
+
+    free(dilation.pixels);
+}
