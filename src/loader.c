@@ -21,14 +21,21 @@ void load_img(t_image *img, const char *path)
     if (!surface)
         errx(EXIT_FAILURE, "%s", SDL_GetError());
 
+    if (surface->format->BytesPerPixel == 3)
+    {
+        SDL_PixelFormat *format = SDL_AllocFormat(SDL_PIXELFORMAT_RGBA32);
+        surface = SDL_ConvertSurface(surface, format, 0);
+        SDL_FreeFormat(format);
+    }
+
     SDL_LockSurface(surface);
 
-    img->pixels = malloc(surface->pitch * surface->h);
-    memcpy(img->pixels, surface->pixels,surface->pitch * surface->h);
+    img->pixels = malloc(sizeof(uint32) * surface->w * surface->h);
+    memcpy(img->pixels, surface->pixels,
+            sizeof(uint32) * surface->w * surface->h);
 
     img->width = surface->w;
     img->height = surface->h;
-    img->pitch = surface->pitch;
 
     SDL_UnlockSurface(surface);
 
@@ -65,7 +72,7 @@ void DEBUG_display_image(const t_image *img)
     SDL_Surface *s = SDL_CreateRGBSurfaceFrom(
             img->pixels,
             img->width, img->height,
-            8 * (img->pitch / img->width), img->pitch,
+            32, 4 * img->width,
             0x000000ff, 0x0000ff00, 0x00ff0000, 0xff000000);
     SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, s);
 

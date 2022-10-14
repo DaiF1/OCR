@@ -20,7 +20,6 @@ struct s_image
     uint32  *pixels;
     int32   width;
     int32   height;
-    int32   pitch;
 };
 
 typedef struct s_image t_image;
