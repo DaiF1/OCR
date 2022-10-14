@@ -6,7 +6,7 @@
  * Loader.h Implementation
  *
  * Started on  06/10 julie.fiadino
- * Last Update 13/10 julie.fiadino
+ * Last Update 14/10 julie.fiadino
 */
 
 #include <stdlib.h>
@@ -21,11 +21,16 @@ void load_img(t_image *img, const char *path)
     if (!surface)
         errx(EXIT_FAILURE, "%s", SDL_GetError());
 
-    img->pixels = malloc(sizeof(uint32) * surface->w * surface->h);
-    memcpy(img->pixels, surface->pixels, sizeof(uint32) * surface->w * surface->h);
+    SDL_LockSurface(surface);
+
+    img->pixels = malloc(surface->pitch * surface->h);
+    memcpy(img->pixels, surface->pixels,surface->pitch * surface->h);
 
     img->width = surface->w;
     img->height = surface->h;
+    img->pitch = surface->pitch;
+
+    SDL_UnlockSurface(surface);
 
     free(surface);
 }
@@ -60,7 +65,7 @@ void DEBUG_display_image(const t_image *img)
     SDL_Surface *s = SDL_CreateRGBSurfaceFrom(
             img->pixels,
             img->width, img->height,
-            24, 3 * img->width,
+            8 * (img->pitch / img->width), img->pitch,
             0x000000ff, 0x0000ff00, 0x00ff0000, 0xff000000);
     SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, s);
 

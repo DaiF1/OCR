@@ -6,7 +6,7 @@
  * Main executable for unit testing
  *
  * Started on  06/10 julie.fiadino
- * Last Update 11/10 julie.fiadino
+ * Last Update 14/10 julie.fiadino
 */
 
 #include <stddef.h>
@@ -39,7 +39,7 @@ int main()
 {
     // loader debug
     t_image *img = malloc(sizeof(t_image));
-    load_img(img, "img/000.png");
+    load_img(img, "img/010.png");
     DEBUG_display_image(img);
     assert(img->pixels);
 
@@ -73,26 +73,28 @@ int main()
     }
 
     t_image dilation = {
-        malloc(sizeof(uint32) * img->width * img->height),
+        malloc(img->pitch * img->height),
         img->width,
-        img->height
+        img->height,
+        img->pitch
     };
     int32 *ce = malloc(sizeof(int32) * 25);
-    circle_element(ce, 2);
+    circle_element(ce, 1);
 
-    morpho_dilation(img, &dilation, ce, 5);
+    morpho_dilation(img, &dilation, ce, 3);
     DEBUG_display_image(&dilation);
 
     t_image erosion = {
-        malloc(sizeof(uint32) * img->width * img->height),
+        malloc(img->pitch * img->height),
         img->width,
-        img->height
+        img->height,
+        img->pitch
     };
 
-    morpho_erosion(img, &erosion, ce, 5);
+    morpho_erosion(img, &erosion, ce, 3);
     DEBUG_display_image(&erosion);
 
-    free(img);
+    destroy_img(img);
     free(dilation.pixels);
     free(erosion.pixels);
 
