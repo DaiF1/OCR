@@ -6,13 +6,29 @@
  * Loader.h Implementation
  *
  * Started on  06/10 julie.fiadino
- * Last Update 14/10 julie.fiadino
+* Last Update 14/10 julie.fiadino
 */
 
 #include <stdlib.h>
 #include <string.h>
 #include <err.h>
 #include "loader.h"
+
+void gray_scale(t_image *img)
+{
+    for (int i = 0; i < img->width*img->height; i++)
+    {
+
+        float r = (float)((uint8)(img->pixels[i] >> 16)) / 255.0;
+		float g = (float)((uint8)(img->pixels[i] >> 8)) / 255.0;
+		float b = (float)((uint8) img->pixels[i]) / 255.0;
+
+		float average = 0.3*r + 0.59*g + 0.11*b;// je me rappelle plus de la formule;
+		// 0xff000000 -> alpha
+		img->pixels[i] = 0xff000000 + ((uint8)(average * 255.0) << 16) + ((uint8)(average * 255.0) << 8) +(uint8)(average * 255.0);
+    }
+    
+}
 
 void load_img(t_image *img, const char *path)
 {
