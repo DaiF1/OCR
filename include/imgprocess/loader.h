@@ -6,7 +6,7 @@
  * Image loading utility
  *
  * Started on  06/10 julie.fiadino
- * Last Update 13/10 julie.fiadino
+ * Last Update 14/10 julie.fiadino
 */
 
 #pragma once
@@ -26,12 +26,19 @@ typedef struct s_image t_image;
 
 
 /*
- * load_img(path): load the image contained in path
+ * load_img(img, path): load the image contained in path
  *
+ * param img: source image
  * param path: the path to the image
- * return: the image as a t_image
 */
 void load_img(t_image *img, const char *path);
+
+/*
+ * destroy_img(path): free the given image
+ *
+ * param img: image to destroy
+*/
+void destroy_img(t_image *img);
 
 /*
  * DEBUG_display_image(img): Display the image on an SDL window

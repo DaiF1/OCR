@@ -10,6 +10,7 @@
 */
 
 #include <stdlib.h>
+#include <string.h>
 #include <err.h>
 #include "loader.h"
 
@@ -20,9 +21,19 @@ void load_img(t_image *img, const char *path)
     if (!surface)
         errx(EXIT_FAILURE, "%s", SDL_GetError());
 
-    img->pixels = surface->pixels;
+    img->pixels = malloc(sizeof(uint32) * surface->w * surface->h);
+    memcpy(img->pixels, surface->pixels, sizeof(uint32) * surface->w * surface->h);
+
     img->width = surface->w;
     img->height = surface->h;
+
+    free(surface);
+}
+
+void destroy_img(t_image *img)
+{
+    free(img->pixels);
+    free(img);
 }
 
 void DEBUG_display_image(const t_image *img)
