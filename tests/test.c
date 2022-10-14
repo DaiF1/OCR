@@ -90,10 +90,8 @@ int main()
         img->height,
     };
 
-    /*
     morpho_erosion(img, &erosion, ce, 3);
     DEBUG_display_image(&erosion);
-    */
 
     destroy_img(img);
     free(dilation.pixels);
