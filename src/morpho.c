@@ -50,8 +50,10 @@ void morpho_dilation(const t_image *src, t_image *dest, const int32 *s_el,
         {
             for (size_t x = minx; x < maxx; x++)
             {
-                uint32 p = p_src[y * src->width + x] & 
-                    (s_el[(y - miny) * len + x - minx]) * 0xffffffff;
+                if (s_el[(y - miny) * len + x - minx] == 0)
+                    continue;
+
+                uint32 p = p_src[y * src->width + x] & 0xffffffff;
 
                 if (p > maxp)
                     maxp = p;
