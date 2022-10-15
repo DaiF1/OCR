@@ -6,9 +6,7 @@
  * Loader.h Implementation
  *
  * Started on  06/10 julie.fiadino
- * Last Update 14/10 julie.fiadino
- * Started on 14/10 nicolas.dek
- * Last Update on 14/10 nicolas.dek
+ * Last Update 14/10 nicolas.dek
 */
 
 #include <stdlib.h>
@@ -22,11 +20,14 @@ void gray_scale(t_image *img)
     {
 
         float r = (float) ((uint8)(img->pixels[i] >> 16)) / 255.0;
-		float g = (float) ((uint8)(img->pixels[i] >> 8)) / 255.0;
-		float b = (float) ((uint8) img->pixels[i]) / 255.0;
+        float g = (float) ((uint8)(img->pixels[i] >> 8)) / 255.0;
+        float b = (float) ((uint8) img->pixels[i]) / 255.0;
 
-		float average = (0.3 * r) + (0.59 * g) + (0.11 * b);
-		img->pixels[i] = 0xff000000 + ((uint8)(average * 255.0) << 16) + ((uint8)(average * 255.0) << 8) +(uint8)(average * 255.0);
+        float average = (0.3 * r) + (0.59 * g) + (0.11 * b);
+        img->pixels[i] = 0xff000000 +
+            ((uint8)(average * 255.0) << 16) +
+            ((uint8)(average * 255.0) << 8) +
+            (uint8)(average * 255.0);
     }
     
 }
@@ -41,9 +42,9 @@ void black_and_white(t_image *img)
         pixel_color = pixel_color < 0.5 ? 0 : 1;
         uint8 new_color = pixel_color * 255.0;
 
-		img->pixels[i] = 0xff000000 + (new_color << 16) + (new_color << 8) + new_color;
-    }
-    
+        img->pixels[i] = 0xff000000 + (new_color << 16) + 
+            (new_color << 8) + new_color;
+    } 
 }
 
 void load_img(t_image *img, const char *path)

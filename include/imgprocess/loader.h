@@ -6,8 +6,6 @@
  * Image loading utility
  *
  * Started on  06/10 julie.fiadino
- * Last Update 14/10 julie.fiadino
- * Started on 15/10 nicolas.dek
  * Last Update 15/10 nicolas.dek
 */
 
