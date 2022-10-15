@@ -128,4 +128,15 @@ void adjust_image(t_image *img, int8 precision)
     };
 
     morpho_closing(img, &closing, ce, len);
+
+    for (size_t i = 0; i < (size_t)img->width * (size_t)img->height; i++)
+    {
+        float colsrc = (float)((uint8)img->pixels[i]) / 255.0;
+        float colclosing = (float)((uint8)closing.pixels[i]) / 255.0;
+
+        float newcol = colsrc / colclosing;
+        uint8 newp = (uint8)(newcol * 255.0);
+
+        img->pixels[i] = 0xff000000 + (newp << 16) + (newp << 8) + newp;
+    }
 }

@@ -39,7 +39,7 @@ int main()
 {
     // loader debug
     t_image *img = malloc(sizeof(t_image));
-    load_img(img, "img/004.png");
+    load_img(img, "img/008.png");
     //DEBUG_display_image(img);
     assert(img->pixels);
 
@@ -72,6 +72,10 @@ int main()
         free(ce);
     }
 
+    gray_scale(img);
+    //DEBUG_display_image(img);
+    assert(img);
+
     // Morpho operations debug
     t_image dilation = {
         malloc(sizeof(uint32) * img->width * img->height),
@@ -102,6 +106,12 @@ int main()
     morpho_closing(img, &closing, ce, 5);
     //DEBUG_display_image(&closing);
 
+    adjust_image(img, 5);
+    //DEBUG_display_image(img);
+
+    black_and_white(img);
+    //DEBUG_display_image(img);
+    assert(img);
 
     destroy_img(img);
     free(dilation.pixels);
