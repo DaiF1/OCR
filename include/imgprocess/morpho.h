@@ -57,3 +57,12 @@ void morpho_dilation(const t_image *src, t_image *dest,
 */
 void morpho_closing(const t_image *src, t_image *dest,
         const int32 *s_el, const size_t len);
+
+/*
+ * adjust_image(img, precision): Adjust image constrast by given precision
+ *
+ * param img: image to adjust
+ * param precision: adjustment precision. 
+ *  A higher precision will take more time to compute
+*/
+void adjust_image(t_image *img, int8 precision);

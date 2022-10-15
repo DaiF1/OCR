@@ -39,7 +39,7 @@ int main()
 {
     // loader debug
     t_image *img = malloc(sizeof(t_image));
-    load_img(img, "img/012.png");
+    load_img(img, "img/004.png");
     //DEBUG_display_image(img);
     assert(img->pixels);
 
