@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include "pretty_print.h"
 #include "solver.h"
+#include "reader.h"
 
 int test_solver()
 {
@@ -39,8 +40,29 @@ int test_solver()
     return EXIT_FAILURE;
 }
 
+int test_reader()
+{
+    int grill[9][9] =
+            {
+                    {-1, -1, -1, -1, -1, -1, -1, -1, -1},
+                    {-1, -1, -1, -1, -1, -1, -1, -1, -1},
+                    {-1, -1, -1, -1, -1, -1, -1, -1, -1},
+                    {-1, -1, -1, -1, -1, -1, -1, -1, -1},
+                    {-1, -1, -1, -1, -1, -1, -1, -1, -1},
+                    {-1, -1, -1, -1, -1, -1, -1, -1, -1},
+                    {-1, -1, -1, -1, -1, -1, -1, -1, -1},
+                    {-1, -1, -1, -1, -1, -1, -1, -1, -1},
+                    {-1, -1, -1, -1, -1, -1, -1, -1, -1},
+            };
+    pretty_print(grill);
+    int tmp = read_sudoku(grill, "grid_00", 1);
+    pretty_print(grill);
+    return tmp;
+}
+
 int main()
 {
-    test_solver();
-  return EXIT_SUCCESS; 
+    //test_solver();
+    test_reader();
+    return EXIT_SUCCESS;
 }
