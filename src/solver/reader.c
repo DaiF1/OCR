@@ -1,5 +1,5 @@
 /*
- * writer.c in src/solver/
+ * reader.c in src/solver/
  *
  * Made by Oscar Chevalier
  *
@@ -32,9 +32,9 @@ int read_sudoku(int grill[9][9], char name[], int debug)
             grill[y][x] = -1;
         else
             grill[y][x] = c - '0';
+        c = fgetc(file);
         if (debug)
             printf("read_sudoku: (%zu, %zu) %i\n", x, y, grill[y][x]);
-        c = fgetc(file);
         x++;
 
         if (x == 9)
@@ -43,21 +43,25 @@ int read_sudoku(int grill[9][9], char name[], int debug)
             y++;
             if (y % 3 == 0)
             {
-                printf("read_sudoku: lr '%c' (%zu)\n", c, y);
+                if (debug)
+                    printf("read_sudoku: lr '%c' (%zu)\n", c, y);
                 if(c != '\n')
                     return 0;
+                c = fgetc(file);
             }
             c = fgetc(file);
         }
         else if (x % 3 == 0)
         {
-            printf("read_sudoku: space '%c' (%zu)\n", c, x);
+            if (debug)
+                printf("read_sudoku: space '%c' (%zu)\n", c, x);
             if(c != ' ') {
                 return 0;
             }
             c = fgetc(file);
         }
     }
+    fclose(file);
     return y == 9 && c == EOF;
 }
 
