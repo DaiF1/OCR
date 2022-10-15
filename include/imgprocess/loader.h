@@ -7,6 +7,8 @@
  *
  * Started on  06/10 julie.fiadino
  * Last Update 14/10 julie.fiadino
+ * Started on 15/10 nicolas.dek
+ * Last Update 15/10 nicolas.dek
 */
 
 #pragma once
@@ -23,6 +25,20 @@ struct s_image
 };
 
 typedef struct s_image t_image;
+
+/*
+ * gray_scale(img): grayscale the img
+ *
+ * param img: source image
+*/
+void gray_scale(t_image *img);
+
+/*
+ * black_and_white(img): transform grayscale to black and white
+ *
+ * param img: source image
+*/
+void black_and_white(t_image *img);
 
 
 /*
