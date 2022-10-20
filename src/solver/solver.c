@@ -44,7 +44,7 @@ int main(int argc, char* argv[])
                 {-1, -1, -1, -1, -1, -1, -1, -1, -1},
                 {-1, -1, -1, -1, -1, -1, -1, -1, -1},
             };
-        int debug = 0;
+        int debug = 1;
         read_sudoku(grill, argv[1], debug);
         solver(grill, debug);
         char name[] = ".result";
