@@ -6,7 +6,8 @@ LDLIBS =
 
 all: src/main
 
-SRC = $(wildcard src/*.c) $(wildcard src/solver/*.c)
+SRC = $(wildcard src/*.c) \
+	$(filter-out src/solver/solver.c, $(wildcard src/solver/*.c))
 OBJ = ${SRC:.c=.o}
 
 SRC_TEST = $(filter-out src/main.c,$(SRC)) $(wildcard tests/*.c)
