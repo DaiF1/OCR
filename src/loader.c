@@ -6,9 +6,7 @@
  * Loader.h Implementation
  *
  * Started on  06/10 julie.fiadino
- * Last Update 14/10 julie.fiadino
- * Started on 14/10 nicolas.dek
- * Last Update on 14/10 nicolas.dek
+ * Last Update on 20/10 nicolas.dek
 */
 
 #include <stdlib.h>
