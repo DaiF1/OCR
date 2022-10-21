@@ -96,7 +96,7 @@ int update_square(int grill[9][9], size_t x, size_t y, int possibilities[9][9][9
  *
  * return: if there is an update
  */
-int update_possibilities(int grill[9][9], size_t x, size_t y, int possibilities[9][9][9])
+int update_possibilities(int grill[9][9], size_t x, size_t y, int possibilities[9][9][9], int debug)
 {
     if(grill[y][x] > 0)
     {
@@ -114,7 +114,21 @@ int update_possibilities(int grill[9][9], size_t x, size_t y, int possibilities[
        update_line(grill, x, y, possibilities) ||
        update_square(grill, x, y, possibilities))
     {
+        if (debug)
+        {
+            printf("solver:update_possibilities:1:");
+            for(size_t i = 0; i < 9; i++)
+                printf("%i ",possibilities[y][x][i]);
+            printf("\n");
+        }
         return 1;
+    }
+    if (debug)
+    {
+        printf("solver:update_possibilities:0:");
+        for(size_t i = 0; i < 9; i++)
+            printf("%i ",possibilities[y][x][i]);
+        printf("\n");
     }
     return 0;
 }
@@ -133,9 +147,19 @@ int update_all_possibilities(int grill[9][9], int possibilities[9][9][9], int de
     {
         for (size_t j = 0; j < 9; ++j)
         {
-            int v2 = update_possibilities(grill, j, i, possibilities);
+            if (grill[j][i] > 0)
+            {
+                for (size_t k = 0; k < 9; k++)
+                {
+                    possibilities[j][i][k] = 0;
+                }
+                if (debug)
+                    printf("solver:update_all_possibilities:full (%zu, %zu) %i\n", i, j, grill[j][i]);
+                continue;
+            }
+            int v2 = update_possibilities(grill, i, j, possibilities, debug);
             if(debug)
-                printf("solver:update_all_possibilities: (%zu, %zu) %i\n", j, i, v2);
+                printf("solver:update_all_possibilities:empty (%zu, %zu) %i %i\n", i, j, grill[j][i], v2);
             v = v || v2;
         }
     }

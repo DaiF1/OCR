@@ -19,6 +19,31 @@
 #include "writer.h"
 #include "solver.h"
 
+void name_modifier(char* name, char str[], size_t l, int debug)
+{
+    for(size_t i = 0; i < l; i++)
+    {
+        str[i] = *name;
+        name++;
+    }
+    char format[8] = ".result";
+    for (int i = 0; i < 8; ++i)
+    {
+        str[i + l-1] = format[i];
+    }
+    if (debug)
+    {
+        printf("name_modifier: %zu\n", l);
+        size_t i = 0;
+        while (i < l + 8)
+        {
+            printf("%hhi ", str[i]);
+            i++;
+        }
+        printf("\nname_modifier: %s\n", str);
+    }
+}
+
 int main(int argc, char* argv[])
 {
     if (argc == 2)
@@ -35,12 +60,13 @@ int main(int argc, char* argv[])
                         {-1, -1, -1, -1, -1, -1, -1, -1, -1},
                         {-1, -1, -1, -1, -1, -1, -1, -1, -1},
                 };
-        int debug = 1;
+        int debug = 0;
         read_sudoku(grill, argv[1], debug);
         solver(grill, debug);
-        char name[] = ".result";
-        strcat(argv[1], name);
-        write_sudoku(grill, name, debug);
+        int l = sizeof(argv[1]);
+        char str[l + 8];
+        name_modifier(argv[1], str, l, debug);
+        write_sudoku(grill, str, debug);
         return EXIT_SUCCESS;
     }
     return EXIT_FAILURE;

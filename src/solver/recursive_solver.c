@@ -14,6 +14,7 @@
 #include "rules.h"
 #include "evident_solver.h"
 #include "pretty_print.h"
+#include "update_possibilities.h"
 
 /*
  * next_free_case(rill[9][9], *x, *y):
@@ -66,6 +67,7 @@ int recursive_solver(int grill[9][9], size_t x, size_t y, int possibilities[9][9
     // Ends
     if( cases_remaining == 0)
     {
+        update_all_possibilities(grill, possibilities, debug);
         int temp = count_remaining_cases(grill, possibilities, debug);
         if (temp == cases_remaining)
         {

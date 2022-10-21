@@ -24,6 +24,8 @@ int write_sudoku(int grill[9][9], char name[], int debug)
     FILE* file = fopen(name, "w");
     if (file == NULL)
         errx(1, "Can't write the file.");
+    if (debug)
+        printf("write_sudoku:name %s\n", name);
     for(size_t y = 0; y < 9;)
     {
         for (size_t x = 0; x < 9 ;)
