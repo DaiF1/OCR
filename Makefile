@@ -36,7 +36,7 @@ test: tests/test
 # solver build
 
 src/solver/solver: ${OBJ_SOLVER}
-solver: src/solver/solver
+solver: src/solver/main_solver
 
 # clean
 
