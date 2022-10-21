@@ -35,12 +35,15 @@ bool compare_matrices(int32 *m1, int32 *m2, size_t len)
     return true;
 }
 
-int main()
+int main(int argc, char **argv)
 {
+    if (argc == 1)
+        return EXIT_FAILURE;
+
     // loader debug
     t_image *img = malloc(sizeof(t_image));
-    load_img(img, "img/008.png");
-    //DEBUG_display_image(img);
+    load_img(img, argv[1]);
+    DEBUG_display_image(img);
     assert(img->pixels);
 
     // Morpho operations debug
@@ -77,14 +80,20 @@ int main()
     assert(img);
 
     // Morpho operations debug
+    /*
     t_image dilation = {
         malloc(sizeof(uint32) * img->width * img->height),
         img->width,
         img->height,
     };
-    int32 *ce = malloc(sizeof(int32) * 25);
-    circle_element(ce, 2);
+    */
+    size_t r = img->width / 200;
+    size_t precision = 2 * r + 1;
 
+    int32 *ce = malloc(sizeof(int32) * precision * precision);
+    circle_element(ce, r);
+
+    /*
     morpho_dilation(img, &dilation, ce, 5);
     //DEBUG_display_image(&dilation);
 
@@ -106,16 +115,17 @@ int main()
     morpho_closing(img, &closing, ce, 5);
     //DEBUG_display_image(&closing);
 
-    adjust_image(img, 5);
+    */
+    adjust_image(img, precision);
     //DEBUG_display_image(img);
 
     black_and_white(img);
-    //DEBUG_display_image(img);
+    DEBUG_display_image(img);
     assert(img);
 
     destroy_img(img);
-    free(dilation.pixels);
-    free(erosion.pixels);
+    //free(dilation.pixels);
+    //free(erosion.pixels);
     free(ce);
 
     return EXIT_SUCCESS;
