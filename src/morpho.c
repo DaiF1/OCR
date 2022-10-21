@@ -5,7 +5,7 @@
  * Morpho.h Implementation
  *
  * Started on  08/10 julie.fiadino
- * Last Update 15/10 julie.fiadino
+ * Last Update 21/10 julie.fiadino
 */
 
 #include "morpho.h"
@@ -113,35 +113,4 @@ void morpho_closing(const t_image *src, t_image *dest, const int32 *s_el,
     morpho_erosion(&dilation, dest, s_el, len);
 
     free(dilation.pixels);
-}
-
-void adjust_image(t_image *img, int8 precision)
-{
-    size_t len = 2 * precision + 1;
-    int32 *ce = malloc(sizeof(int32) * len * len);
-    circle_element(ce, precision);
-
-    t_image closing = {
-        malloc(sizeof(uint32) * img->width * img->height),
-        img->width,
-        img->height,
-    };
-
-    morpho_closing(img, &closing, ce, len);
-
-    free(ce);
-
-    for (size_t i = 0; i < (size_t)img->width * (size_t)img->height; i++)
-    {
-        float colsrc = (float)((uint8)img->pixels[i]) / 255.0;
-        float colclosing = (float)((uint8)closing.pixels[i]) / 255.0;
-
-        float newcol = colsrc / colclosing;
-        newcol = (newcol > 1.0) ? 1.0 : newcol;
-        uint8 newp = (uint8)(newcol * 255.0);
-
-        img->pixels[i] = 0xff000000 + (newp << 16) + (newp << 8) + newp;
-    }
-
-    free(closing.pixels);
 }
