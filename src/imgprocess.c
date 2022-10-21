@@ -10,6 +10,9 @@
 */
 
 #include "loader.h"
+#include "morpho.h"
+
+#define max(a, b) ((a) > (b)) ? (a) : (b)
 
 void gray_scale(t_image *img)
 {
@@ -20,10 +23,13 @@ void gray_scale(t_image *img)
 		float g = (float) ((uint8)(img->pixels[i] >> 8)) / 255.0;
 		float b = (float) ((uint8) img->pixels[i]) / 255.0;
 
-		float average = (0.3 * r) + (0.59 * g) + (0.11 * b);
-		img->pixels[i] = 0xff000000 + ((uint8)(average * 255.0) << 16) + ((uint8)(average * 255.0) << 8) +(uint8)(average * 255.0);
+        float m = max(max(r, g), b);
+        
+        img->pixels[i] = 0xff000000 +
+            ((uint8)(m * 255.0) << 16) +
+            ((uint8)(m * 255.0) << 8) +
+            (uint8)(m * 255.0);
     }
-    
 }
 
 void black_and_white(t_image *img)

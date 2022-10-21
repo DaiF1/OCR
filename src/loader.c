@@ -14,52 +14,6 @@
 #include <err.h>
 #include "loader.h"
 
-#define max(a, b) ((a) > (b)) ? (a) : (b)
-
-void gray_scale(t_image *img)
-{
-    for (int i = 0; i < img->width * img->height; i++)
-    {
-
-        float r = (float) ((uint8)(img->pixels[i] >> 16)) / 255.0;
-		float g = (float) ((uint8)(img->pixels[i] >> 8)) / 255.0;
-		float b = (float) ((uint8) img->pixels[i]) / 255.0;
-
-        float m = max(max(r, g), b);
-        
-        img->pixels[i] = 0xff000000 +
-            ((uint8)(m* 255.0) << 16) +
-            ((uint8)(m * 255.0) << 8) +
-            (uint8)(m * 255.0);
-    }
-}
-
-void black_and_white(t_image *img)
-{
-    // !!! *img must already been a grayscale image !!!
-
-    // will be the sum of all the grey pixel level divide by the number of pixel
-    float treshold = 0;
-
-    // calculate the treshold
-    for (int i = 0; i <  img->width * img->height; i++)
-        treshold += (float) ((uint8)(img->pixels[i] >> 16)) / 255.0;
-    treshold /=  (img->width * img->height);
-
-    // change every pixel based on the treshold
-    for (int i = 0; i < img->width * img->height; i++)
-    {
-        // get the grey level of the current pixel
-        float grey_level = (float)((uint8)(img->pixels[i] >> 16)) / 255.0;
-
-        // binary_color contain black or white value
-        uint32 binary_color = grey_level < treshold ? 0 : 255; 
-        //apply
-        img->pixels[i] = 0xff000000 + (binary_color << 16) +
-            (binary_color << 8) + binary_color;
-    }
-}
-
 void load_img(t_image *img, const char *path)
 {
     SDL_Surface *surface = IMG_Load(path);
