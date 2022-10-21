@@ -67,7 +67,7 @@ void load_img(t_image *img, const char *path)
     if (!surface)
         errx(EXIT_FAILURE, "%s", SDL_GetError());
 
-    if (surface->format->BytesPerPixel == 3)
+    if (surface->format->BytesPerPixel != 4)
     {
         SDL_PixelFormat *format = SDL_AllocFormat(SDL_PIXELFORMAT_RGBA32);
         surface = SDL_ConvertSurface(surface, format, 0);
