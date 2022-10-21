@@ -10,8 +10,7 @@ SRC = $(wildcard src/*.c) \
 	$(filter-out src/solver/solver.c, $(wildcard src/solver/*.c))
 OBJ = ${SRC:.c=.o}
 
-SRC_TEST = $(filter-out src/main.c,$(SRC)) $(wildcard tests/*.c) \
-	   src/solver/solver.c
+SRC_TEST = $(filter-out src/main.c,$(SRC)) $(wildcard tests/*.c)
 OBJ_TEST = ${SRC_TEST:.c=.o}
 
 SRC_SOLVER = $(wildcard src/solver/*.c)
@@ -35,7 +34,7 @@ test: tests/test
 
 # solver build
 
-src/solver/solver: ${OBJ_SOLVER}
+src/solver/main_solver: ${OBJ_SOLVER}
 solver: src/solver/main_solver
 
 # clean
