@@ -33,7 +33,7 @@ int count_remaining_cases(int grill[9][9], int possibilities[9][9][9], int debug
             int v = 0;
             for (int k = 0; k < 9; ++k)
             {
-                if (possibilities[k] != 0)
+                if (possibilities[i][j][k] != 0)
                 {
                     v = 1;
                     break;
