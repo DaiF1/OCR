@@ -6,13 +6,95 @@
  * OCR main file
  *
  * Started on  21/10 nicolas.dek
- * Last Update 21/10 nicolas.dek
-*/
+ * Last Update 23/10 nicolas.dek
+ */
+#include <err.h>
 
 #include "loader.h"
 #include "morpho.h"
 
 #define max(a, b) ((a) > (b)) ? (a) : (b)
+
+int *component_analysis(t_image *img)
+{
+    uint8 color_to_find = 0;
+    int h = img->height;
+    int w = img->width;
+    int latest_label = 0;
+    int *current_label = NULL;
+    uint32 *current_pixel = 0;
+    uint8 current_color = 0;
+    int *pixels_label = calloc(sizeof(int), w*h+ 1);
+
+    if (pixels_label == NULL)
+        errx(1, "Not enough memorhihi!");
+
+    for (int i = 0; i < h; i++)
+    {
+        for (int j = 0; j < w; j++)
+        {
+            current_pixel = img->pixels+(i*h+j);
+            current_color = (uint8) (*current_pixel) / 255.0;
+            current_label = (pixels_label+(i*h+j));
+
+            if (current_color == color_to_find)
+            {
+                // gere les erreurs de sortie de matrice
+                if (i < h && i >= 0 && j < w && j >= 0)
+                {
+                    // verifie la couleur du pixel du gauche et du haut
+                    if ((uint8) (img->pixels[i*h+j-1] / 255) == (uint8) (img->pixels[(i-1)*h+j] / 255)
+                            && (uint8) (img->pixels[i*h+j-1] / 255 == color_to_find))
+                    {
+                        // on prend le plus petit label du haut et de gauche et on
+                        // l'assigne au 3 (gauche, current, haut)
+                        int tmp_label = latest_label;
+                        if (pixels_label[(i-1)*h+j] <= pixels_label[i*h+j-1]
+                                && pixels_label[(i-1)] != 0)
+                            tmp_label = pixels_label[(i-1)*h+j];
+                        else if (pixels_label[i*h+j-1] != 0)
+                            tmp_label = pixels_label[i*h+j-1];
+                        else if (tmp_label == 0)
+                            tmp_label++;
+
+                        pixels_label[(i-1)*h+j] = tmp_label;
+                        pixels_label[i*h+j-1] = tmp_label;
+                        *current_label = tmp_label;
+                    }
+
+                }
+
+                // gere les erreurs de sortie de matrice
+                if (j < w && j >= 0 && *current_label == 0)
+                {
+                    // verifie la couleur du pixel de gauche
+                    // pour prendre son label
+                    if ((uint8) (img->pixels[i*h+j-1] / 255 == color_to_find))
+                        *current_label = *(pixels_label+(i*h+j-1));
+                    // verifie si le pixel du haut et actuel ont la meme couleur et
+                }
+
+                // gere les erreurs de sortie de matrice
+                if (i < h && i >= 0 && *current_label == 0)
+                {
+                    // verifie la couleur du pixel de haut
+                    // pour prendre son label
+                    if ((uint8) (img->pixels[(i-1)*h+j]) / 255 == color_to_find)
+                        *current_label = pixels_label[(i-1)*h+j];
+
+                }
+
+                // on verifie si la couleur du haut et de gauche est blanc
+                // c'est le dernier cas, normalement y'a plus rien a comparer
+                if (*current_label == 0)
+                    *current_label = latest_label++;
+
+            }
+        }
+    }
+    return pixels_label;
+}
+
 
 void gray_scale(t_image *img)
 {
@@ -20,11 +102,11 @@ void gray_scale(t_image *img)
     {
 
         float r = (float) ((uint8)(img->pixels[i] >> 16)) / 255.0;
-		float g = (float) ((uint8)(img->pixels[i] >> 8)) / 255.0;
-		float b = (float) ((uint8) img->pixels[i]) / 255.0;
+        float g = (float) ((uint8)(img->pixels[i] >> 8)) / 255.0;
+        float b = (float) ((uint8) img->pixels[i]) / 255.0;
 
         float m = max(max(r, g), b);
-        
+
         img->pixels[i] = 0xff000000 +
             ((uint8)(m * 255.0) << 16) +
             ((uint8)(m * 255.0) << 8) +
