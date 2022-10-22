@@ -13,6 +13,7 @@
 #include <string.h>
 #include <err.h>
 #include "saver.h"
+#include "loader.h"
 
 
 SDL_Surface* crop_surface(SDL_Surface* s, int x, int y, int width, int height)
@@ -25,10 +26,9 @@ SDL_Surface* crop_surface(SDL_Surface* s, int x, int y, int width, int height)
     return surface;
 }
 
-void save_and_crop_image(image_t *img, int x, int y, int width, int height, const char *path)
+void save_and_crop_image(t_image *img, int x, int y, int width, int height, char *path)
 {
     // img to surface
-    t_image *img;
     SDL_Surface *s = SDL_CreateRGBSurfaceFrom(
             img->pixels,
             img->width, img->height,
@@ -37,6 +37,6 @@ void save_and_crop_image(image_t *img, int x, int y, int width, int height, cons
     // crop surface
     crop_surface(s, x, y, width, height);
     //save surface
-    IMG_SavePNG(s, "path");
+    IMG_SavePNG(s, path);
     SDL_FreeSurface(s);
 }
