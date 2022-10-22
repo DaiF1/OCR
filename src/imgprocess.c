@@ -26,6 +26,7 @@ int *component_analysis(t_image *img)
     uint8 current_color = 0;
     int *pixels_label = calloc(sizeof(int), w*h+ 1);
 
+
     if (pixels_label == NULL)
         errx(1, "Not enough memorhihi!");
 
@@ -40,7 +41,7 @@ int *component_analysis(t_image *img)
             if (current_color == color_to_find)
             {
                 // gere les erreurs de sortie de matrice
-                if (i < h && i >= 0 && j < w && j >= 0)
+                if (i < h && i > 0 && j < w && j > 0)
                 {
                     // verifie la couleur du pixel du gauche et du haut
                     if ((uint8) (img->pixels[i*h+j-1] / 255) == (uint8) (img->pixels[(i-1)*h+j] / 255)
@@ -65,7 +66,7 @@ int *component_analysis(t_image *img)
                 }
 
                 // gere les erreurs de sortie de matrice
-                if (j < w && j >= 0 && *current_label == 0)
+                if (j < w && j > 0 && *current_label == 0)
                 {
                     // verifie la couleur du pixel de gauche
                     // pour prendre son label
@@ -75,7 +76,7 @@ int *component_analysis(t_image *img)
                 }
 
                 // gere les erreurs de sortie de matrice
-                if (i < h && i >= 0 && *current_label == 0)
+                if (i < h && i > 0 && *current_label == 0)
                 {
                     // verifie la couleur du pixel de haut
                     // pour prendre son label
@@ -92,6 +93,7 @@ int *component_analysis(t_image *img)
             }
         }
     }
+    printf("%d\n", latest_label);
     return pixels_label;
 }
 
