@@ -14,6 +14,7 @@
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
 #include "utils.h"
+#include "loader.h"
 
 /*
  * save_and_crop_image(img, x, y, width, height, path): Display the image on an SDL window
@@ -25,4 +26,4 @@
  * param height: the height of the rectangle
  * path: the path to save the image
 */
-void save_and_crop_image(image_t *img, int x, int y, int width, int height, const char *path)
+void save_and_crop_image(t_image *img, int x, int y, int width, int height, char *path);
