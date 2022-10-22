@@ -1,3 +1,5 @@
+#pragma once
+
 #include "loader.h"
 
 void black_and_white(t_image *img);
