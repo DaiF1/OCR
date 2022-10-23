@@ -13,6 +13,7 @@
 #include <assert.h>
 #include "loader.h"
 #include "morpho.h"
+#include "imgprocess.h"
 
 /*
  * compare_matrices(m1, m2, len): Return true if the two matrices are identical
@@ -35,7 +36,33 @@ bool compare_matrices(int32 *m1, int32 *m2, size_t len)
     return true;
 }
 
-int main(int argc, char **argv)
+int coni_test()
+{
+  t_image *img = malloc(sizeof(t_image));
+  load_img(img, "img/empty.png");
+
+  /* size_t r = img->width / 200; */
+  /* size_t precision = 2 * r + 1; */
+  /* int32 *ce = malloc(sizeof(int32) * precision * precision); */
+  /* circle_element(ce, r); */
+  /* t_image closing = { */
+  /*     malloc(sizeof(uint32) * img->width * img->height), */
+  /*     img->width, */
+  /*     img->height, */
+  /* }; */
+  gray_scale(img);
+  /* morpho_dilation(img, &closing, ce, 5); */
+  /* morpho_closing(img, &closing, ce, 5); */
+  /* morpho_erosion(img, &closing, ce, 5); */
+  black_and_white(img);
+  int *component = component_analysis(img);
+  DEBUG_color_component(component, img);
+
+  DEBUG_display_image(img);
+  return 0;
+}
+
+int backup_main(int argc, char **argv)
 {
     if (argc == 1)
         return EXIT_FAILURE;
@@ -129,4 +156,10 @@ int main(int argc, char **argv)
     free(ce);
 
     return EXIT_SUCCESS;
+}
+
+int main()
+{
+    coni_test();
+    return 0;
 }
