@@ -15,6 +15,41 @@
 
 #define max(a, b) ((a) > (b)) ? (a) : (b)
 
+void merge_component_neighbour(int *pixels_label, int i, int j, int w, int h)
+{
+    int *current_label = (pixels_label+(i*h+j));
+    if (*current_label != 0)
+    {
+        int lowest_label = *current_label;
+        for (int a=-1; a<2; a++)
+        {
+            for (int b=-1; b<2; b++)
+            {
+                if (i+a >= 0 && i+a < h && j+b >= 0 && j+b < w)
+                {
+                    if (pixels_label[(i+a)*h+(j+b)] < lowest_label && pixels_label[(i+a)*h+(j+b)] != 0)
+                        lowest_label = pixels_label[(i+a)*h+(j+b)];
+                }
+            }
+        }
+
+        for (int a=-1; a<2; a++)
+        {
+            for (int b=-1; b<2; b++)
+            {
+                if (i+a >= 0 && i+a < h && j+b >= 0 && j+b < w)
+                {
+                    if (pixels_label[(i+a)*h+(j+b)] != 0 && pixels_label[(i+a)*h+(j+b)] != lowest_label)
+                    {
+                        pixels_label[(i+a)*h+(j+b)] = lowest_label;
+                        merge_component_neighbour(pixels_label, i+a, j+b, w, h);
+                    }
+                }
+            }
+        }
+    }
+}
+
 int *component_analysis(t_image *img)
 {
     // 0 = black
@@ -99,43 +134,9 @@ int *component_analysis(t_image *img)
     }
 
     // merge neighbours label
-    for (int i=0; i < img->height; i++)
-    {
-        for (int j=0; j < img->width; j++)
-        {
-            current_label = (pixels_label+(i*h+j));
-            left = (i*h)+(j-1);
-            top  = ((i-1)*h)+j;
-            if (i > 0 && j > 0)
-            {
-                int tmp_label = *current_label;
-                if (pixels_label[left] < pixels_label[top] && pixels_label[left] < *current_label)
-                    tmp_label = pixels_label[left];
-                else if (pixels_label[top] < pixels_label[left] && pixels_label[top] < *current_label)
-                    tmp_label = pixels_label[top];
-                *current_label = tmp_label;
-                pixels_label[top] = tmp_label;
-                pixels_label[left] = tmp_label;
-
-            }
-            else if (j > 0)
-            {
-                if (pixels_label[left] < *current_label)
-                    *current_label = pixels_label[left];
-                else
-                    pixels_label[left] = *current_label;
-            }
-            else if (i > 0)
-            {
-                if (pixels_label[top] < *current_label)
-                    *current_label = pixels_label[top];
-                else
-                    pixels_label[top] = *current_label;
-            }
-            
-
-        }
-    }
+    for (int i=0; i < w; i++)
+        for (int j=0; j < h; j++)
+            merge_component_neighbour(pixels_label, i, j, w, h);
     return pixels_label;
 }
 
@@ -153,36 +154,30 @@ int get_nb_component(int *component, int size)
 int *get_size_component(int *component, int size)
 {
     int nb_component = get_nb_component(component, size);
-    int *size_component = calloc(sizeof(int), nb_component+2);
+    int *size_component = calloc(sizeof(int), nb_component+1);
     for (int i = 0; i < size; i++)
         size_component[component[i]]++; 
     return size_component;
 }
 
-void DEBUG_color_component(int *component, t_image *img)
+int get_max_component(int *size_component, int *component, int size)
 {
-    uint32 *current_color = 0;
-    uint32 color[30] = {0};
-    for (int i=0; i < 30; i++)
-        color[i] = 0xFF000000;
-
-    for (int i=0; i < img->width*img->height; i++)
+    int max_component = 1;
+    int nb_component = get_nb_component(component, size);
+    for (int i=2; i < nb_component; i++)
     {
-        if (*(component+i) != 0)
-        {
-            /* printf("%d\n", *(component+i)); */
-            current_color = &color[*(component+i)];
-            if (*current_color == 0xFF000000)
-            {
-                int result = 0;
-                srand(time(NULL));
-                result = (rand() % (16711680 - 0)) + 0;
-
-                *current_color += result;
-            }
-            *(img->pixels+i) = *current_color;
-        }
+        if (size_component[max_component] < size_component[i])
+            max_component = i;
     }
+    return max_component;
+    
+}
+
+void DEBUG_color_component(int *component, t_image *img, int label, uint32 color)
+{
+    for (int i=0; i < img->width*img->height; i++)
+        if (*(component+i) == label)
+            *(img->pixels+i) = color;
 }
 
 
