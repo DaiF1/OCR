@@ -73,6 +73,7 @@ int backup_main(int argc, char **argv)
     DEBUG_display_image(img);
     assert(img->pixels);
 
+    save_and_crop_image(img, 50, 50, 50, 50, "img_croped.png");
     // Morpho operations debug
     {
         int32 c[] = {
