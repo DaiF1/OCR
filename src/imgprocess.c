@@ -17,10 +17,16 @@
 
 int *component_analysis(t_image *img)
 {
+    // VARIABLE DEBUG du pauvre
+    int nb_black = 0;
+    int nb_white = 0;
+
+    // 0 = black
+    // 1 = white
     uint8 color_to_find = 0;
     int h = img->height;
     int w = img->width;
-    int latest_label = 0;
+    int latest_label = 1;
     int *current_label = NULL;
     uint32 *current_pixel = 0;
     uint8 current_color = 0;
@@ -40,7 +46,18 @@ int *component_analysis(t_image *img)
 
             if (current_color == color_to_find)
             {
+                nb_black++;
                 // gere les erreurs de sortie de matrice
+                // gere les erreurs de sortie de matrice
+                if (j < w && j > 0 && *current_label == 0)
+                {
+                    // verifie la couleur du pixel de gauche
+                    // pour prendre son label
+                    if ((uint8) (img->pixels[i*h+j-1] / 255 == color_to_find))
+                        *current_label = *(pixels_label+(i*h+j-1));
+                    // verifie si le pixel du haut et actuel ont la meme couleur et
+                }
+
                 if (i < h && i > 0 && j < w && j > 0)
                 {
                     // verifie la couleur du pixel du gauche et du haut
@@ -55,24 +72,12 @@ int *component_analysis(t_image *img)
                             tmp_label = pixels_label[(i-1)*h+j];
                         else if (pixels_label[i*h+j-1] != 0)
                             tmp_label = pixels_label[i*h+j-1];
-                        else if (tmp_label == 0)
-                            tmp_label++;
 
                         pixels_label[(i-1)*h+j] = tmp_label;
                         pixels_label[i*h+j-1] = tmp_label;
                         *current_label = tmp_label;
                     }
 
-                }
-
-                // gere les erreurs de sortie de matrice
-                if (j < w && j > 0 && *current_label == 0)
-                {
-                    // verifie la couleur du pixel de gauche
-                    // pour prendre son label
-                    if ((uint8) (img->pixels[i*h+j-1] / 255 == color_to_find))
-                        *current_label = *(pixels_label+(i*h+j-1));
-                    // verifie si le pixel du haut et actuel ont la meme couleur et
                 }
 
                 // gere les erreurs de sortie de matrice
@@ -88,13 +93,30 @@ int *component_analysis(t_image *img)
                 // on verifie si la couleur du haut et de gauche est blanc
                 // c'est le dernier cas, normalement y'a plus rien a comparer
                 if (*current_label == 0)
-                    *current_label = latest_label++;
+                    *current_label = ++latest_label;
 
             }
+            else
+                nb_white++;
         }
     }
-    printf("%d\n", latest_label);
+    printf("%d %d %d\n", latest_label, nb_black, nb_white);
     return pixels_label;
+}
+
+void DEBUG_color_component(int *component, t_image *img)
+{
+    int previous_label = 0;
+    uint32 color = 0xFF000000;
+    for (int i=0; i < img->width*img->height; i++)
+    {
+        if (*(component+i) != 0)
+        {
+            if (*(component+i) != previous_label)
+                color++;
+            *(img->pixels+i) = color;
+        }
+    }
 }
 
 
