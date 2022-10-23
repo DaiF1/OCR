@@ -14,6 +14,7 @@
 #include "loader.h"
 #include "morpho.h"
 #include "imgprocess.h"
+#include "saver.h"
 
 /*
  * compare_matrices(m1, m2, len): Return true if the two matrices are identical
@@ -73,6 +74,7 @@ int backup_main(int argc, char **argv)
     DEBUG_display_image(img);
     assert(img->pixels);
 
+    save_and_crop_image(img, 50, 50, 50, 50, "img_croped.png");
     // Morpho operations debug
     {
         int32 c[] = {
@@ -160,6 +162,7 @@ int backup_main(int argc, char **argv)
 
 int main()
 {
+    backup_main();
     coni_test();
     return 0;
 }
