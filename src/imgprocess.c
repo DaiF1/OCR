@@ -9,7 +9,7 @@
  * Last Update 23/10 nicolas.dek
  */
 #include <err.h>
-
+#include <time.h> // POUR LA FUNCTION "DEBUG_color_component"
 #include "loader.h"
 #include "morpho.h"
 
@@ -51,7 +51,7 @@ int *component_analysis(t_image *img)
                 {
                     // verifie la couleur du pixel du gauche et du haut
                     if ((uint8) (img->pixels[left] / 255) == (uint8) (img->pixels[top] / 255)
-                            && (uint8) (img->pixels[left] / 255 == current_color))
+                            && (uint8)(img->pixels[left]/255) == current_color)
                     {
                         // on prend le plus petit label du haut et de gauche et on
                         // l'assigne au 3 (gauche, current, haut)
@@ -74,7 +74,7 @@ int *component_analysis(t_image *img)
                 {
                     // verifie la couleur du pixel de gauche
                     // pour prendre son label
-                    if ((uint8) (img->pixels[left] / 255 == color_to_find))
+                    if ((uint8) (img->pixels[left] / 255) == color_to_find)
                         *current_label = pixels_label[left];
                     // verifie si le pixel du haut et actuel ont la meme couleur et
                 }
@@ -84,7 +84,7 @@ int *component_analysis(t_image *img)
                 {
                     // verifie la couleur du pixel de haut
                     // pour prendre son label
-                    if ((uint8) (img->pixels[top]) / 255 == color_to_find)
+                    if ((uint8) (img->pixels[top] / 255) == color_to_find)
                         *current_label = pixels_label[top];
 
                 }
@@ -98,20 +98,89 @@ int *component_analysis(t_image *img)
         }
     }
 
+    // merge neighbours label
+    for (int i=0; i < img->height; i++)
+    {
+        for (int j=0; j < img->width; j++)
+        {
+            current_label = (pixels_label+(i*h+j));
+            left = (i*h)+(j-1);
+            top  = ((i-1)*h)+j;
+            if (i > 0 && j > 0)
+            {
+                int tmp_label = *current_label;
+                if (pixels_label[left] < pixels_label[top] && pixels_label[left] < *current_label)
+                    tmp_label = pixels_label[left];
+                else if (pixels_label[top] < pixels_label[left] && pixels_label[top] < *current_label)
+                    tmp_label = pixels_label[top];
+                *current_label = tmp_label;
+                pixels_label[top] = tmp_label;
+                pixels_label[left] = tmp_label;
+
+            }
+            else if (j > 0)
+            {
+                if (pixels_label[left] < *current_label)
+                    *current_label = pixels_label[left];
+                else
+                    pixels_label[left] = *current_label;
+            }
+            else if (i > 0)
+            {
+                if (pixels_label[top] < *current_label)
+                    *current_label = pixels_label[top];
+                else
+                    pixels_label[top] = *current_label;
+            }
+            
+
+        }
+    }
     return pixels_label;
+}
+
+int get_nb_component(int *component, int size)
+{
+    int latest_component = 0;
+    for (int i = 0; i < size; i++)
+    {
+        if (component[i] > latest_component)
+            latest_component = component[i];
+    }
+    return latest_component+1;
+}
+
+int *get_size_component(int *component, int size)
+{
+    int nb_component = get_nb_component(component, size);
+    int *size_component = calloc(sizeof(int), nb_component+2);
+    for (int i = 0; i < size; i++)
+        size_component[component[i]]++; 
+    return size_component;
 }
 
 void DEBUG_color_component(int *component, t_image *img)
 {
-    int previous_label = 0;
-    uint32 color = 0xFF000000;
+    uint32 *current_color = 0;
+    uint32 color[30] = {0};
+    for (int i=0; i < 30; i++)
+        color[i] = 0xFF000000;
+
     for (int i=0; i < img->width*img->height; i++)
     {
         if (*(component+i) != 0)
         {
-            if (*(component+i) != previous_label)
-                color++;
-            *(img->pixels+i) = color;
+            /* printf("%d\n", *(component+i)); */
+            current_color = &color[*(component+i)];
+            if (*current_color == 0xFF000000)
+            {
+                int result = 0;
+                srand(time(NULL));
+                result = (rand() % (16711680 - 0)) + 0;
+
+                *current_color += result;
+            }
+            *(img->pixels+i) = *current_color;
         }
     }
 }
