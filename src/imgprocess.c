@@ -17,10 +17,6 @@
 
 int *component_analysis(t_image *img)
 {
-    // VARIABLE DEBUG du pauvre
-    int nb_black = 0;
-    int nb_white = 0;
-
     // 0 = black
     // 1 = white
     uint8 color_to_find = 0;
@@ -31,6 +27,7 @@ int *component_analysis(t_image *img)
     uint32 *current_pixel = 0;
     uint8 current_color = 0;
     int *pixels_label = calloc(sizeof(int), w*h+ 1);
+    int left, top = 0;
 
 
     if (pixels_label == NULL)
@@ -43,50 +40,52 @@ int *component_analysis(t_image *img)
             current_pixel = img->pixels+(i*h+j);
             current_color = (uint8) (*current_pixel) / 255.0;
             current_label = (pixels_label+(i*h+j));
+            left = (i*h)+(j-1);
+            top  = ((i-1)*h)+j;
+            
 
             if (current_color == color_to_find)
             {
-                nb_black++;
                 // gere les erreurs de sortie de matrice
-                // gere les erreurs de sortie de matrice
-                if (j < w && j > 0 && *current_label == 0)
-                {
-                    // verifie la couleur du pixel de gauche
-                    // pour prendre son label
-                    if ((uint8) (img->pixels[i*h+j-1] / 255 == color_to_find))
-                        *current_label = *(pixels_label+(i*h+j-1));
-                    // verifie si le pixel du haut et actuel ont la meme couleur et
-                }
-
-                if (i < h && i > 0 && j < w && j > 0)
+                if (i > 0 && j > 0)
                 {
                     // verifie la couleur du pixel du gauche et du haut
-                    if ((uint8) (img->pixels[i*h+j-1] / 255) == (uint8) (img->pixels[(i-1)*h+j] / 255)
-                            && (uint8) (img->pixels[i*h+j-1] / 255 == color_to_find))
+                    if ((uint8) (img->pixels[left] / 255) == (uint8) (img->pixels[top] / 255)
+                            && (uint8) (img->pixels[left] / 255 == current_color))
                     {
                         // on prend le plus petit label du haut et de gauche et on
                         // l'assigne au 3 (gauche, current, haut)
                         int tmp_label = latest_label;
-                        if (pixels_label[(i-1)*h+j] <= pixels_label[i*h+j-1]
-                                && pixels_label[(i-1)] != 0)
-                            tmp_label = pixels_label[(i-1)*h+j];
-                        else if (pixels_label[i*h+j-1] != 0)
-                            tmp_label = pixels_label[i*h+j-1];
+                        if (pixels_label[top] <= pixels_label[left]
+                                && pixels_label[top] != 0)
+                            tmp_label = pixels_label[top];
+                        else if (pixels_label[left] != 0)
+                            tmp_label = pixels_label[left];
 
-                        pixels_label[(i-1)*h+j] = tmp_label;
-                        pixels_label[i*h+j-1] = tmp_label;
+                        pixels_label[top] = tmp_label;
+                        pixels_label[left] = tmp_label;
                         *current_label = tmp_label;
                     }
 
                 }
 
                 // gere les erreurs de sortie de matrice
-                if (i < h && i > 0 && *current_label == 0)
+                if (j > 0 && *current_label == 0)
+                {
+                    // verifie la couleur du pixel de gauche
+                    // pour prendre son label
+                    if ((uint8) (img->pixels[left] / 255 == color_to_find))
+                        *current_label = pixels_label[left];
+                    // verifie si le pixel du haut et actuel ont la meme couleur et
+                }
+
+                // gere les erreurs de sortie de matrice
+                if (i > 0 && *current_label == 0)
                 {
                     // verifie la couleur du pixel de haut
                     // pour prendre son label
-                    if ((uint8) (img->pixels[(i-1)*h+j]) / 255 == color_to_find)
-                        *current_label = pixels_label[(i-1)*h+j];
+                    if ((uint8) (img->pixels[top]) / 255 == color_to_find)
+                        *current_label = pixels_label[top];
 
                 }
 
@@ -96,11 +95,9 @@ int *component_analysis(t_image *img)
                     *current_label = ++latest_label;
 
             }
-            else
-                nb_white++;
         }
     }
-    printf("%d %d %d\n", latest_label, nb_black, nb_white);
+
     return pixels_label;
 }
 
