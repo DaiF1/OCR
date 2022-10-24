@@ -46,7 +46,7 @@ int read_sudoku(int grill[9][9], char name[], int debug)
                 if (debug)
                     printf("read_sudoku: lr '%c' (%zu)\n", c, y);
                 if(c != '\n')
-                    return 0;
+                    errx(EXIT_FAILURE, "read_sudoku: format wrong (no end of line).\n");
                 c = fgetc(file);
             }
             c = fgetc(file);
@@ -55,13 +55,16 @@ int read_sudoku(int grill[9][9], char name[], int debug)
         {
             if (debug)
                 printf("read_sudoku: space '%c' (%zu)\n", c, x);
-            if(c != ' ') {
-                return 0;
+            if(c != ' ')
+            {
+                errx(EXIT_FAILURE, "read_sudoku: format wrong (no space).\n");
             }
             c = fgetc(file);
         }
     }
     fclose(file);
+    if (debug)
+        printf("read_sudoku: y == 9 (%i), c == EOF (%i)", y == 9, c == EOF);
     return y == 9 && c == EOF;
 }
 
