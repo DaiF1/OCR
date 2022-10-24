@@ -42,6 +42,8 @@ void save_and_crop_image(t_image *img, int x, int y, int width, int height, char
         errx(EXIT_FAILURE, "%s", SDL_GetError());
     // crop surface
     SDL_Surface *ss = crop_surface(s, x, y, width, height);
+    if (!ss)
+        errx(EXIT_FAILURE, "%s", SDL_GetError());
     //save surface
     IMG_SavePNG(ss, path);
     SDL_FreeSurface(s);
