@@ -54,9 +54,11 @@ void load_img(t_image *img, const char *path);
 */
 void destroy_img(t_image *img);
 
+#if DEBUG
 /*
  * DEBUG_display_image(img): Display the image on an SDL window
  *
  * param img: t_image to display
 */
 void DEBUG_display_image(const t_image *img);
+#endif
