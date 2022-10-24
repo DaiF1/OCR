@@ -12,6 +12,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <err.h>
 #include "recursive_solver.h"
 #include "count_remaining_cases.h"
 #include "update_possibilities.h"
@@ -78,12 +79,13 @@ int main(int argc, char* argv[])
                 };
         int debug = 0;
         read_sudoku(grill, argv[1], debug);
-        solver(grill, debug);
+        if (!solver(grill, debug))
+            errx(EXIT_FAILURE, "The sudoku is unsolvable.");
         int l = size(argv[1]);
         char str[l + 8];
         name_modifier(argv[1], str, l, debug);
         write_sudoku(grill, str, debug);
         return EXIT_SUCCESS;
     }
-    return EXIT_FAILURE;
+    errx(EXIT_FAILURE, "Wrong number of argument.");
 }
