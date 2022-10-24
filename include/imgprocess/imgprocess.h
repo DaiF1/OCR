@@ -2,9 +2,9 @@
 
 #include "loader.h"
 
-int get_max_component(int *size_component, int *component, int size);
+int get_max_component(uint32 *size_component, int *component, int size);
 int get_nb_component(int *component, int size);
-int *get_size_component(int *component, int size);
+uint32 *get_size_component(int *component, int size);
 void DEBUG_color_component(int *component, t_image *img, int label, uint32 color);
 int *component_analysis(t_image *img);
 void black_and_white(t_image *img);

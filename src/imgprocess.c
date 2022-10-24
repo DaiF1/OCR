@@ -17,13 +17,13 @@
 
 void merge_component_neighbour(int *pixels_label, int i, int j, int w, int h)
 {
-    int *current_label = (pixels_label+(i*h+j));
-    if (*current_label != 0)
+    int radius = 1;
+    if (*(pixels_label+(i*h+j)) != 0)
     {
-        int lowest_label = *current_label;
-        for (int a=-1; a<2; a++)
+        int lowest_label = *(pixels_label+(i*h+j));
+        for (int a=-radius; a<=radius; a++)
         {
-            for (int b=-1; b<2; b++)
+            for (int b=-radius; b<=radius; b++)
             {
                 if (i+a >= 0 && i+a < h && j+b >= 0 && j+b < w)
                 {
@@ -33,9 +33,10 @@ void merge_component_neighbour(int *pixels_label, int i, int j, int w, int h)
             }
         }
 
-        for (int a=-1; a<2; a++)
+        /* pixels_label[i*h+j] = lowest_label; */
+        for (int a=-radius; a<radius; a++)
         {
-            for (int b=-1; b<2; b++)
+            for (int b=-radius; b<radius; b++)
             {
                 if (i+a >= 0 && i+a < h && j+b >= 0 && j+b < w)
                 {
@@ -57,13 +58,13 @@ int *component_analysis(t_image *img)
     uint8 color_to_find = 0;
     int h = img->height;
     int w = img->width;
-    int latest_label = 1;
+    int latest_label = 0;
     int *current_label = NULL;
     uint32 *current_pixel = 0;
     uint8 current_color = 0;
-    int *pixels_label = calloc(sizeof(int), w*h+ 1);
+    int *pixels_label = calloc(sizeof(int), w*h);
     int left, top = 0;
-
+    int tmp_label = 0;
 
     if (pixels_label == NULL)
         errx(1, "Not enough memorhihi!");
@@ -90,11 +91,12 @@ int *component_analysis(t_image *img)
                     {
                         // on prend le plus petit label du haut et de gauche et on
                         // l'assigne au 3 (gauche, current, haut)
-                        int tmp_label = latest_label;
-                        if (pixels_label[top] <= pixels_label[left]
+                        /* merge_component_neighbour(pixels_label, i, j, w, h); */
+
+                        if (pixels_label[top] < pixels_label[left]
                                 && pixels_label[top] != 0)
                             tmp_label = pixels_label[top];
-                        else if (pixels_label[left] != 0)
+                        else
                             tmp_label = pixels_label[left];
 
                         pixels_label[top] = tmp_label;
@@ -127,15 +129,20 @@ int *component_analysis(t_image *img)
                 // on verifie si la couleur du haut et de gauche est blanc
                 // c'est le dernier cas, normalement y'a plus rien a comparer
                 if (*current_label == 0)
+                {
+                    /* if ((uint8) (img->pixels[top] / 255) == 0 || (uint8) (img->pixels[left] / 255) == 0) */
+                    /*     printf("%u, %u, %d, %d\n", (uint8) (img->pixels[top] / 255), (uint8) (img->pixels[left] / 255), i, j); */
                     *current_label = ++latest_label;
+                }
 
             }
         }
     }
 
+    printf("%d\n", latest_label);
     // merge neighbours label
-    for (int i=0; i < w; i++)
-        for (int j=0; j < h; j++)
+    for (int i=0; i < h; i++)
+        for (int j=0; j < w; j++)
             merge_component_neighbour(pixels_label, i, j, w, h);
     return pixels_label;
 }
@@ -151,16 +158,20 @@ int get_nb_component(int *component, int size)
     return latest_component+1;
 }
 
-int *get_size_component(int *component, int size)
+uint32 *get_size_component(int *component, int size)
 {
     int nb_component = get_nb_component(component, size);
-    int *size_component = calloc(sizeof(int), nb_component+1);
+    uint32 *size_component = calloc(sizeof(uint32), nb_component+1);
     for (int i = 0; i < size; i++)
-        size_component[component[i]]++; 
+    {
+        /* printf("%d, %d, %d, %d\n", nb_component, component[i], i, size); */
+        if (component[i] >= 0)
+            size_component[component[i]]++; 
+    }
     return size_component;
 }
 
-int get_max_component(int *size_component, int *component, int size)
+int get_max_component(uint32 *size_component, int *component, int size)
 {
     int max_component = 1;
     int nb_component = get_nb_component(component, size);
