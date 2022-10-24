@@ -21,6 +21,11 @@
 
 void name_modifier(char* name, char str[], size_t l, int debug)
 {
+    if (debug)
+    {
+        printf("name_modifier:name:%s\n", name);
+        printf("name_modifier:l:%zu\n", l);
+    }
     for(size_t i = 0; i < l; i++)
     {
         str[i] = *name;
@@ -29,7 +34,7 @@ void name_modifier(char* name, char str[], size_t l, int debug)
     char format[8] = ".result";
     for (int i = 0; i < 8; ++i)
     {
-        str[i + l-1] = format[i];
+        str[i + l] = format[i];
     }
     if (debug)
     {
@@ -42,6 +47,17 @@ void name_modifier(char* name, char str[], size_t l, int debug)
         }
         printf("\nname_modifier: %s\n", str);
     }
+}
+
+size_t size(char* c)
+{
+    size_t l = 0;
+    while (*c != 0)
+    {
+        l++;
+        c++;
+    }
+    return l;
 }
 
 int main(int argc, char* argv[])
@@ -63,7 +79,7 @@ int main(int argc, char* argv[])
         int debug = 0;
         read_sudoku(grill, argv[1], debug);
         solver(grill, debug);
-        int l = sizeof(argv[1]);
+        int l = size(argv[1]);
         char str[l + 8];
         name_modifier(argv[1], str, l, debug);
         write_sudoku(grill, str, debug);
