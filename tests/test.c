@@ -59,14 +59,15 @@ int coni_test()
     gray_scale(closing);
     black_and_white(closing);
 
-    int *component = component_analysis(closing);
-    int *size = get_size_component(component, closing->height*closing->width);
-    int max_component = get_max_component(size, component, closing->width*closing->height);
+    int *labels = component_analysis(closing);
+    int nb_labels = get_nb_of_labels(labels, closing->height*closing->width); 
+    int *size_of_labels = get_size_of_labels(labels, closing->height*closing->width);
+    int max_label = get_max_label(size_of_labels, nb_labels);
 
     /* int *mask = fill_component(component, closing->width, closing->height, max_component); */
     /* DEBUG_color_component(component, closing, max_component, (uint32) 0xFF0000FF); */
     /* isolate_component(closing, mask, 1); */
-    remove_background(closing, component, max_component);
+    remove_background(closing, labels, max_label);
     /* DEBUG_color_component(no_bg_mask, closing, 1, (uint32) 0xFF0000FF); */
 
     save_and_crop_image(closing, 0, 0, closing->width, closing->height, "/home/coni/test.png");
