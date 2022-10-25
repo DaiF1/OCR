@@ -119,4 +119,7 @@ void extract_hv(const t_image *src, t_image *dest_v, t_image *dest_h)
 
     morpho_erosion(&dx, dest_v, ce, precision);
     morpho_erosion(&dy, dest_h, ce, precision);
+
+    free(dx.pixels);
+    free(dy.pixels);
 }
