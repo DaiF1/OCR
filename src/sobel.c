@@ -90,7 +90,7 @@ void sobel(const t_image *src, t_image *dest, const int8 dx, const int8 dy)
 
             float b = (max - min) / (src->width / 100);
             dest->pixels[y * src->width + x] = (pixel > -b && pixel < b) ?
-                0xff000000 : 0xffffffff;
+                0xffffffff : 0xff000000;
         }
     }
 }
@@ -117,6 +117,6 @@ void extract_hv(const t_image *src, t_image *dest_v, t_image *dest_h)
     int32 *ce = malloc(sizeof(int) * precision * precision);
     circle_element(ce, radius);
 
-    morpho_dilation(&dx, dest_v, ce, precision);
-    morpho_dilation(&dy, dest_h, ce, precision);
+    morpho_erosion(&dx, dest_v, ce, precision);
+    morpho_erosion(&dy, dest_h, ce, precision);
 }
