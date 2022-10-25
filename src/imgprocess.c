@@ -15,6 +15,58 @@
 
 #define max(a, b) ((a) > (b)) ? (a) : (b)
 
+void isolate_component(t_image *img, int *component, int id)
+{
+    int w = img->width;
+    int h = img->height;
+
+    for (int i=0; i < h; i++)
+    {
+        for (int j=0; j < w; j++)
+        {
+            if (component[i*w+j] != id)
+            {
+                img->pixels[i*w+j] = 0xFFFFFFFF;
+            }
+        }
+    }
+    
+}
+
+void remove_background(t_image *img, int *component, int id)
+{
+    int w = img->width;
+    int h = img->height;
+
+    int lowest_x = w;
+    int lowest_y = h;
+    int higher_x = 0;
+    int higher_y = 0;
+
+    for (int i=0; i < h; i++)
+    {
+        for (int j=0; j < w; j++)
+        {
+            if (component[i*w+j] == id)
+            {
+                lowest_x = j < lowest_x ? j : lowest_x;
+                lowest_y = i < lowest_y ? i : lowest_y;
+                higher_x = i > lowest_x ? j : lowest_y;
+                higher_y = i > higher_x ? i : higher_y;
+            }
+        }
+    }
+
+    for (int i=0; i < h; i++)
+    {
+        for (int j=0; j < w; j++)
+        {
+            if (i < lowest_y || i > higher_y || j < lowest_x || j > higher_x)
+                img->pixels[i*w+j] = 0xFFFFFFFF;
+        }
+    }
+}
+
 void merge_component_neighbour(int *pixels_label, int i, int j, int w, int h)
 {
     int radius = 1;
@@ -34,9 +86,9 @@ void merge_component_neighbour(int *pixels_label, int i, int j, int w, int h)
         }
 
         /* pixels_label[i*h+j] = lowest_label; */
-        for (int a=-radius; a<radius; a++)
+        for (int a=-radius; a<=radius; a++)
         {
-            for (int b=-radius; b<radius; b++)
+            for (int b=-radius; b<=radius; b++)
             {
                 if (i+a >= 0 && i+a < h && j+b >= 0 && j+b < w)
                 {
