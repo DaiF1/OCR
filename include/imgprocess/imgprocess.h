@@ -2,7 +2,7 @@
 
 #include "loader.h"
 
-int get_max_component(uint32 *size_component, int *component, int size);
+int get_max_component(int *size_component, int *component, int size);
 int get_nb_component(int *component, int size);
 int *get_size_component(int *component, int size);
 

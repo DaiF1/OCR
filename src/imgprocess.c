@@ -18,17 +18,17 @@
 void merge_component_neighbour(int *pixels_label, int i, int j, int w, int h)
 {
     int radius = 1;
-    if (*(pixels_label+(i*h+j)) != 0)
+    if (*(pixels_label+(i*w+j)) != 0)
     {
-        int lowest_label = *(pixels_label+(i*h+j));
+        int lowest_label = *(pixels_label+(i*w+j));
         for (int a=-radius; a<=radius; a++)
         {
             for (int b=-radius; b<=radius; b++)
             {
                 if (i+a >= 0 && i+a < h && j+b >= 0 && j+b < w)
                 {
-                    if (pixels_label[(i+a)*h+(j+b)] < lowest_label && pixels_label[(i+a)*h+(j+b)] != 0)
-                        lowest_label = pixels_label[(i+a)*h+(j+b)];
+                    if (pixels_label[(i+a)*w+(j+b)] < lowest_label && pixels_label[(i+a)*w+(j+b)] != 0)
+                        lowest_label = pixels_label[(i+a)*w+(j+b)];
                 }
             }
         }
@@ -40,9 +40,9 @@ void merge_component_neighbour(int *pixels_label, int i, int j, int w, int h)
             {
                 if (i+a >= 0 && i+a < h && j+b >= 0 && j+b < w)
                 {
-                    if (pixels_label[(i+a)*h+(j+b)] != 0 && pixels_label[(i+a)*h+(j+b)] != lowest_label)
+                    if (pixels_label[(i+a)*w+(j+b)] != 0 && pixels_label[(i+a)*w+(j+b)] != lowest_label)
                     {
-                        pixels_label[(i+a)*h+(j+b)] = lowest_label;
+                        pixels_label[(i+a)*w+(j+b)] = lowest_label;
                         merge_component_neighbour(pixels_label, i+a, j+b, w, h);
                     }
                 }
@@ -73,11 +73,11 @@ int *component_analysis(t_image *img)
     {
         for (int j = 0; j < w; j++)
         {
-            current_pixel = img->pixels+(i*h+j);
+            current_pixel = img->pixels+(i*w+j);
             current_color = (uint8) (*current_pixel) / 255.0;
-            current_label = (pixels_label+(i*h+j));
-            left = (i*h)+(j-1);
-            top  = ((i-1)*h)+j;
+            current_label = (pixels_label+(i*w+j));
+            left = (i*w)+(j-1);
+            top  = ((i-1)*w)+j;
             
 
             if (current_color == color_to_find)
