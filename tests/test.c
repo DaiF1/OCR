@@ -39,28 +39,39 @@ bool compare_matrices(int32 *m1, int32 *m2, size_t len)
 
 int coni_test()
 {
-  t_image *img = malloc(sizeof(t_image));
-  load_img(img, "img/empty.png");
+    t_image *closing= malloc(sizeof(t_image));
+    load_img(closing, "img/good.png");
+    /* load_img(img, "img/012.png"); */
 
-  /* size_t r = img->width / 200; */
-  /* size_t precision = 2 * r + 1; */
-  /* int32 *ce = malloc(sizeof(int32) * precision * precision); */
-  /* circle_element(ce, r); */
-  /* t_image closing = { */
-  /*     malloc(sizeof(uint32) * img->width * img->height), */
-  /*     img->width, */
-  /*     img->height, */
-  /* }; */
-  gray_scale(img);
-  /* morpho_dilation(img, &closing, ce, 5); */
-  /* morpho_closing(img, &closing, ce, 5); */
-  /* morpho_erosion(img, &closing, ce, 5); */
-  black_and_white(img);
-  int *component = component_analysis(img);
-  DEBUG_color_component(component, img);
+    // DEBUG ADJUST
+    /* closing->height -= 5; */
 
-  DEBUG_display_image(img);
-  return 0;
+    /* size_t r = img->width / 200; */
+    /* size_t precision = 2 * r + 1; */
+
+    /* int32 *ce = malloc(sizeof(int32) * precision * precision); */
+    /* t_image *closing = malloc(sizeof(t_image)); */
+    /* closing->pixels = malloc(sizeof(uint32) * img->width * img->height); */
+    /* closing->width = img->width; */ 
+    /* closing->height = img->height; */
+
+    /* morpho_dilation(img, closing, ce, 5); */
+    gray_scale(closing);
+    black_and_white(closing);
+
+    int *component = component_analysis(closing);
+    int *size = get_size_component(component, closing->height*closing->width);
+    int max_component = get_max_component(size, component, closing->width*closing->height);
+
+    /* int *mask = fill_component(component, closing->width, closing->height, max_component); */
+    /* DEBUG_color_component(component, closing, max_component, (uint32) 0xFF0000FF); */
+    /* isolate_component(closing, mask, 1); */
+    remove_background(closing, component, max_component);
+    /* DEBUG_color_component(no_bg_mask, closing, 1, (uint32) 0xFF0000FF); */
+
+    save_and_crop_image(closing, 0, 0, closing->width, closing->height, "/home/coni/test.png");
+    DEBUG_display_image(closing);
+    return 0;
 }
 
 int backup_main(int argc, char **argv)
@@ -162,7 +173,7 @@ int backup_main(int argc, char **argv)
 
 int main()
 {
-    backup_main();
+    /* backup_main(); */
     coni_test();
     return 0;
 }
