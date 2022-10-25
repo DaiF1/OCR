@@ -25,21 +25,6 @@ struct s_image
 typedef struct s_image t_image;
 
 /*
- * gray_scale(img): grayscale the img
- *
- * param img: source image
-*/
-void gray_scale(t_image *img);
-
-/*
- * black_and_white(img): transform grayscale to black and white
- *
- * param img: source image
-*/
-void black_and_white(t_image *img);
-
-
-/*
  * load_img(img, path): load the image contained in path
  *
  * param img: source image
