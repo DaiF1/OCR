@@ -48,6 +48,7 @@ void destroy_img(t_image *img)
     free(img);
 }
 
+#if DEBUG
 void DEBUG_display_image(const t_image *img)
 {
     // Initializes the SDL.
@@ -101,3 +102,4 @@ void DEBUG_display_image(const t_image *img)
     SDL_DestroyWindow(window);
     SDL_Quit();
 }
+#endif

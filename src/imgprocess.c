@@ -184,13 +184,14 @@ int get_max_component(uint32 *size_component, int *component, int size)
     
 }
 
+#if DEBUG
 void DEBUG_color_component(int *component, t_image *img, int label, uint32 color)
 {
     for (int i=0; i < img->width*img->height; i++)
         if (*(component+i) == label)
             *(img->pixels+i) = color;
 }
-
+#endif
 
 void gray_scale(t_image *img)
 {

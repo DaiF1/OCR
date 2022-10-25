@@ -22,7 +22,7 @@ main: src/main
 
 # debug build
 
-debug: CFLAGS += -g
+debug: CFLAGS += -g -DDEBUG
 debug: main
 
 # test build
@@ -30,7 +30,7 @@ debug: main
 SRC_TEST = $(filter-out src/main.c,$(wildcard src/*.c)) $(wildcard tests/*.c)
 OBJ_TEST = ${SRC_TEST:.c=.o}
 
-tests/test: CFLAGS += -g
+tests/test: CFLAGS += -g -DDEBUG
 tests/test: ${OBJ_TEST}
 test: tests/test
 	mv tests/test .
