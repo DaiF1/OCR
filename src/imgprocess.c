@@ -15,6 +15,70 @@
 
 #define max(a, b) ((a) > (b)) ? (a) : (b)
 
+bool _find_component_up(int *component, int x, int y, int w, int id)
+{
+    for (int i=x; i >= 0; i--)
+    {
+        if (component[i*w+y] == id)
+            return true;
+    }
+    return false;
+}
+
+bool _find_component_right(int *component, int x, int y, int w, int h, int id)
+{
+    for (int i=y; i <= h; i++)
+    {
+        if (component[x*w+i] == id)
+            return true;
+    }
+    return false;
+}
+
+bool _find_component_left(int *component, int x, int y, int w, int id)
+{
+    for (int i=y; i >= 0; i--)
+    {
+        if (component[x*w+i] == id)
+            return true;
+    }
+    return false;
+}
+
+bool _find_component_down(int *component, int x, int y, int w, int id)
+{
+    for (int i=x; i < w; i++)
+    {
+        if (component[i*w+y] == id)
+            return true;
+    }
+    return false;
+}
+
+// return "mask" int* with 0 or 1
+int *fill_component(int *component, int w, int h, int id)
+{
+    int *mask = calloc(sizeof(int), w*h);
+    for (int i = 0; i < h; i++)
+    {
+        for (int j = 0; j < w; j++)
+        {
+            if (component[i*w+j] != id)
+            {
+                if (_find_component_left(component, i, j, w, id)
+                        && _find_component_right(component, i, j, w, h, id)
+                        && _find_component_up(component, i, j, w, id)
+                        && _find_component_down(component, i, j, w, id))
+                    mask[i*w+j] = 1;
+            }
+            else
+                mask[i*w+j] = 1;
+
+        }
+    }
+   return mask; 
+}
+
 void isolate_component(t_image *img, int *component, int id)
 {
     int w = img->width;
@@ -33,38 +97,20 @@ void isolate_component(t_image *img, int *component, int id)
     
 }
 
-void remove_background(t_image *img, int *component, int id)
+int *remove_background(t_image *img, int *component, int id)
 {
-    int w = img->width;
-    int h = img->height;
 
-    int lowest_x = w;
-    int lowest_y = h;
-    int higher_x = 0;
-    int higher_y = 0;
-
-    for (int i=0; i < h; i++)
+    int *mask = fill_component(component, img->width, img->height, id); 
+    isolate_component(img, mask, 1);
+    for (int i=0; i < img->height; i++)
     {
-        for (int j=0; j < w; j++)
+        for (int j=0; j < img->width; j++)
         {
-            if (component[i*w+j] == id)
-            {
-                lowest_x = j < lowest_x ? j : lowest_x;
-                lowest_y = i < lowest_y ? i : lowest_y;
-                higher_x = i > lowest_x ? j : lowest_y;
-                higher_y = i > higher_x ? i : higher_y;
-            }
+            if (mask[i*img->width+j] == 0)
+                img->pixels[i*img->width+j] = 0xFFFFFFFF;
         }
     }
-
-    for (int i=0; i < h; i++)
-    {
-        for (int j=0; j < w; j++)
-        {
-            if (i < lowest_y || i > higher_y || j < lowest_x || j > higher_x)
-                img->pixels[i*w+j] = 0xFFFFFFFF;
-        }
-    }
+    return mask;
 }
 
 void merge_component_neighbour(int *pixels_label, int i, int j, int w, int h)
@@ -223,7 +269,7 @@ uint32 *get_size_component(int *component, int size)
     return size_component;
 }
 
-int get_max_component(uint32 *size_component, int *component, int size)
+int get_max_component(int *size_component, int *component, int size)
 {
     int max_component = 1;
     int nb_component = get_nb_component(component, size);
