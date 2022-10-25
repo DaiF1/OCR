@@ -9,46 +9,85 @@
  * Last Update 25/10 julie.fiadino
 */
 
+#include <stdlib.h>
+#include <float.h>
 #include "sobel.h"
+
+#define KERNEL_SIZE 5
+#define KERNEL_RADIUS 2
 
 void sobel(const t_image *src, t_image *dest, const int8 dx, const int8 dy)
 {
     if (!dx && !dy)
         return;
 
-    m3x3 kernel = g_sobel_kernel;
+    float kernel[] = {
+        1,0, -2,0,1,
+        4,0, -8,0,4,
+        6,0,-12,0,6,
+        4,0, -8,0,4,
+        1,0, -2,0,1,
+    };
+
+    // Yes its ugly i know
     if (dy)
-        kernel = g_sobel_kernel_t;
-
-    for (size_t i = 0; i < (size_t)(src->width * src->height); i++)
     {
-        size_t px = i % (size_t)src->width;
-        size_t py = i / (size_t)src->width;
+        float kernely[] = {
+             1, 4,  6, 4, 1,
+             0, 0,  0, 0, 0,
+            -2,-8,-12,-8,-2,
+             0, 0,  0, 0, 0,
+             1, 4,  6, 4, 1,
+        };
+        for (int i = 0; i < KERNEL_SIZE * KERNEL_SIZE; i++)
+            kernel[i] = kernely[i];
+    }
 
-        size_t minx = (px >= KERNEL_SIZE) ? px - KERNEL_SIZE : 0;
-        size_t miny = (py >= KERNEL_SIZE) ? py - KERNEL_SIZE : 0;
+    float min = DBL_MAX;
+    float max = - DBL_MAX;
 
-        size_t maxx = (px < (size_t)src->width - KERNEL_SIZE) ?
-            px + KERNEL_SIZE : (size_t)src->width;
-        size_t maxy = (py < (size_t)src->height - KERNEL_SIZE) ?
-            py + KERNEL_SIZE : (size_t)src->height;
-
-        int32 sum = 0;
-
-        for (size_t y = miny; y < maxy; y++)
+    for (int y = KERNEL_RADIUS; y < src->height - KERNEL_RADIUS; y++)
+    {
+        for (int x = KERNEL_RADIUS; x < src->width - KERNEL_RADIUS; x++)
         {
-            for (size_t x = minx; x < maxx; x++)
+            float pixel = 0.0;
+
+            for (int j = -KERNEL_RADIUS; j <= KERNEL_RADIUS; j++)
             {
-                uint32 p = src->pixels[y * src->width + x];
-                int8 k = kernel.e[(y - miny) * KERNEL_SIZE + x - minx];
-
-                uint8 c = (uint8)p;
-
-                sum += (int32)c * (int32)k;
+                for (int i = -KERNEL_RADIUS; i <= KERNEL_RADIUS; i++)
+                {
+                    pixel += kernel[(j + KERNEL_RADIUS) * KERNEL_SIZE +
+                        i + KERNEL_RADIUS] *
+                        (float)src->pixels[(y + j) * src->width + x + i];
+                }
             }
-        }
 
-        uint8 c = (uint8)(sum + 128);
-        dest->pixels[i] = 0xff000000 + ((uint32)c << 16) + ((uint32)c << 8) + c;
+            if (pixel < min)
+                min = pixel;
+            if (pixel > max)
+                max = pixel;
+        }
+    }
+
+    for (int y = KERNEL_RADIUS; y < src->height - KERNEL_RADIUS; y++)
+    {
+        for (int x = KERNEL_RADIUS; x < src->width - KERNEL_RADIUS; x++)
+        {
+            float pixel = 0.0;
+
+            for (int j = -KERNEL_RADIUS; j <= KERNEL_RADIUS; j++)
+            {
+                for (int i = -KERNEL_RADIUS; i <= KERNEL_RADIUS; i++)
+                {
+                    pixel += kernel[(j + KERNEL_RADIUS) * KERNEL_SIZE +
+                        i + KERNEL_RADIUS] *
+                        (float)src->pixels[(y + j) * src->width + x + i];
+                }
+            }
+
+            float b = (max - min) / (src->width / 100);
+            dest->pixels[y * src->width + x] = (pixel > -b && pixel < b) ?
+                0xff000000 : 0xffffffff;
+        }
     }
 }
