@@ -77,13 +77,20 @@ int *fill_label(int *label, int w, int h, int id);
  * param labels: matrix from component_analysis(..)
  * param id: the label to keep
  */
-void *remove_background(t_image *img, int *labels, int id);
+void remove_background(t_image *img, int *labels, int id);
 
 #if DEBUG
 void DEBUG_color_component(int *component, t_image *img, int label, uint32 color);
 #endif
 
-
+/*
+ * get_corners(src, dest): stores in dest a black and white image
+ * with all the corners
+ *
+ * param src: source image
+ * param src: destination image
+*/
+void get_corners(const t_image *src, t_image *dest);
 
 /*
  * gray_scale(img): grayscale the img

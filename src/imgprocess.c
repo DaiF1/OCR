@@ -6,12 +6,13 @@
  * OCR main file
  *
  * Started on  21/10 nicolas.dek
- * Last Update 23/10 nicolas.dek
+ * Last Update 25/10 julie.fiadino
  */
 #include <err.h>
 #include <time.h> // POUR LA FUNCTION "DEBUG_color_label"
 #include "loader.h"
 #include "morpho.h"
+#include "sobel.h"
 
 #define max(a, b) ((a) > (b)) ? (a) : (b)
 
@@ -311,6 +312,32 @@ void DEBUG_color_component(int *component, t_image *img, int label, uint32 color
             *(img->pixels+i) = color;
 }
 #endif
+
+void get_corners(const t_image *src, t_image *dest)
+{
+    t_image dx = {
+        calloc(src->width * src->height, sizeof(uint32)),
+        src->width,
+        src->height
+    };
+    sobel(src, &dx, 1, 0);
+
+    t_image dy = {
+        calloc(src->width * src->height, sizeof(uint32)),
+        src->width,
+        src->height
+    };
+
+    extract_hv(src, &dx, &dy);
+
+    for (int i = 0; i < src->width * src->height; i++)
+    {
+        uint32 px = (dx.pixels[i] << 8) >> 8;
+        uint32 py = (dy.pixels[i] << 8) >> 8;
+        uint32 c = ((0xffffff - px) & (0xffffff - py));
+        dest->pixels[i] = 0xffffffff + ((c << 8) >> 8);
+    }
+}
 
 void gray_scale(t_image *img)
 {

@@ -15,6 +15,7 @@
 #include "morpho.h"
 #include "imgprocess.h"
 #include "saver.h"
+#include "sobel.h"
 
 /*
  * compare_matrices(m1, m2, len): Return true if the two matrices are identical
@@ -40,7 +41,7 @@ bool compare_matrices(int32 *m1, int32 *m2, size_t len)
 int coni_test()
 {
     t_image *closing= malloc(sizeof(t_image));
-    load_img(closing, "img/good.png");
+    load_img(closing, "img/sudoku.jpg");
     /* load_img(img, "img/012.png"); */
 
     // DEBUG ADJUST
@@ -56,7 +57,10 @@ int coni_test()
     /* closing->height = img->height; */
 
     /* morpho_dilation(img, closing, ce, 5); */
+    int precision = 2 * closing->width / 200 + 1;
+
     gray_scale(closing);
+    adjust_image(closing, precision);
     black_and_white(closing);
 
     int *labels = component_analysis(closing);
@@ -67,11 +71,39 @@ int coni_test()
     /* int *mask = fill_component(component, closing->width, closing->height, max_component); */
     /* DEBUG_color_component(component, closing, max_component, (uint32) 0xFF0000FF); */
     /* isolate_component(closing, mask, 1); */
-    remove_background(closing, labels, max_label);
+    isolate_label(closing, labels, max_label);
     /* DEBUG_color_component(no_bg_mask, closing, 1, (uint32) 0xFF0000FF); */
 
-    save_and_crop_image(closing, 0, 0, closing->width, closing->height, "/home/coni/test.png");
+    //save_and_crop_image(closing, 0, 0, closing->width, closing->height, "/home/coni/test.png");
     DEBUG_display_image(closing);
+
+    t_image dx = {
+        calloc(closing->width * closing->height, sizeof(uint32)),
+        closing->width,
+        closing->height
+    };
+    sobel(closing, &dx, 1, 0);
+
+    t_image dy = {
+        calloc(closing->width * closing->height, sizeof(uint32)),
+        closing->width,
+        closing->height
+    };
+
+    extract_hv(closing, &dx, &dy);
+
+    DEBUG_display_image(&dx);
+    DEBUG_display_image(&dy);
+
+    t_image img_and = {
+        calloc(closing->width * closing->height, sizeof(uint32)),
+        closing->width,
+        closing->height
+    };
+
+    get_corners(closing, &img_and);
+    DEBUG_display_image(&img_and);
+
     return 0;
 }
 
