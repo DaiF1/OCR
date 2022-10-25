@@ -11,7 +11,10 @@
 
 #include <stdlib.h>
 #include <float.h>
+
+#include "utils.h"
 #include "sobel.h"
+#include "morpho.h"
 
 #define KERNEL_SIZE 5
 #define KERNEL_RADIUS 2
@@ -44,7 +47,7 @@ void sobel(const t_image *src, t_image *dest, const int8 dx, const int8 dy)
     }
 
     float min = DBL_MAX;
-    float max = - DBL_MAX;
+    float max = -DBL_MAX;
 
     for (int y = KERNEL_RADIUS; y < src->height - KERNEL_RADIUS; y++)
     {
@@ -90,4 +93,30 @@ void sobel(const t_image *src, t_image *dest, const int8 dx, const int8 dy)
                 0xff000000 : 0xffffffff;
         }
     }
+}
+
+void extract_hv(const t_image *src, t_image *dest_v, t_image *dest_h)
+{
+    t_image dx = {
+        calloc(src->width * src->height, sizeof(uint32)),
+        src->width,
+        src->height
+    };
+    sobel(src, &dx, 1, 0);
+
+    t_image dy = {
+        calloc(src->width * src->height, sizeof(uint32)),
+        src->width,
+        src->height
+    };
+    sobel(src, &dy, 0, 1);
+    
+    size_t radius = src->width / 200;
+    size_t precision = 2 * radius + 1;
+
+    int32 *ce = malloc(sizeof(int) * precision * precision);
+    circle_element(ce, radius);
+
+    morpho_dilation(&dx, dest_v, ce, precision);
+    morpho_dilation(&dy, dest_h, ce, precision);
 }

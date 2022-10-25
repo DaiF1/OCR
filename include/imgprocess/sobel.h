@@ -35,3 +35,4 @@ void sobel(const t_image *src, t_image *dest, const int8 dx, const int8 dy);
  * param dest_h: destination image for horizontal ligns
 */
 void extract_hv(const t_image *src, t_image *dest_v, t_image *dest_h);
+
