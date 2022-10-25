@@ -9,11 +9,15 @@
  * Last Update 25/10 julie.fiadino
  */
 #include <err.h>
+#include <math.h>
 #include <time.h> // POUR LA FUNCTION "DEBUG_color_label"
+
 #include "loader.h"
 #include "morpho.h"
 #include "sobel.h"
 
+#define PI 3.1415926535
+#define min(a, b) ((a) < (b)) ? (a) : (b)
 #define max(a, b) ((a) > (b)) ? (a) : (b)
 
 // ______________ Projection to find a label use in fill_label(..)
@@ -412,4 +416,32 @@ void adjust_image(t_image *img, int8 precision)
     }
 
     free(closing.pixels);
+}
+
+void rotate(t_image *src, t_image *dest, float angle)
+{
+    float r = (angle - 90) * PI / 180;
+
+    float cs = cosf(r);
+    float sn = sinf(r);
+
+    int middle_x = src->width / 2;
+    int middle_y = src->height / 2;
+
+    for (int y = 0; y < src->height; y++)
+    {
+        for (int x = 0; x < src->width; x++)
+        {
+            int u = x - middle_x;
+            int v = y - middle_y;
+
+            int cx = u * sn + v * cs + middle_x;
+            int cy = u * cs - v * sn + middle_y;
+
+            cx = max(min(cx, src->width), 0);
+            cy = max(min(cy, src->height), 0);
+
+            dest->pixels[y * src->width + x] = src->pixels[cy * src->width + (src->width - cx)];
+        }
+    }
 }

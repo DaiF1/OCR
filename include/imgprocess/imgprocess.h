@@ -107,3 +107,14 @@ void gray_scale(t_image *img);
 void black_and_white(t_image *img);
 
 void adjust_image(t_image *img, int8 precision);
+
+
+/*
+ * rotate(src, dest, angle): rotate image src by given angle.
+ * Will rotate in trigonometrical direction.
+ *
+ * param src: source image
+ * param dest: destination image
+ * param angle: rotation angle (in deg)
+*/
+void rotate(t_image *src, t_image *dest, float angle);
