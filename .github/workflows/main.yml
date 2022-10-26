@@ -41,6 +41,8 @@ jobs:
         run: |
           make test
           ./tests/test
+          make network
+          ./network
           
   deploy:
       runs-on: ubuntu-latest
