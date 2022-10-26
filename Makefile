@@ -1,5 +1,5 @@
 CC = gcc
-CPPFLAGS = -MMD -I include/
+CPPFLAGS = -I include/ -I include/neuralnetwork
 CFLAGS = -Wall -Wextra -Werror -std=c99 -D__NO_INLINE__
 LDFLAGS =
 LDLIBS = -lm
