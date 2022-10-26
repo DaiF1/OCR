@@ -55,7 +55,7 @@ solver: src/solver/main_solver
 clean:
 	${RM} ${OBJ}
 	${RM} ${OBJ_TEST}
-  ${RM} ${OBJ_N}
+	${RM} ${OBJ_N}
 	${RM} src/main
 	${RM} network
 	${RM} tests/test
