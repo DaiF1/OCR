@@ -27,7 +27,10 @@ jobs:
 
       # Build main.c
       - name: make main.c
-        run: make
+        run: |
+          make
+          make clean
+          make solver
 
   # Test job
   test:
