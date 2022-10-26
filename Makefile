@@ -7,7 +7,7 @@ LDLIBS =
 all: src/main
 
 SRC = $(wildcard src/*.c) \
-	$(filter-out src/solver/solver.c, $(wildcard src/solver/*.c))
+	$(filter-out %/main_solver.c, $(wildcard src/solver/*.c))
 OBJ = ${SRC:.c=.o}
 
 SRC_TEST = $(filter-out src/main.c,$(SRC)) $(wildcard tests/*.c)
@@ -36,6 +36,7 @@ test: tests/test
 
 src/solver/main_solver: ${OBJ_SOLVER}
 solver: src/solver/main_solver
+	mv src/solver/main_solver ./solver
 
 # clean
 
@@ -44,3 +45,4 @@ clean:
 	${RM} ${OBJ_TEST}
 	${RM} src/main
 	${RM} tests/test
+	${RM} solver
