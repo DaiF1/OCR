@@ -11,7 +11,7 @@ static const int num_hidden = 5;
 static const int num_outputs = 1;
 
 // number of "generation" of AI
-static const int EPOCHS = 1000000;
+static const int EPOCHS = 100000;
 
 // learning rate
 static const double LR = 0.1;
@@ -291,7 +291,7 @@ int main()
     printf("Input:(1, 1) (Correct answer: 0): %f\n", result_network(1.0, 1.0, &hidden_weights, &hidden_bias, &output_weights, &output_bias));
     printf("\n");
     
-    printf("\nAccuracy of the network:\n");
+    printf("\nRandom Test :\n");
 
     random_test(&hidden_weights, &hidden_bias, &output_weights, &output_bias);
 
