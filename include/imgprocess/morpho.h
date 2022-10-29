@@ -5,7 +5,7 @@
  * File for morphological operations
  *
  * Started on  08/10 julie.fiadino
- * Last Update 14/10 julie.fiadino
+ * Last Update 29/10 julie.fiadino
 */
 
 #pragma once
@@ -14,13 +14,21 @@
 #include "loader.h"
 
 /*
- * circle_element(r): Build structuring element for morphological operations
+ * circle_element(dest, r): Build structuring element for morphological operations
  *
  * param dest: destination matrix
  * param r: radius of the circle
- * return: a matrix of size (2r + 1) * (2r + 1) (represented as a list)
 */
 void circle_element(int32 *dest, const size_t r);
+
+/*
+ * rect_element(dest, size_x, size_y): Build structuring element for morphological operations
+ *
+ * param dest: destination matrix (of size max(size_x, size_y)) ^2
+ * param size_x: nb of columns in element
+ * param size_y: nb of ligns in element
+*/
+void rect_element(int32 *dest, const size_t size_x, const size_t size_y);
 
 /*
  * morpho_erosion(src, dest, s_el, len): Perform erosion on given image
@@ -29,7 +37,6 @@ void circle_element(int32 *dest, const size_t r);
  * param dest: destination image
  * param s_el: structuring element (matrix as list)
  * param len: number of ligns in structuring element
- * return: the image after operation
 */
 void morpho_erosion(const t_image *src, t_image *dest,
         const int32 *s_el, const size_t len);
@@ -41,7 +48,6 @@ void morpho_erosion(const t_image *src, t_image *dest,
  * param dest: destination image
  * param s_el: structuring element (matrix as list)
  * param len: number of ligns in structuring element
- * return: the image after operation
 */
 void morpho_dilation(const t_image *src, t_image *dest,
         const int32 *s_el, const size_t len);
@@ -53,16 +59,18 @@ void morpho_dilation(const t_image *src, t_image *dest,
  * param dest: destination image
  * param s_el: structuring element (matrix as list)
  * param len: number of ligns in structuring element
- * return: the image after operation
 */
 void morpho_closing(const t_image *src, t_image *dest,
         const int32 *s_el, const size_t len);
 
 /*
- * adjust_image(img, precision): Adjust image constrast by given precision
+ * morpho_erosion(src, dest, s_el, len): Perform opening on given image
  *
- * param img: image to adjust
- * param precision: adjustment precision. 
- *  A higher precision will take more time to compute
+ * param src: source image
+ * param dest: destination image
+ * param s_el: structuring element (matrix as list)
+ * param len: number of ligns in structuring element
 */
-void adjust_image(t_image *img, int8 precision);
+void morpho_opening(const t_image *src, t_image *dest,
+        const int32 *s_el, const size_t len);
+

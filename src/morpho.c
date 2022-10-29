@@ -27,6 +27,26 @@ void circle_element(int32 *dest, const size_t r)
     }
 }
 
+void rect_element(int32 *dest, const size_t size_x, const size_t size_y)
+{
+    size_t len = (size_x > size_y) ? size_x : size_y;
+
+    for (size_t y = 0; y < len; y++)
+    {
+        for (size_t x = 0; x < len; x++)
+        {
+            int32 mx = (int32)x - len / 2;
+            int32 my = (int32)y - len / 2;
+
+            if (mx <= -(int32)size_x || mx >= (int32)size_x ||
+                    my <= -(int32)size_y || my >= (int32)size_y)
+                dest[y * len + x] = 0;
+            else
+                dest[y * len + x] = 1;
+        }
+    }
+}
+
 void morpho_dilation(const t_image *src, t_image *dest, const int32 *s_el,
         const size_t len)
 {
@@ -113,4 +133,19 @@ void morpho_closing(const t_image *src, t_image *dest, const int32 *s_el,
     morpho_erosion(&dilation, dest, s_el, len);
 
     free(dilation.pixels);
+}
+
+void morpho_opening(const t_image *src, t_image *dest, const int32 *s_el,
+        const size_t len)
+{
+    t_image erosion = {
+        malloc(sizeof(uint32) * src->width * src->height),
+        src->width,
+        src->height,
+    };
+
+    morpho_erosion(src, &erosion, s_el, len);
+    morpho_dilation(&erosion, dest, s_el, len);
+
+    free(erosion.pixels);
 }
