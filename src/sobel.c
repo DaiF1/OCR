@@ -15,6 +15,7 @@
 #include "utils.h"
 #include "sobel.h"
 #include "morpho.h"
+#include "imgprocess.h"
 
 #define KERNEL_SIZE 5
 #define KERNEL_RADIUS 2
@@ -90,7 +91,7 @@ void sobel(const t_image *src, t_image *dest, const int8 dx, const int8 dy)
 
             float b = (max - min) / (src->width / 100);
             dest->pixels[y * src->width + x] = (pixel > -b && pixel < b) ?
-                0xffffffff : 0xff000000;
+                0xff000000 : 0xffffffff;
         }
     }
 }
@@ -114,11 +115,16 @@ void extract_hv(const t_image *src, t_image *dest_v, t_image *dest_h)
     size_t radius = src->width / 200;
     size_t precision = 2 * radius + 1;
 
-    int32 *ce = malloc(sizeof(int) * precision * precision);
-    circle_element(ce, radius);
+    int32 *rx = malloc(sizeof(int) * precision * precision);
+    rect_element(rx, 2, precision);
+    
+    int32 *ry = malloc(sizeof(int) * precision * precision);
+    rect_element(ry,  precision, 2);
 
-    morpho_erosion(&dx, dest_v, ce, precision);
-    morpho_erosion(&dy, dest_h, ce, precision);
+    invert_img(&dx);
+    invert_img(&dy);
+    morpho_opening(&dx, dest_v, rx, precision);
+    morpho_opening(&dy, dest_h, ry, precision);
 
     free(dx.pixels);
     free(dy.pixels);

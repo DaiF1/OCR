@@ -46,7 +46,7 @@ bool compare_matrices(int32 *m1, int32 *m2, size_t len)
 int coni_test()
 {
     t_image *closing= malloc(sizeof(t_image));
-    load_img(closing, "img/sudoku.jpg");
+    load_img(closing, "img/002.png");
     /* load_img(img, "img/012.png"); */
 
     // DEBUG ADJUST
@@ -80,14 +80,13 @@ int coni_test()
     /* DEBUG_color_component(no_bg_mask, closing, 1, (uint32) 0xFF0000FF); */
 
     //save_and_crop_image(closing, 0, 0, closing->width, closing->height, "/home/coni/test.png");
-    DEBUG_display_image(closing);
+    //DEBUG_display_image(closing);
 
     t_image dx = {
         calloc(closing->width * closing->height, sizeof(uint32)),
         closing->width,
         closing->height
     };
-    sobel(closing, &dx, 1, 0);
 
     t_image dy = {
         calloc(closing->width * closing->height, sizeof(uint32)),
@@ -95,10 +94,22 @@ int coni_test()
         closing->height
     };
 
+    /*
+    int32 r_assert[] =
+    {
+        0,0,0,0,0,
+        0,0,0,0,0,
+        1,1,1,1,1,
+        0,0,0,0,0,
+        0,0,0,0,0,
+    };
+    assert(compare_matrices(r, r_assert, prec));
+    */
+
     extract_hv(closing, &dx, &dy);
 
-    DEBUG_display_image(&dx);
-    DEBUG_display_image(&dy);
+    //DEBUG_display_image(&dx);
+    //DEBUG_display_image(&dy);
 
     t_image img_and = {
         calloc(closing->width * closing->height, sizeof(uint32)),
@@ -107,7 +118,7 @@ int coni_test()
     };
 
     get_corners(closing, &img_and);
-    DEBUG_display_image(&img_and);
+    //DEBUG_display_image(&img_and);
 
     return 0;
 }
