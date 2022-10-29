@@ -33,7 +33,10 @@ jobs:
 
       # Build main.c
       - name: make main.c
-        run: make
+        run: |
+          make
+          make clean
+          make solver
 
   # Test job
   test:
@@ -54,6 +57,8 @@ jobs:
         run: |
           make test
           ./test
+          make network
+          ./network
           
   deploy:
       runs-on: ubuntu-latest
