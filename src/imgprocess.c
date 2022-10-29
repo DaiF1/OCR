@@ -387,6 +387,20 @@ void black_and_white(t_image *img)
     }
 }
 
+void invert_img(t_image *img)
+{
+    for (int i = 0; i < img->width * img->height; i++)
+    {
+        uint32 pixel = img->pixels[i];
+        uint8 r = (uint8)(pixel >> 16);
+        uint8 g = (uint8)(pixel >> 8);
+        uint8 b = (uint8)pixel;
+
+        img->pixels[i] = 0xff000000 + ((255 - r) << 16) +
+            ((255 - g) << 8) + (255 - b);
+    }
+}
+
 void adjust_image(t_image *img, int8 precision)
 {
     size_t len = 2 * precision + 1;

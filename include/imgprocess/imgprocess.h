@@ -106,6 +106,13 @@ void gray_scale(t_image *img);
 */
 void black_and_white(t_image *img);
 
+/*
+ * invert_img(img): invert color of given image
+ *
+ * param img: image to invert
+*/
+void invert_img(t_image *img);
+
 void adjust_image(t_image *img, int8 precision);
 
 
