@@ -45,6 +45,8 @@ SDL_Surface* resize(SDL_Surface *surface, int max_pixels)
         }
     }
 
+    free(surface);
+
     return SDL_CreateRGBSurfaceFrom(
             img->pixels,
             img->width, img->height,
@@ -66,7 +68,7 @@ void load_img(t_image *img, const char *path)
         surface = SDL_ConvertSurface(surface, format, 0);
         SDL_FreeFormat(format);
     }
-    if (surface->w < 1000 || surface->h < 1000)
+    if (surface->w > 1000 || surface->h > 1000)
         surface = resize(surface, 1000);
     SDL_LockSurface(surface);
 
