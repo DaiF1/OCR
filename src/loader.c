@@ -6,7 +6,7 @@
  * Loader.h Implementation
  *
  * Started on  06/10 julie.fiadino
- * Last Update on 26/10 oscar.chevalier
+ * Last Update on 30/10 julie.fiadino
 */
 
 #include <stdlib.h>
@@ -14,32 +14,37 @@
 #include <err.h>
 #include "loader.h"
 
-
 SDL_Surface* resize(SDL_Surface *surface, int max_pixels)
 {
-
-    t_image *src= malloc(sizeof(t_image));
-    SDL_LockSurface(surface);
-
-    src->pixels = malloc(sizeof(uint32) * surface->w * surface->h);
-    memcpy(src->pixels, surface->pixels,
-           sizeof(uint32) * surface->w * surface->h);
-
-    src->width = surface->w;
-    src->height = surface->h;
+    float scale_factor;
+    if(surface->h > surface->w)
+        scale_factor = (float)surface->h/(float)max_pixels;
+    else
+        scale_factor = (float)surface->w/(float)max_pixels;
 
     SDL_UnlockSurface(surface);
     t_image *img= malloc(sizeof(t_image));
-    float scale_factor;
-    if(src->height > src-> width)
-        scale_factor = src->height/max_pixels;
-    else
-        scale_factor = src->width/max_pixels;
-    for (int y = 0; y < src->height; y++) {
-        for (int x = 0; x < src->width; x++) {
-            img->pixels[y * img->width + x] = src->pixels[(int) scale_factor * (y * src->width + x)];
+    img->width = (int)((float)surface->w / scale_factor);
+    img->height = (int)((float)surface->h / scale_factor);
+    img->pixels = malloc(sizeof(uint32) * img->width * img->height);
+
+    uint32 *pixels = surface->pixels;
+
+    for (int y = 0; y < img->height; y++)
+    {
+        for (int x = 0; x < img->width; x++)
+        {
+            float dx = (float)x / (float)img->width;
+            float dy = (float)y / (float)img->height;
+
+            float u = dx * surface->w;
+            float v = dy * surface->h;
+
+            img->pixels[y * img->width + x] =
+                pixels[(int)v * surface->w + (int)u];
         }
     }
+
     return SDL_CreateRGBSurfaceFrom(
             img->pixels,
             img->width, img->height,
@@ -61,7 +66,8 @@ void load_img(t_image *img, const char *path)
         surface = SDL_ConvertSurface(surface, format, 0);
         SDL_FreeFormat(format);
     }
-    surface = resize(surface, 1000);
+    if (surface->w < 1000 || surface->h < 1000)
+        surface = resize(surface, 1000);
     SDL_LockSurface(surface);
 
     img->pixels = malloc(sizeof(uint32) * surface->w * surface->h);
