@@ -1,10 +1,10 @@
 CC = gcc
-CPPFLAGS = -I include/ -I include/solver -I include/neuralnetwork
+CPPFLAGS = -I include/ -I include/imgprocess -I include/solver -I include/neuralnetwork
 CFLAGS = -Wall -Wextra -Werror -std=c99 -D__NO_INLINE__
 LDFLAGS =
-LDLIBS = -lm
+LDLIBS = `pkg-config --libs sdl2 SDL2_image` -lm
 
-all: src/main
+all: main
 
 # main build
 
@@ -16,8 +16,13 @@ OBJ = ${SRC:.c=.o}
 
 $(OBJ): $(notdir %.o): %.c
 
+src/loader.o: CFLAGS += `pkg-config --cflags sdl2 SDL2_image`
+
 src/main: CFLAGS += -O2
 src/main: ${OBJ}
+
+main: src/main
+	mv src/main .
 
 # network build
 
@@ -31,15 +36,17 @@ network: src/neuralnetwork/network
 # debug build
 
 debug: CFLAGS += -g -DDEBUG
-debug: src/main
+debug: main
 
 # test build
 
 SRC_TEST = $(filter-out src/main.c,$(SRC)) $(wildcard tests/*.c)
 OBJ_TEST = ${SRC_TEST:.c=.o}
 
+tests/test: CFLAGS += -g -DDEBUG
 tests/test: ${OBJ_TEST}
 test: tests/test
+	mv tests/test .
 
 # solver build
 
@@ -56,7 +63,7 @@ clean:
 	${RM} ${OBJ}
 	${RM} ${OBJ_TEST}
 	${RM} ${OBJ_N}
-	${RM} src/main
+	${RM} main
 	${RM} network
-	${RM} tests/test
+	${RM} test
 	${RM} solver
