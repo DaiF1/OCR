@@ -47,7 +47,7 @@ bool compare_matrices(int32 *m1, int32 *m2, size_t len)
 int coni_test()
 {
     t_image *closing= malloc(sizeof(t_image));
-    load_img(closing, "img/sudoku.jpg");
+    load_img(closing, "img/006.png");
     /* load_img(img, "img/012.png"); */
 
     // DEBUG ADJUST
@@ -221,6 +221,121 @@ int backup_main(int argc, char **argv)
     return EXIT_SUCCESS;
 }
 
+int demo_test()
+{
+    printf("Loading image...\n");
+    t_image *img = malloc(sizeof(t_image));
+    load_img(img, "img/006.png");
+    DEBUG_display_image(img);
+    assert(img->pixels);
+
+    printf("Demo 1: Rotation (done on a copy to prevent damage)\n");
+    printf("Rotation of 30 degrees...\n");
+    t_image rotation = {
+        malloc(sizeof(uint32) * img->width * img->height),
+        img->width,
+        img->height,
+    };
+    rotate(img, &rotation, 30);
+    DEBUG_display_image(&rotation);
+
+    printf("Demo 2: Color adjusment\n");
+    printf("Grayscale...\n");
+    gray_scale(img);
+    DEBUG_display_image(img);
+    printf("Luminosity adjustments...\n");
+    adjust_image(img, img->width / 100);
+    DEBUG_display_image(img);
+    printf("Black and white...\n");
+    black_and_white(img);
+    DEBUG_display_image(img);
+
+    printf("Demo 3: Grid detection\n");
+    printf("Isolating grid...\n");
+
+    t_image copy = {
+        calloc(img->width * img->height, sizeof(uint32)),
+        img->width,
+        img->height
+    };
+
+    memcpy(copy.pixels, img->pixels,
+            img->width * img->height * sizeof(uint32));
+
+    int *labels = component_analysis(img);
+    int nb_labels = get_nb_of_labels(labels, img->height*img->width); 
+    int *size_of_labels = get_size_of_labels(labels, img->height*img->width);
+    int max_label = get_max_label(size_of_labels, nb_labels);
+
+    isolate_label(&copy, labels, max_label);
+    DEBUG_display_image(&copy);
+
+    printf("Lign detection...\n");
+
+    t_image dx = {
+        calloc(img->width * img->height, sizeof(uint32)),
+        img->width,
+        img->height
+    };
+
+    t_image dy = {
+        calloc(img->width * img->height, sizeof(uint32)),
+        img->width,
+        img->height
+    };
+
+    extract_hv(&copy, &dx, &dy);
+
+    DEBUG_display_image(&dx);
+    DEBUG_display_image(&dy);
+
+    printf("Corner recuperation...\n");
+    t_image img_and = {
+        calloc(img->width * img->height, sizeof(uint32)),
+        img->width,
+        img->height
+    };
+
+    get_corners(&copy, &img_and);
+    //DEBUG_display_image(&img_and);
+
+    t_bounds bounds = {
+        {127, 87},
+        {645, 87},
+        {127, 604},
+        {645, 604},
+    };
+
+    printf("Demo 4: Grid Splitting\n");
+
+    printf("Cropping the grid...\n");
+    t_image dest = {
+        malloc(sizeof(uint32) * DEST_IMG_SIZE * DEST_IMG_SIZE),
+        DEST_IMG_SIZE,
+        DEST_IMG_SIZE,
+    };
+
+    remap(img, &dest, bounds);
+
+    DEBUG_draw_bounds(img, bounds);
+    DEBUG_display_image(&dest);
+
+    printf("Saving boxes...\n");
+    system("mkdir boxes");
+    for (int y = 0; y < 9; y++)
+    {
+        for (int x = 0; x < 9; x++)
+        {
+            // format 'grid_xy.png'
+            char *buffer = malloc(sizeof(char) * 18);
+            sprintf(buffer, "boxes/grid_%i%i.png", x, y);
+            save_and_crop_image(&dest, x * 50, y * 50, 50, 50, buffer);
+        }
+    }
+
+    return EXIT_SUCCESS;
+}
+
 int remap_test()
 {
     t_image *img = malloc(sizeof(t_image));
@@ -340,8 +455,14 @@ int test_writer()
     return tmp;
 }
 
-int main()
+int main(int argc, char **argv)
 {
+    if (argc != 2)
+        return EXIT_SUCCESS;
+    
+    if (!strcmp(argv[1], "demo"))
+        demo_test();
+
     /* backup_main(); */
     //coni_test();
     //remap_test();
