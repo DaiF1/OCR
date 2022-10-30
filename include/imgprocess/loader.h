@@ -6,7 +6,7 @@
  * Image loading utility
  *
  * Started on  06/10 julie.fiadino
- * Last Update 15/10 nicolas.dek
+ * Last Update 26/10 oscar.chevalier
 */
 
 #pragma once

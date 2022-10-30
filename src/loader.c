@@ -6,13 +6,47 @@
  * Loader.h Implementation
  *
  * Started on  06/10 julie.fiadino
- * Last Update on 21/10 nicolas.dek
+ * Last Update on 26/10 oscar.chevalier
 */
 
 #include <stdlib.h>
 #include <string.h>
 #include <err.h>
 #include "loader.h"
+
+
+SDL_Surface* resize(SDL_Surface *surface, int max_pixels)
+{
+
+    t_image *src= malloc(sizeof(t_image));
+    SDL_LockSurface(surface);
+
+    src->pixels = malloc(sizeof(uint32) * surface->w * surface->h);
+    memcpy(src->pixels, surface->pixels,
+           sizeof(uint32) * surface->w * surface->h);
+
+    src->width = surface->w;
+    src->height = surface->h;
+
+    SDL_UnlockSurface(surface);
+    t_image *img= malloc(sizeof(t_image));
+    float scale_factor;
+    if(src->height > src-> width)
+        scale_factor = src->height/max_pixels;
+    else
+        scale_factor = src->width/max_pixels;
+    for (int y = 0; y < src->height; y++) {
+        for (int x = 0; x < src->width; x++) {
+            img->pixels[y * img->width + x] = src->pixels[(int) scale_factor * (y * src->width + x)];
+        }
+    }
+    return SDL_CreateRGBSurfaceFrom(
+            img->pixels,
+            img->width, img->height,
+            32, 4 * img->width,
+            0x000000ff, 0x0000ff00, 0x00ff0000, 0xff000000);
+}
+
 
 void load_img(t_image *img, const char *path)
 {
@@ -27,7 +61,7 @@ void load_img(t_image *img, const char *path)
         surface = SDL_ConvertSurface(surface, format, 0);
         SDL_FreeFormat(format);
     }
-
+    surface = resize(surface, 1000);
     SDL_LockSurface(surface);
 
     img->pixels = malloc(sizeof(uint32) * surface->w * surface->h);
