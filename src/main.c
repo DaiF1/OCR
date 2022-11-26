@@ -30,6 +30,7 @@ void file_set(GtkFileChooserButton *button, gpointer user_data)
     gchar *filename = gtk_file_chooser_get_filename(
             GTK_FILE_CHOOSER(button));
 
+    gtk_image_clear(ui->s_image);
     gtk_image_set_from_file(ui->s_image, filename);
 }
 
