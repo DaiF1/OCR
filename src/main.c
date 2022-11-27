@@ -6,29 +6,11 @@
  * OCR main file
  *
  * Started on  06/10 julie.fiadino
- * Last Update 21/10 julie.fiadino
+ * Last Update 27/10 julie.fiadino
 */
-#include <gtk/gtk.h>
-
 #include "utils.h"
+#include "interface.h"
 #include "imgprocess.h"
-
-typedef struct UI
-{
-    GtkWindow               *window;
-    GtkImage                *s_image;
-    GtkFileChooserButton    *file_chooser;
-    GtkToolButton           *save_button;
-    GtkToolButton           *solve_button;
-    GtkToolButton           *step_button;
-    GtkToolButton           *quit_button;
-} UI;
-
-typedef struct Progress
-{
-    GtkDialog       *dialog;
-    GtkProgressBar  *bar;
-} Progress;
 
 gpointer thread_progress(gpointer user_data)
 {
@@ -92,6 +74,21 @@ void on_solve(GtkToolButton *button, gpointer user_data)
     gtk_widget_destroy(GTK_WIDGET(progress));
 }
 
+void on_step(GtkToolButton *button, gpointer user_data)
+{
+    // TODO
+}
+
+void on_save(GtkToolButton *button, gpointer user_data)
+{
+    // TODO
+}
+
+void on_quit(GtkToolButton *button, gpointer user_data)
+{
+    // TODO
+}
+
 int main()
 {
     gtk_init(NULL, NULL);
@@ -134,6 +131,10 @@ int main()
     g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
     g_signal_connect(open_button, "file-set", G_CALLBACK(file_set), &ui);
     g_signal_connect(solve_button, "clicked", G_CALLBACK(on_solve), &ui);
+    g_signal_connect(step_button, "clicked", G_CALLBACK(on_step), &ui);
+    g_signal_connect(save_button, "clicked", G_CALLBACK(on_save), &ui);
+    g_signal_connect(quit_button, "clicked", G_CALLBACK(on_quit), &ui);
+
 
     gtk_main();
 
