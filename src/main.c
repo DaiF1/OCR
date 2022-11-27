@@ -75,10 +75,26 @@ void on_solve(GtkToolButton *button, gpointer user_data)
 
     g_print("image converted!\n");
 
-    DEBUG_display_image(&img);
-
     gtk_widget_destroy(GTK_WIDGET(dialog));
     gtk_widget_destroy(GTK_WIDGET(progress));
+
+    t_image copy = {
+        calloc(img.width * img.height, sizeof(uint32)),
+        img.width,
+        img.height
+    };
+
+    memcpy(copy.pixels, img.pixels,
+            img.width * img.height * sizeof(uint32));
+
+    int *labels = component_analysis(&img);
+    int nb_labels = get_nb_of_labels(labels, copy.height*copy.width);
+    int *size_of_labels = get_size_of_labels(labels, copy.height*copy.width);
+    int max_label = get_max_label(size_of_labels, nb_labels);
+
+    isolate_label(&copy, labels, max_label);
+
+    gtk_widget_queue_draw(GTK_WIDGET(ui->s_image));
 }
 
 void on_step(GtkToolButton *button, gpointer user_data)
