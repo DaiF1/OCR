@@ -30,13 +30,21 @@ void file_set(GtkFileChooserButton *button, gpointer user_data)
 
     gtk_image_clear(ui->s_image);
     gtk_image_set_from_file(ui->s_image, filename);
+
+    GdkPixbuf *pixbuf = gtk_image_get_pixbuf(ui->s_image);
+    pixbuf = gdk_pixbuf_add_alpha(pixbuf, FALSE, 0, 0, 0);
+
+    int src_width = (int)gdk_pixbuf_get_width(pixbuf);
+    int src_height = (int)gdk_pixbuf_get_height(pixbuf);
+
+    pixbuf = gdk_pixbuf_scale_simple(pixbuf,
+            src_width * 500 / src_height, 500, GDK_INTERP_BILINEAR);
+
+    gtk_image_set_from_pixbuf(ui->s_image, pixbuf);
 }
 
 void on_solve(GtkToolButton *button, gpointer user_data)
-{
-    UI *ui = user_data;
-
-
+{ UI *ui = user_data;
     GtkDialogFlags flags = GTK_DIALOG_DESTROY_WITH_PARENT;
     GtkDialog *dialog = GTK_DIALOG(gtk_message_dialog_new(ui->window,
             flags,
@@ -53,7 +61,6 @@ void on_solve(GtkToolButton *button, gpointer user_data)
     g_thread_new("dialog", thread_progress, &bar);
 
     GdkPixbuf *pixbuf = gtk_image_get_pixbuf(ui->s_image);
-    pixbuf = gdk_pixbuf_add_alpha(pixbuf, FALSE, 0, 0, 0);
 
     t_image img = {0};
     img.pixels = (uint32 *)gdk_pixbuf_get_pixels(pixbuf);
