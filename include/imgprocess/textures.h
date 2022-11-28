@@ -12,7 +12,7 @@
 
 #include "loader.h"
 
-#define DEST_IMG_SIZE 450
+#define DEST_IMG_SIZE 216
 
 typedef struct
 {
