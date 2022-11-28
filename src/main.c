@@ -11,6 +11,7 @@
 #include "utils.h"
 #include "interface.h"
 #include "imgprocess.h"
+#include "reader.h"
 
 gpointer thread_progress(gpointer user_data)
 {
@@ -67,13 +68,11 @@ void on_solve(GtkToolButton *button, gpointer user_data)
     img.width = (int32)gdk_pixbuf_get_width(pixbuf);
     img.height = (int32)gdk_pixbuf_get_height(pixbuf);
 
-    g_print("image collected!\n");
+    // TODO: rotation auto
 
     gray_scale(&img);
     adjust_image(&img, 5);
     black_and_white(&img);
-
-    g_print("image converted!\n");
 
     gtk_widget_destroy(GTK_WIDGET(dialog));
     gtk_widget_destroy(GTK_WIDGET(progress));
@@ -93,6 +92,32 @@ void on_solve(GtkToolButton *button, gpointer user_data)
     int max_label = get_max_label(size_of_labels, nb_labels);
 
     isolate_label(&copy, labels, max_label);
+
+    // TODO: grid detection
+    
+    // TODO: image crop
+
+    // TODO: number recognition
+
+    // TODO(oscar c'est pour toi): solve call
+    
+    // TODO: write to image
+    int grid[9][9] = {0};
+    read_sudoku(grid, "grids/grid00.result", 0);
+
+    gtk_image_clear(ui->s_image);
+    gtk_image_set_from_file(ui->s_image, "img/empty.png");
+
+    pixbuf = gtk_image_get_pixbuf(ui->s_image);
+    pixbuf = gdk_pixbuf_add_alpha(pixbuf, FALSE, 0, 0, 0);
+
+    int src_width = (int)gdk_pixbuf_get_width(pixbuf);
+    int src_height = (int)gdk_pixbuf_get_height(pixbuf);
+
+    pixbuf = gdk_pixbuf_scale_simple(pixbuf,
+            src_width * 450 / src_height, 450, GDK_INTERP_BILINEAR);
+
+    gtk_image_set_from_pixbuf(ui->s_image, pixbuf);
 
     gtk_widget_queue_draw(GTK_WIDGET(ui->s_image));
 }
