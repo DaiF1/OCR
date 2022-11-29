@@ -9,7 +9,8 @@
  * Last Update 27/10 julie.fiadino
 */
 #include "utils.h"
-#include "interface.h"
+#include "interface/interface.h"
+#include "interface/output.h"
 #include "imgprocess.h"
 #include "reader.h"
 
