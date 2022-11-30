@@ -10,11 +10,11 @@
  */
 
 #include <stdio.h>
-#include "count_remaining_cases.h"
-#include "rules.h"
-#include "evident_solver.h"
-#include "pretty_print.h"
-#include "update_possibilities.h"
+#include "solver/count_remaining_cases.h"
+#include "solver/rules.h"
+#include "solver/evident_solver.h"
+#include "solver/pretty_print.h"
+#include "solver/update_possibilities.h"
 
 /*
  * next_free_case(rill[9][9], *x, *y):

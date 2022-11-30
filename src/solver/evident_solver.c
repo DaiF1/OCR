@@ -11,7 +11,7 @@
 
 
 #include <stdio.h>
-#include "update_possibilities.h"
+#include "solver/update_possibilities.h"
 
 int evident_solver(int grill[9][9], size_t* x, size_t* y, int possibilities[9][9][9])
 {

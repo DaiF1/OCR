@@ -12,9 +12,9 @@
 #include <math.h>
 #include <time.h> // POUR LA FUNCTION "DEBUG_color_label"
 
-#include "loader.h"
-#include "morpho.h"
-#include "sobel.h"
+#include "imgprocess/loader.h"
+#include "imgprocess/morpho.h"
+#include "imgprocess/sobel.h"
 
 #define PI 3.1415926535
 #define min(a, b) ((a) < (b)) ? (a) : (b)

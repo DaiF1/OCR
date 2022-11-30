@@ -12,7 +12,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <err.h>
-#include "loader.h"
+#include "imgprocess/loader.h"
 
 SDL_Surface* resize(SDL_Surface *surface, int max_pixels)
 {

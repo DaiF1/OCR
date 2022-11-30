@@ -1,5 +1,5 @@
-#include "matrix.h"
-#include "maths_extra.h"
+#include "neuralnetwork/matrix.h"
+#include "neuralnetwork/maths_extra.h"
 
 // all explanations of function are in the header
 

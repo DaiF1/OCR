@@ -8,7 +8,7 @@
  * Last Update 21/10 julie.fiadino
 */
 
-#include "morpho.h"
+#include "imgprocess/morpho.h"
 
 void circle_element(int32 *dest, const size_t r)
 {

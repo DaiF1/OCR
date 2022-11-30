@@ -2,9 +2,9 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <math.h>
-#include "matrix.h"
-#include "maths_extra.h"
-#include "saveLoad.h"
+#include "neuralnetwork/matrix.h"
+#include "neuralnetwork/maths_extra.h"
+#include "neuralnetwork/saveLoad.h"
 
 static const int num_inputs = 2;
 static const int num_hidden = 5;

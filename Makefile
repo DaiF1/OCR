@@ -1,5 +1,5 @@
 CC = gcc
-CPPFLAGS = -I include/ -I include/imgprocess -I include/solver -I include/neuralnetwork
+CPPFLAGS = -I include/
 CFLAGS = -Wall -Wextra -Werror -std=c99 -D__NO_INLINE__
 LDFLAGS =
 LDLIBS = `pkg-config --libs sdl2 SDL2_image` -lm

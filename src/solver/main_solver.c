@@ -13,12 +13,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include <err.h>
-#include "recursive_solver.h"
-#include "count_remaining_cases.h"
-#include "update_possibilities.h"
-#include "reader.h"
-#include "writer.h"
-#include "solver.h"
+#include "solver/recursive_solver.h"
+#include "solver/count_remaining_cases.h"
+#include "solver/update_possibilities.h"
+#include "solver/reader.h"
+#include "solver/writer.h"
+#include "solver/solver.h"
 
 void name_modifier(char* name, char str[], size_t l, int debug)
 {

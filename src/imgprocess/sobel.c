@@ -13,9 +13,9 @@
 #include <float.h>
 
 #include "utils.h"
-#include "sobel.h"
-#include "morpho.h"
-#include "imgprocess.h"
+#include "imgprocess/sobel.h"
+#include "imgprocess/morpho.h"
+#include "imgprocess/imgprocess.h"
 
 #define KERNEL_SIZE 5
 #define KERNEL_RADIUS 2

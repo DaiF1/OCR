@@ -8,7 +8,7 @@
  * Started on  29/10 julie.fiadino
  * Last Update 29/10 julie.fiadino
 */
-#include "textures.h"
+#include "imgprocess/textures.h"
 
 float lerp(float a, float b, float w)
 {

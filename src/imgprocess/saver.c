@@ -12,8 +12,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <err.h>
-#include "saver.h"
-#include "loader.h"
+#include "imgprocess/saver.h"
+#include "imgprocess/loader.h"
 
 
 SDL_Surface* crop_surface(SDL_Surface* s, int x, int y, int width, int height)

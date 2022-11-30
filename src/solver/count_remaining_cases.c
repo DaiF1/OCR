@@ -13,7 +13,7 @@
 #include <stdio.h>
 #include <err.h>
 #include <stdlib.h>
-#include "pretty_print.h"
+#include "solver/pretty_print.h"
 
 /*
  * count_remaining_cases(grill[9][9], possibilities[9][9][9]): count the remaining cases.

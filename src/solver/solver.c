@@ -10,9 +10,9 @@
  */
 
 #include <stdio.h>
-#include "recursive_solver.h"
-#include "count_remaining_cases.h"
-#include "update_possibilities.h"
+#include "solver/recursive_solver.h"
+#include "solver/count_remaining_cases.h"
+#include "solver/update_possibilities.h"
 
 int solver(int grill[9][9], int debug)
 {
