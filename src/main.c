@@ -125,17 +125,18 @@ void on_solve(GtkToolButton *button, gpointer user_data)
 
 void on_step(GtkToolButton *button, gpointer user_data)
 {
-    // TODO
+    // TODO: Solve but show steps
 }
 
 void on_save(GtkToolButton *button, gpointer user_data)
 {
-    // TODO
+    // TODO: Save image to file
+    // NOTE: See pixbuf class for image saving utility
 }
 
 void on_quit(GtkToolButton *button, gpointer user_data)
 {
-    // TODO
+    // TODO: destroy window
 }
 
 int main()
