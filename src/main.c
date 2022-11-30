@@ -13,6 +13,8 @@
 #include "interface/output.h"
 #include "imgprocess.h"
 #include "reader.h"
+#include "solver.h"
+#include "saver.h"
 
 gpointer thread_progress(gpointer user_data)
 {
@@ -98,27 +100,33 @@ void on_solve(GtkToolButton *button, gpointer user_data)
     
     // TODO: image crop
 
-    // TODO: number recognition
+    system("mkdir boxes");
+    int grid[9][9] = {0};
+    for (int y = 0; y < 9; y++)
+    {
+        for (int x = 0; x < 9; x++)
+        {
+            // format 'grid_xy.png'
+            char *buffer = malloc(sizeof(char) * 18);
+            sprintf(buffer, "boxes/grid_%i%i.png", x, y);
+            save_and_crop_image(&img, x * 24, y * 24, 24, 24, buffer);
 
-    // TODO(oscar c'est pour toi): solve call
+            // TODO: number recognition
+            int number = 0;
+
+            grid[y][x] = number;
+        }
+    }
+
+    system("rm -r boxes/ && rmdir boxes");
+
+    if (!solver(grid, 0))
+    {
+        // TODO: Show message box with error
+        return;
+    }
     
     // TODO: write to image
-    int grid[9][9] = {0};
-    read_sudoku(grid, "grids/grid00.result", 0);
-
-    gtk_image_clear(ui->s_image);
-    gtk_image_set_from_file(ui->s_image, "img/empty.png");
-
-    pixbuf = gtk_image_get_pixbuf(ui->s_image);
-    pixbuf = gdk_pixbuf_add_alpha(pixbuf, FALSE, 0, 0, 0);
-
-    int src_width = (int)gdk_pixbuf_get_width(pixbuf);
-    int src_height = (int)gdk_pixbuf_get_height(pixbuf);
-
-    pixbuf = gdk_pixbuf_scale_simple(pixbuf,
-            src_width * 450 / src_height, 450, GDK_INTERP_BILINEAR);
-
-    gtk_image_set_from_pixbuf(ui->s_image, pixbuf);
 
     gtk_widget_queue_draw(GTK_WIDGET(ui->s_image));
 }
