@@ -11,17 +11,18 @@
 #include <stdlib.h>
 #include <assert.h>
 
-#include "pretty_print.h"
-#include "solver.h"
-#include "reader.h"
-#include "writer.h"
+#include "solver/pretty_print.h"
+#include "solver/solver.h"
+#include "solver/reader.h"
+#include "solver/writer.h"
 
-#include "loader.h"
-#include "morpho.h"
-#include "imgprocess.h"
-#include "saver.h"
-#include "sobel.h"
-#include "textures.h"
+#include "imgprocess/loader.h"
+#include "imgprocess/morpho.h"
+#include "imgprocess/imgprocess.h"
+#include "imgprocess/saver.h"
+#include "imgprocess/sobel.h"
+#include "imgprocess/textures.h"
+#include "imgprocess/component.h"
 
 /*
  * compare_matrices(m1, m2, len): Return true if the two matrices are identical
