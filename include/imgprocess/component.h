@@ -9,7 +9,7 @@
  * last update 01/12 julie.fiadino
  */
 
-#include "loader.h"
+#include "image.h"
 
 /*
  * component_analysis(..): 

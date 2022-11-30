@@ -11,7 +11,7 @@
 #pragma once
 
 #include "utils.h"
-#include "loader.h"
+#include "image.h"
 
 /*
  * circle_element(dest, r): Build structuring element for morphological operations

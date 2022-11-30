@@ -2,7 +2,7 @@
 #include <stdlib.h>
 
 #include "utils.h"
-#include "imgprocess/loader.h"
+#include "imgprocess/image.h"
 
 // ______________ Projection to find a label use in fill_label(..)
 

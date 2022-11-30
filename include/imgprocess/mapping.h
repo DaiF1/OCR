@@ -10,7 +10,7 @@
 */
 #pragma once
 
-#include "loader.h"
+#include "image.h"
 
 #define DEST_IMG_SIZE 216
 

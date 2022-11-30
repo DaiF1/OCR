@@ -11,7 +11,7 @@
 
 #pragma once
 
-#include "loader.h"
+#include "image.h"
 
 /*
  * get_corners(src, dest): stores in dest a black and white image

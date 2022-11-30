@@ -12,7 +12,7 @@
 #include <math.h>
 #include <time.h> // POUR LA FUNCTION "DEBUG_color_label"
 
-#include "imgprocess/loader.h"
+#include "imgprocess/image.h"
 #include "imgprocess/morpho.h"
 #include "imgprocess/sobel.h"
 #include "imgprocess/component.h"

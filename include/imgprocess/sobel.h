@@ -12,7 +12,7 @@
 #pragma once
 
 #include "utils.h"
-#include "loader.h"
+#include "image.h"
 
 /* sobel(src, dest, dx, dy): computes first order derivative on src
  *
