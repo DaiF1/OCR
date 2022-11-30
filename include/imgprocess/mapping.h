@@ -12,6 +12,7 @@
 
 #include "image.h"
 
+#define DEST_TILE_SIZE 24
 #define DEST_IMG_SIZE 216
 
 typedef struct
