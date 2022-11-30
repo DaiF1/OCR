@@ -19,7 +19,6 @@
 #include "imgprocess/loader.h"
 #include "imgprocess/morpho.h"
 #include "imgprocess/imgprocess.h"
-#include "imgprocess/saver.h"
 #include "imgprocess/sobel.h"
 #include "imgprocess/textures.h"
 #include "imgprocess/component.h"

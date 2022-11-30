@@ -6,7 +6,7 @@
  * Image loading utility
  *
  * Started on  06/10 julie.fiadino
- * Last Update 26/10 oscar.chevalier
+ * Last Update 01/12 julie.fiadino
 */
 
 #pragma once
@@ -23,6 +23,18 @@ struct s_image
 };
 
 typedef struct s_image t_image;
+
+/*
+ * save_and_crop_image(img, x, y, width, height, path): Display the image on an SDL window
+ *
+ * param img: t_image to crop and save
+ * param x: the x coordinate of the top left corner
+ * param y: the y coordinate of the top left corner
+ * param width: the width of the rectangle
+ * param height: the height of the rectangle
+ * path: the path to save the image
+*/
+void save_and_crop_image(t_image *img, int x, int y, int width, int height, char *path);
 
 /*
  * load_img(img, path): load the image contained in path
