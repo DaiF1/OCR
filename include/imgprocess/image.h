@@ -1,9 +1,9 @@
 /*
- * loader.h in include/imgloader
+ * image.h in include/imgloader
  *
  * Made by julie.fiadino
  *
- * Image loading utility
+ * Image definition and interface
  *
  * Started on  06/10 julie.fiadino
  * Last Update 01/12 julie.fiadino

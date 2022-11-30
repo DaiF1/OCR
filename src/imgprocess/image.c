@@ -1,9 +1,9 @@
 /*
- * loader.c in src/
+ * image.c in src/imgprocess
  *
  * Made by julie.fiadino
  *
- * Loader.h Implementation
+ * Image.h Implementation
  *
  * Started on  06/10 julie.fiadino
  * Last Update 01/12 julie.fiadino
