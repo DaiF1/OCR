@@ -1,14 +1,14 @@
 /*
- * textures.h in include/imgprocess
+ * mapping.c in src/imgprocess
  *
  * Made by julie.fiadino
  *
- * File for texture mapping
+ * File for image mapping
  *
  * Started on  29/10 julie.fiadino
  * Last Update 29/10 julie.fiadino
 */
-#include "imgprocess/textures.h"
+#include "imgprocess/mapping.h"
 
 float lerp(float a, float b, float w)
 {

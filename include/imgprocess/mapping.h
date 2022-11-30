@@ -1,9 +1,9 @@
 /*
- * textures.h in include/imgprocess
+ * mapping.h in include/imgprocess
  *
  * Made by julie.fiadino
  *
- * File for texture mapping
+ * File for image mapping
  *
  * Started on  29/10 julie.fiadino
  * Last Update 29/10 julie.fiadino
