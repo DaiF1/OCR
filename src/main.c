@@ -49,7 +49,7 @@ void file_set(GtkFileChooserButton *button, gpointer user_data)
     gtk_image_set_from_pixbuf(ui->s_image, pixbuf);
 }
 
-void on_solve(GtkToolButton *button, gpointer user_data)
+void on_solve(GtkModelButton *button, gpointer user_data)
 {
     UI *ui = user_data;
 
@@ -103,10 +103,12 @@ void on_solve(GtkToolButton *button, gpointer user_data)
 
     // TODO: grid detection
 
+    /*
     int32 *ce = malloc(sizeof(int32) * 25);
     circle_element(ce, 2);
     morpho_erosion(&copy, &img, ce, 2);
     get_corners(&img, &img);
+    */
 
     
     // TODO: image crop
@@ -144,9 +146,19 @@ void on_solve(GtkToolButton *button, gpointer user_data)
     gtk_image_set_from_pixbuf(ui->s_image, pixbuf);
 }
 
-void on_step(GtkToolButton *button, gpointer user_data)
+void on_step(GtkModelButton *button, gpointer user_data)
 {
     // TODO: Solve but show steps
+}
+
+void on_train(GtkModelButton *button, gpointer user_data)
+{
+    // TODO: Train the neural network
+}
+
+void on_load(GtkModelButton *button, gpointer user_data)
+{
+    // TODO: Load neural network weights
 }
 
 void on_save(GtkToolButton *button, gpointer user_data)
@@ -182,10 +194,14 @@ int main()
         GTK_FILE_CHOOSER_BUTTON(gtk_builder_get_object(builder, "_Open"));
     GtkToolButton *save_button =
         GTK_TOOL_BUTTON(gtk_builder_get_object(builder, "_Save"));
-    GtkToolButton *solve_button =
-        GTK_TOOL_BUTTON(gtk_builder_get_object(builder, "_Solve"));
-    GtkToolButton *step_button =
-        GTK_TOOL_BUTTON(gtk_builder_get_object(builder, "_Solve_step"));
+    GtkModelButton *solve_button =
+        GTK_MODEL_BUTTON(gtk_builder_get_object(builder, "_Solve"));
+    GtkModelButton *step_button =
+        GTK_MODEL_BUTTON(gtk_builder_get_object(builder, "_Step"));
+    GtkModelButton *train_button =
+        GTK_MODEL_BUTTON(gtk_builder_get_object(builder, "_Train"));
+    GtkModelButton *load_button =
+        GTK_MODEL_BUTTON(gtk_builder_get_object(builder, "_Load"));
     GtkToolButton *quit_button =
         GTK_TOOL_BUTTON(gtk_builder_get_object(builder, "_Quit"));
 
@@ -203,6 +219,8 @@ int main()
     g_signal_connect(open_button, "file-set", G_CALLBACK(file_set), &ui);
     g_signal_connect(solve_button, "clicked", G_CALLBACK(on_solve), &ui);
     g_signal_connect(step_button, "clicked", G_CALLBACK(on_step), &ui);
+    g_signal_connect(train_button, "clicked", G_CALLBACK(on_train), &ui);
+    g_signal_connect(load_button, "clicked", G_CALLBACK(on_load), &ui);
     g_signal_connect(save_button, "clicked", G_CALLBACK(on_save), &ui);
     g_signal_connect(quit_button, "clicked", G_CALLBACK(on_quit), &ui);
 
