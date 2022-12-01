@@ -336,10 +336,7 @@ void get_corners(const t_image *src, t_image *dest)
 
     for (int i = 0; i < src->width * src->height; i++)
     {
-        uint32 px = (dx.pixels[i] << 8) >> 8;
-        uint32 py = (dy.pixels[i] << 8) >> 8;
-        uint32 c = ((0xffffff - px) & (0xffffff - py));
-        dest->pixels[i] = 0xffffffff + ((c << 8) >> 8);
+        dest->pixels[i] = dx.pixels[i] | dy.pixels[i];
     }
 }
 
