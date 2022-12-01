@@ -99,7 +99,7 @@ void on_solve(GtkToolButton *button, gpointer user_data)
 
     // TODO: grid detection
 
-    get_corners(&copy, &img);
+    //get_corners(&copy, &img);
 
     
     // TODO: image crop
@@ -132,7 +132,7 @@ void on_solve(GtkToolButton *button, gpointer user_data)
     
     // TODO: write to image
 
-    gtk_widget_queue_draw(GTK_WIDGET(ui->s_image));
+    gtk_image_set_from_pixbuf(ui->s_image, pixbuf);
 }
 
 void on_step(GtkToolButton *button, gpointer user_data)
