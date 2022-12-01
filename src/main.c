@@ -49,7 +49,20 @@ void file_set(GtkFileChooserButton *button, gpointer user_data)
 }
 
 void on_solve(GtkToolButton *button, gpointer user_data)
-{ UI *ui = user_data;
+{
+    UI *ui = user_data;
+
+    if (gtk_image_get_storage_type(ui->s_image) ==
+            GTK_IMAGE_EMPTY)
+        return;
+
+    GdkPixbuf *pixbuf = gtk_image_get_pixbuf(ui->s_image);
+
+    t_image img = {0};
+    img.pixels = (uint32 *)gdk_pixbuf_get_pixels(pixbuf);
+    img.width = (int32)gdk_pixbuf_get_width(pixbuf);
+    img.height = (int32)gdk_pixbuf_get_height(pixbuf);
+
     GtkDialogFlags flags = GTK_DIALOG_DESTROY_WITH_PARENT;
     GtkDialog *dialog = GTK_DIALOG(gtk_message_dialog_new(ui->window,
             flags,
@@ -65,21 +78,11 @@ void on_solve(GtkToolButton *button, gpointer user_data)
 
     g_thread_new("dialog", thread_progress, &bar);
 
-    GdkPixbuf *pixbuf = gtk_image_get_pixbuf(ui->s_image);
-
-    t_image img = {0};
-    img.pixels = (uint32 *)gdk_pixbuf_get_pixels(pixbuf);
-    img.width = (int32)gdk_pixbuf_get_width(pixbuf);
-    img.height = (int32)gdk_pixbuf_get_height(pixbuf);
-
     // TODO: rotation auto
 
     gray_scale(&img);
     adjust_image(&img, 2);
     otsu(&img);
-
-    gtk_widget_destroy(GTK_WIDGET(dialog));
-    gtk_widget_destroy(GTK_WIDGET(progress));
 
     t_image copy = {
         calloc(img.width * img.height, sizeof(uint32)),
@@ -132,6 +135,8 @@ void on_solve(GtkToolButton *button, gpointer user_data)
     
     // TODO: write to image
 
+    gtk_widget_destroy(GTK_WIDGET(dialog));
+    gtk_widget_destroy(GTK_WIDGET(progress));
     gtk_image_set_from_pixbuf(ui->s_image, pixbuf);
 }
 
