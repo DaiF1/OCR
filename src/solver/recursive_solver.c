@@ -45,7 +45,7 @@ int next_free_case(int grill[9][9],  size_t* x, size_t* y)
  *
  * return: if the sudoku is valid
  */
-int recursive_solver(int grill[9][9], size_t x, size_t y, 
+int recursive_solver(int grill[9][9], size_t x, size_t y,
         int possibilities[9][9][9], int cases_remaining, int debug)
 {
     if (debug)
@@ -95,7 +95,7 @@ int recursive_solver(int grill[9][9], size_t x, size_t y,
     {
         if (debug)
             printf("{\n");
-        tmp = recursive_solver(grill, x+1, y, possibilities, 
+        tmp = recursive_solver(grill, x+1, y, possibilities,
                 cases_remaining, debug);
         if (debug)
             printf("}\n");
@@ -125,7 +125,7 @@ int recursive_solver(int grill[9][9], size_t x, size_t y,
         {
             printf("solver:recursive_solver: recursion (%zu, %zu) %i\n{\n", x, y, i);
         }
-        tmp = recursive_solver(grill, x+1, y, possibilities, 
+        tmp = recursive_solver(grill, x+1, y, possibilities,
                 cases_remaining-1, debug);
         if (debug)
             printf("}\n");

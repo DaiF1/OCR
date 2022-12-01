@@ -12,17 +12,17 @@
 #include "image.h"
 
 /*
- * component_analysis(..): 
+ * component_analysis(..):
  * analyse pieces of black in a image and giving them a label
  *
  * param img: t_image
- * return: a matrix of the same size of img with label instead of colors 
+ * return: a matrix of the same size of img with label instead of colors
 */
 int *component_analysis(t_image *img);
 
 /*
- * *get_size_of_label(..): 
- * Get the size of each label 
+ * *get_size_of_label(..):
+ * Get the size of each label
  * the index position in the new matrix is the label id, and the content of
  * is the size of this label (= number of black pixels)
  *
@@ -67,7 +67,7 @@ void isolate_label(t_image *img, int *labels, int id);
 
 /*
  * fill_component(..):
- * 
+ *
  * create a matrix "mask" of 1 inside a label
  *
  * param label: matrix from component_analysis(..)
@@ -89,7 +89,7 @@ int *fill_label(int *label, int w, int h, int id);
 void remove_background(t_image *img, int *labels, int id);
 
 #if DEBUG
-void DEBUG_color_component(int *component, t_image *img, int label, 
+void DEBUG_color_component(int *component, t_image *img, int label,
         uint32 color);
 #endif
 

@@ -74,7 +74,7 @@ int *fill_label(int *label, int w, int h, int id)
 
         }
     }
-   return mask; 
+   return mask;
 }
 
 void isolate_label(t_image *img, int *labels, int id)
@@ -94,13 +94,13 @@ void isolate_label(t_image *img, int *labels, int id)
             }
         }
     }
-    
+
 }
 
 void remove_background(t_image *img, int *labels, int id)
 {
-    // we fill the label with a mask 
-    int *mask = fill_label(labels, img->width, img->height, id); 
+    // we fill the label with a mask
+    int *mask = fill_label(labels, img->width, img->height, id);
     // we isolate this mask from the image
     isolate_label(img, mask, 1);
     for (int i=0; i < img->height; i++)
@@ -128,7 +128,7 @@ void merge_label_neighbour(int *labels, int i, int j, int w, int h)
      *  param h: the height of label
     */
 
-    // radius around the current position to determine if the neighbours 
+    // radius around the current position to determine if the neighbours
     // have the lowest label
 
     int radius = 1;
@@ -193,7 +193,7 @@ int *component_analysis(t_image *img)
             current_label = (labels+(i*w+j));
             left = (i*w)+(j-1);
             top  = ((i-1)*w)+j;
-            
+
 
             if (current_color == color_to_find)
             {
@@ -201,7 +201,7 @@ int *component_analysis(t_image *img)
                 if (i > 0 && j > 0)
                 {
                     // verifie la couleur du pixel du gauche et du haut
-                    if ((uint8) (img->pixels[left] / 255) == 
+                    if ((uint8) (img->pixels[left] / 255) ==
                             (uint8) (img->pixels[top] / 255)
                             && (uint8)(img->pixels[left]/255) == current_color)
                     {
@@ -278,7 +278,7 @@ int *get_size_of_labels(int *labels, int size)
     for (int i = 0; i < size; i++)
     {
         if (labels[i] >= 0)
-            size_of_labels[labels[i]]++; 
+            size_of_labels[labels[i]]++;
     }
     return size_of_labels;
 }
@@ -292,11 +292,11 @@ int get_max_label(int *size_of_labels, int nb_label)
             max_label = i;
     }
     return max_label;
-    
+
 }
 
 #if DEBUG
-void DEBUG_color_component(int *component, t_image *img, 
+void DEBUG_color_component(int *component, t_image *img,
         int label, uint32 color)
 {
     for (int i=0; i < img->width*img->height; i++)

@@ -111,13 +111,13 @@ void extract_hv(const t_image *src, t_image *dest_v, t_image *dest_h)
         src->height
     };
     sobel(src, &dy, 0, 1);
-    
+
     size_t radius = src->width / 200;
     size_t precision = 2 * radius + 1;
 
     int32 *rx = malloc(sizeof(int) * precision * precision);
     rect_element(rx, 2, precision);
-    
+
     int32 *ry = malloc(sizeof(int) * precision * precision);
     rect_element(ry,  precision, 2);
 

@@ -46,7 +46,7 @@ int read_sudoku(int grill[9][9], char name[], int debug)
                 if (debug)
                     printf("read_sudoku: lr '%c' (%zu)\n", c, y);
                 if(c != '\n')
-                    errx(EXIT_FAILURE, 
+                    errx(EXIT_FAILURE,
                             "read_sudoku: format wrong (no end of line).\n");
                 c = fgetc(file);
             }
@@ -91,14 +91,14 @@ int write_sudoku(int grill[9][9], char name[], int debug)
             if (grill[y][x] > 0)
             {
                 if (debug)
-                    printf("write_sudoku: 0 (%zu, %zu) %d\n", 
+                    printf("write_sudoku: 0 (%zu, %zu) %d\n",
                             x, y, grill[y][x]);
                 fprintf(file,"%d", grill[y][x]);
             }
             else
             {
                 if (debug)
-                    printf("write_sudoku: n (%zu, %zu) %i\n", 
+                    printf("write_sudoku: n (%zu, %zu) %i\n",
                             x, y, grill[y][x]);
                 fprintf(file, ".");
             }

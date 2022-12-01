@@ -34,7 +34,7 @@ typedef struct
  *
  * param a: a float
  * param b: a float
- * param w: a float between 0 and 1. A value of 0 will return a, 
+ * param w: a float between 0 and 1. A value of 0 will return a,
  *  a value of 1 will return b
 */
 float lerp(float a, float b, float w);
@@ -44,7 +44,7 @@ float lerp(float a, float b, float w);
  *
  * param a: xy coordinates
  * param b: xy coordinates
- * param w: a float between 0 and 1. A value of 0 will return a, 
+ * param w: a float between 0 and 1. A value of 0 will return a,
  *  a value of 1 will return b
 */
 t_coords lerp_c(t_coords a, t_coords b, float w);

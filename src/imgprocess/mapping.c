@@ -77,7 +77,7 @@ void DEBUG_draw_bounds(t_image *bg, t_bounds bounds)
     SDL_FreeSurface(s);
 
     SDL_RenderCopy(renderer, texture, NULL, NULL);
-    
+
     SDL_SetRenderDrawColor(renderer, 0, 255, 0, SDL_ALPHA_OPAQUE);
     SDL_RenderDrawLine(renderer, bounds.bl.x,
             bounds.bl.y, bounds.br.x, bounds.br.y);

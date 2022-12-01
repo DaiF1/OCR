@@ -35,7 +35,7 @@ typedef struct s_image t_image;
  * param height: the height of the rectangle
  * path: the path to save the image
 */
-void save_and_crop_image(t_image *img, int x, int y, 
+void save_and_crop_image(t_image *img, int x, int y,
         int width, int height, char *path);
 
 /*

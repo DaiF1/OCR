@@ -58,7 +58,7 @@ void black_and_white(t_image *img)
         float grey_level = (float)((uint8)(img->pixels[i] >> 16)) / 255.0;
 
         // binary_color contain black or white value
-        uint32 binary_color = grey_level < treshold ? 0 : 255; 
+        uint32 binary_color = grey_level < treshold ? 0 : 255;
         //apply
         img->pixels[i] = 0xff000000 + (binary_color << 16) +
             (binary_color << 8) + binary_color;
@@ -113,7 +113,7 @@ void adjust_image(t_image *img, int8 precision)
 void extract_grid(t_image *img, t_image *dest)
 {
     int *labels = component_analysis(img);
-    int nb_labels = get_nb_of_labels(labels, img->height*img->width); 
+    int nb_labels = get_nb_of_labels(labels, img->height*img->width);
     int *size_of_labels = get_size_of_labels(labels, img->height*img->width);
     int max_label = get_max_label(size_of_labels, nb_labels);
 

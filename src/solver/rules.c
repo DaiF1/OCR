@@ -120,7 +120,7 @@ int is_square_correct(int grill[9][9], size_t x, size_t y, int debug)
  */
 int is_correct(int grill[9][9], size_t x, size_t y, int debug)
 {
-    return is_column_correct(grill, x, y, debug) && 
+    return is_column_correct(grill, x, y, debug) &&
         is_line_correct(grill, x, y, debug) &&
     is_square_correct(grill, x, y, debug);
 }
