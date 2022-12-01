@@ -15,6 +15,7 @@
 #include "reader.h"
 #include "solver.h"
 #include "saver.h"
+#include "sobel.h"
 
 gpointer thread_progress(gpointer user_data)
 {
@@ -74,8 +75,8 @@ void on_solve(GtkToolButton *button, gpointer user_data)
     // TODO: rotation auto
 
     gray_scale(&img);
-    adjust_image(&img, 5);
-    black_and_white(&img);
+    adjust_image(&img, 2);
+    otsu(&img);
 
     gtk_widget_destroy(GTK_WIDGET(dialog));
     gtk_widget_destroy(GTK_WIDGET(progress));
@@ -97,6 +98,9 @@ void on_solve(GtkToolButton *button, gpointer user_data)
     isolate_label(&copy, labels, max_label);
 
     // TODO: grid detection
+
+    get_corners(&copy, &img);
+
     
     // TODO: image crop
 
