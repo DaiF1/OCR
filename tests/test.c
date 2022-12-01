@@ -15,7 +15,7 @@
 #include "solver/solver.h"
 #include "solver/loader.h"
 
-#include "imgprocess/loader.h"
+#include "imgprocess/image.h"
 #include "imgprocess/morpho.h"
 #include "imgprocess/imgprocess.h"
 #include "imgprocess/sobel.h"
