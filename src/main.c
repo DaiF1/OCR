@@ -16,6 +16,7 @@
 #include "solver.h"
 #include "saver.h"
 #include "sobel.h"
+#include "morpho.h"
 
 gpointer thread_progress(gpointer user_data)
 {
@@ -102,7 +103,10 @@ void on_solve(GtkToolButton *button, gpointer user_data)
 
     // TODO: grid detection
 
-    //get_corners(&copy, &img);
+    int32 *ce = malloc(sizeof(int32) * 25);
+    circle_element(ce, 2);
+    morpho_erosion(&copy, &img, ce, 2);
+    get_corners(&img, &img);
 
     
     // TODO: image crop
