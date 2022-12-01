@@ -16,8 +16,7 @@
 #include "solver/recursive_solver.h"
 #include "solver/count_remaining_cases.h"
 #include "solver/update_possibilities.h"
-#include "solver/reader.h"
-#include "solver/writer.h"
+#include "solver/loader.h"
 #include "solver/solver.h"
 
 void name_modifier(char* name, char str[], size_t l, int debug)

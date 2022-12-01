@@ -13,8 +13,7 @@
 
 #include "solver/pretty_print.h"
 #include "solver/solver.h"
-#include "solver/reader.h"
-#include "solver/writer.h"
+#include "solver/loader.h"
 
 #include "imgprocess/loader.h"
 #include "imgprocess/morpho.h"
