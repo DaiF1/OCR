@@ -26,10 +26,13 @@ double cost(double expected_output, double predicted_output)
 }
 
 /*
- return the result of the network for a XOR (have to be modified for the real network)
- hw -> hidden weights , hb -> hidden bias , ow -> output weights , ob -> ourpur bias
+ return the result of the network for a XOR 
+    (have to be modified for the real network)
+ hw -> hidden weights, hb -> hidden bias, ow -> output weights, 
+    ob -> ourpur bias
 */
-double result_network(double i1, double i2, Matrix *hw, Matrix *hb, Matrix *ow, Matrix *ob)
+double result_network(double i1, double i2, Matrix *hw, Matrix *hb, 
+        Matrix *ow, Matrix *ob)
 {
     // matrix with the inputs 
     Matrix input;
@@ -59,7 +62,8 @@ double result_network(double i1, double i2, Matrix *hw, Matrix *hb, Matrix *ow, 
     return res;
 }
 
-// Execute random test on a trained network and display the accuracy of the network
+// Execute random test on a trained network and display the accuracy 
+// of the network
 void random_test(Matrix *hw, Matrix *hb, Matrix *ow, Matrix *ob)
 {
     int correct_predictions = 0;
@@ -102,10 +106,14 @@ void random_test(Matrix *hw, Matrix *hb, Matrix *ow, Matrix *ob)
 
     }
 
-    double accuracy = ((double)(correct_predictions)) / ((double)(NUMBER_OF_TESTS));
-    printf("Passed %d out of %d tests. (Accuracy = %f)\n", correct_predictions, NUMBER_OF_TESTS, accuracy);
-    printf("Total error over %d random tests: %f\n", NUMBER_OF_TESTS, total_error);
-    printf("Average error per trial: %f\n", total_error / ((double)(NUMBER_OF_TESTS)));
+    double accuracy = ((double)(correct_predictions)) / 
+        ((double)(NUMBER_OF_TESTS));
+    printf("Passed %d out of %d tests. (Accuracy = %f)\n", correct_predictions,
+            NUMBER_OF_TESTS, accuracy);
+    printf("Total error over %d random tests: %f\n", NUMBER_OF_TESTS, 
+            total_error);
+    printf("Average error per trial: %f\n", 
+            total_error / ((double)(NUMBER_OF_TESTS)));
 }
 
 int main()
@@ -285,10 +293,18 @@ int main()
 
     // Printing the different result of the tests
     printf("Result of tests after training\n");
-    printf("Input:(0, 0) (Correct answer: 0): %f\n", result_network(0.0, 0.0, &hidden_weights, &hidden_bias, &output_weights, &output_bias));
-    printf("Input:(0, 1) (Correct answer: 1): %f\n", result_network(0.0, 1.0, &hidden_weights, &hidden_bias, &output_weights, &output_bias));
-    printf("Input:(1, 0) (Correct answer: 1): %f\n", result_network(1.0, 0.0, &hidden_weights, &hidden_bias, &output_weights, &output_bias));
-    printf("Input:(1, 1) (Correct answer: 0): %f\n", result_network(1.0, 1.0, &hidden_weights, &hidden_bias, &output_weights, &output_bias));
+    printf("Input:(0, 0) (Correct answer: 0): %f\n", 
+            result_network(0.0, 0.0, &hidden_weights, &hidden_bias, 
+                &output_weights, &output_bias));
+    printf("Input:(0, 1) (Correct answer: 1): %f\n", 
+            result_network(0.0, 1.0, &hidden_weights, &hidden_bias, 
+                &output_weights, &output_bias));
+    printf("Input:(1, 0) (Correct answer: 1): %f\n", 
+            result_network(1.0, 0.0, &hidden_weights, &hidden_bias, 
+                &output_weights, &output_bias));
+    printf("Input:(1, 1) (Correct answer: 0): %f\n", 
+            result_network(1.0, 1.0, &hidden_weights, &hidden_bias, 
+                &output_weights, &output_bias));
     printf("\n");
     
     printf("\nRandom Test :\n");

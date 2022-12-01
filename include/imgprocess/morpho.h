@@ -14,7 +14,8 @@
 #include "image.h"
 
 /*
- * circle_element(dest, r): Build structuring element for morphological operations
+ * circle_element(dest, r): Build structuring element for
+ * morphological operations
  *
  * param dest: destination matrix
  * param r: radius of the circle
@@ -22,7 +23,8 @@
 void circle_element(int32 *dest, const size_t r);
 
 /*
- * rect_element(dest, size_x, size_y): Build structuring element for morphological operations
+ * rect_element(dest, size_x, size_y): Build structuring element for
+ * morphological operations
  *
  * param dest: destination matrix (of size max(size_x, size_y)) ^2
  * param size_x: nb of columns in element

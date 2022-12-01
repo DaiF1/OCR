@@ -16,7 +16,8 @@
 #include "solver/pretty_print.h"
 
 /*
- * count_remaining_cases(grill[9][9], possibilities[9][9][9]): count the remaining cases.
+ * count_remaining_cases(grill[9][9], possibilities[9][9][9]):
+ * count the remaining cases.
  *
  * param grill[9][9]: the sudoku grill
  * param possibilities[9][9][9]: the possibilities on each cases.
@@ -24,7 +25,8 @@
  * return: the number of remaining case.
  */
 
-int count_remaining_cases(int grill[9][9], int possibilities[9][9][9], int debug)
+int count_remaining_cases(int grill[9][9], int possibilities[9][9][9], 
+        int debug)
 {
     int nbr = 0;
     for (size_t i = 0; i < 9; ++i)
@@ -43,7 +45,8 @@ int count_remaining_cases(int grill[9][9], int possibilities[9][9][9], int debug
             if (grill[i][j] <= 0 && v)
             {
                 if (debug)
-                    printf("solver:count_remaining_cases: (%zu, %zu) %i\n", j, i, v);
+                    printf("solver:count_remaining_cases: (%zu, %zu) %i\n",
+                            j, i, v);
                 nbr++;
             }
             else if (grill[i][j] <= 0 || v)
@@ -55,7 +58,8 @@ int count_remaining_cases(int grill[9][9], int possibilities[9][9][9], int debug
                 }
                 printf("\n");
                 pretty_print(grill);
-                errx(EXIT_FAILURE, "solver:count_remaining_cases: grill and possibilities are not equal. "
+                errx(EXIT_FAILURE, "solver:count_remaining_cases: grill \
+                        and possibilities are not equal. "
                                    "(%zu, %zu)\n", j, i);
             }
         }

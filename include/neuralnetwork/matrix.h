@@ -42,7 +42,8 @@ Matrix *m_add(Matrix *a, Matrix *b);
 // substract matrix b to a 
 Matrix *m_subtract(Matrix *a, Matrix *b);
 
-// the matrix resulting is the matrix where indexes of same place are multiplied (it's just named hadamard product...)
+// the matrix resulting is the matrix where indexes of same place are 
+// multiplied (it's just named hadamard product...)
 Matrix *m_hadamard(Matrix *a, Matrix *b);
 
 // multiply a matrix by a single double

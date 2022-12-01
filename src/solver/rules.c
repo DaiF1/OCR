@@ -33,7 +33,8 @@ int is_line_correct(int grill[9][9], size_t x, size_t y, int debug)
             if(v == grill[y][i])
             {
                 if (debug)
-                    printf("solver:is_line_correct: collision (%zu, %zu) %i and (%zu, %zu) %i\n",
+                    printf("solver:is_line_correct: collision (%zu, %zu) \
+                            %i and (%zu, %zu) %i\n",
                            x, y, v, i, x, grill[y][i]);
                 return 0;
             }
@@ -63,7 +64,8 @@ int is_column_correct(int grill[9][9], size_t x, size_t y, int debug)
             if(v == grill[i][x])
             {
                 if (debug)
-                    printf("solver:is_column_correct: collision (%zu, %zu) %i and (%zu, %zu) %i\n",
+                    printf("solver:is_column_correct: collision (%zu, %zu) \
+                            %i and (%zu, %zu) %i\n",
                            x, y, v, x, i, grill[i][x]);
                 return 0;
             }
@@ -95,7 +97,8 @@ int is_square_correct(int grill[9][9], size_t x, size_t y, int debug)
                 if(v == grill[i][j])
                 {
                     if (debug)
-                        printf("solver:is_square_correct: collision (%zu, %zu) %i and (%zu, %zu) %i\n",
+                        printf("solver:is_square_correct: collision (%zu, %zu)\
+                                 %i and (%zu, %zu) %i\n",
                                x, y, v, j, i, grill[i][j]);;
                     return 0;
                 }
@@ -117,6 +120,7 @@ int is_square_correct(int grill[9][9], size_t x, size_t y, int debug)
  */
 int is_correct(int grill[9][9], size_t x, size_t y, int debug)
 {
-    return is_column_correct(grill, x, y, debug) && is_line_correct(grill, x, y, debug) &&
+    return is_column_correct(grill, x, y, debug) && 
+        is_line_correct(grill, x, y, debug) &&
     is_square_correct(grill, x, y, debug);
 }

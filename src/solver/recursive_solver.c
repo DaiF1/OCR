@@ -35,7 +35,8 @@ int next_free_case(int grill[9][9],  size_t* x, size_t* y)
 }
 
 /*
- * recursive_solver(grill[9][9], x, y, possibilities[9][9][9], case_remaining): resolve the grill by the fastest way.
+ * recursive_solver(grill[9][9], x, y, possibilities[9][9][9], case_remaining):
+ * resolve the grill by the fastest way.
  *
  * param grill[9][9]: the sudoku grill
  * param x: the x coordinate of the last replaced case
@@ -44,7 +45,8 @@ int next_free_case(int grill[9][9],  size_t* x, size_t* y)
  *
  * return: if the sudoku is valid
  */
-int recursive_solver(int grill[9][9], size_t x, size_t y, int possibilities[9][9][9], int cases_remaining, int debug)
+int recursive_solver(int grill[9][9], size_t x, size_t y, 
+        int possibilities[9][9][9], int cases_remaining, int debug)
 {
     if (debug)
     {
@@ -93,7 +95,8 @@ int recursive_solver(int grill[9][9], size_t x, size_t y, int possibilities[9][9
     {
         if (debug)
             printf("{\n");
-        tmp = recursive_solver(grill, x+1, y, possibilities, cases_remaining, debug);
+        tmp = recursive_solver(grill, x+1, y, possibilities, 
+                cases_remaining, debug);
         if (debug)
             printf("}\n");
         return tmp;
@@ -122,7 +125,8 @@ int recursive_solver(int grill[9][9], size_t x, size_t y, int possibilities[9][9
         {
             printf("solver:recursive_solver: recursion (%zu, %zu) %i\n{\n", x, y, i);
         }
-        tmp = recursive_solver(grill, x+1, y, possibilities, cases_remaining-1, debug);
+        tmp = recursive_solver(grill, x+1, y, possibilities, 
+                cases_remaining-1, debug);
         if (debug)
             printf("}\n");
         if(tmp)

@@ -141,7 +141,8 @@ void merge_label_neighbour(int *labels, int i, int j, int w, int h)
             {
                 if (i+a >= 0 && i+a < h && j+b >= 0 && j+b < w)
                 {
-                    if (labels[(i+a)*w+(j+b)] < lowest_label && labels[(i+a)*w+(j+b)] != 0)
+                    if (labels[(i+a)*w+(j+b)] < lowest_label &&
+                            labels[(i+a)*w+(j+b)] != 0)
                         lowest_label = labels[(i+a)*w+(j+b)];
                 }
             }
@@ -153,7 +154,8 @@ void merge_label_neighbour(int *labels, int i, int j, int w, int h)
             {
                 if (i+a >= 0 && i+a < h && j+b >= 0 && j+b < w)
                 {
-                    if (labels[(i+a)*w+(j+b)] != 0 && labels[(i+a)*w+(j+b)] != lowest_label)
+                    if (labels[(i+a)*w+(j+b)] != 0 &&
+                            labels[(i+a)*w+(j+b)] != lowest_label)
                     {
                         labels[(i+a)*w+(j+b)] = lowest_label;
                         merge_label_neighbour(labels, i+a, j+b, w, h);
@@ -199,11 +201,12 @@ int *component_analysis(t_image *img)
                 if (i > 0 && j > 0)
                 {
                     // verifie la couleur du pixel du gauche et du haut
-                    if ((uint8) (img->pixels[left] / 255) == (uint8) (img->pixels[top] / 255)
+                    if ((uint8) (img->pixels[left] / 255) == 
+                            (uint8) (img->pixels[top] / 255)
                             && (uint8)(img->pixels[left]/255) == current_color)
                     {
-                        // on prend le plus petit label du haut et de gauche et on
-                        // l'assigne au 3 (gauche, current, haut)
+                        // on prend le plus petit label du haut et de gauche et
+                        // on l'assigne au 3 (gauche, current, haut)
                         /* merge_component_neighbour(labels, i, j, w, h); */
 
                         if (labels[top] < labels[left]
@@ -226,7 +229,7 @@ int *component_analysis(t_image *img)
                     // pour prendre son label
                     if ((uint8) (img->pixels[left] / 255) == color_to_find)
                         *current_label = labels[left];
-                    // verifie si le pixel du haut et actuel ont la meme couleur et
+                    // verifie si le pixel du haut et actuel ont la meme couleur
                 }
 
                 // gere les erreurs de sortie de matrice
@@ -293,7 +296,8 @@ int get_max_label(int *size_of_labels, int nb_label)
 }
 
 #if DEBUG
-void DEBUG_color_component(int *component, t_image *img, int label, uint32 color)
+void DEBUG_color_component(int *component, t_image *img, 
+        int label, uint32 color)
 {
     for (int i=0; i < img->width*img->height; i++)
         if (*(component+i) == label)

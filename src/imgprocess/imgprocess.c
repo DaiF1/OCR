@@ -143,7 +143,8 @@ void rotate(t_image *src, t_image *dest, float angle)
             cx = max(min(cx, src->width), 0);
             cy = max(min(cy, src->height), 0);
 
-            dest->pixels[y * src->width + x] = src->pixels[cy * src->width + (src->width - cx)];
+            dest->pixels[y * src->width + x] =
+                src->pixels[cy * src->width + (src->width - cx)];
         }
     }
 }

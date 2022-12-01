@@ -89,7 +89,8 @@ int *fill_label(int *label, int w, int h, int id);
 void remove_background(t_image *img, int *labels, int id);
 
 #if DEBUG
-void DEBUG_color_component(int *component, t_image *img, int label, uint32 color);
+void DEBUG_color_component(int *component, t_image *img, int label, 
+        uint32 color);
 #endif
 
 
