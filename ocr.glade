@@ -111,6 +111,7 @@
             <property name="receives-default">True</property>
             <property name="tooltip-text" translatable="yes">Save image</property>
             <property name="text" translatable="yes">Save...</property>
+            <property name="centered">True</property>
           </object>
           <packing>
             <property name="expand">False</property>
