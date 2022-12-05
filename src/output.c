@@ -18,57 +18,29 @@
 void print_number(SDL_Surface *surface, char number[],
         int x, int y, t_color color)
 {
-    TTF_Font *font = TTF_OpenFont("Sans.ttf", 24);
+    TTF_Init();
+    TTF_Font *font = TTF_OpenFont("FreeMono.otf", 24);
     SDL_Color c = {color.r, color.g, color.b, 255};
 
+    if (!font)
+        return;
+
     SDL_Surface *num = TTF_RenderText_Solid(font, number, c);
+
+    if (!num)
+    {
+        printf("%s\n", number);
+        printf("%s\n", SDL_GetError());
+        return;
+    }
 
     int tile_size = 500 / 9;
     SDL_Rect numpos = {x * tile_size, y * tile_size, tile_size, tile_size};
     SDL_BlitSurface(num, NULL, surface, &numpos);
 
-    // Initializes the SDL.
-    if (SDL_Init(SDL_INIT_VIDEO) != 0)
-        errx(EXIT_FAILURE, "%s", SDL_GetError());
-
-    // Creates a window.
-    SDL_Window *window = SDL_CreateWindow("Display test", 0, 0,
-            500, 500,
-            SDL_WINDOW_SHOWN);
-    if (window == NULL)
-        errx(EXIT_FAILURE, "%s", SDL_GetError());
-
-    // Creates a renderer.
-    SDL_Renderer *renderer = SDL_CreateRenderer(window, -1,
-            SDL_RENDERER_ACCELERATED);
-    if (renderer == NULL)
-        errx(EXIT_FAILURE, "%s", SDL_GetError());
-
-    SDL_Texture *texture = SDL_CreateTextureFromSurface(renderer, surface);
-
-    SDL_RenderCopy(renderer, texture, NULL, NULL);
-    SDL_RenderPresent(renderer);
-
-    SDL_Event event;
-    bool loop = true;
-
-    while (loop)
-    {
-        SDL_WaitEvent(&event);
-
-        switch (event.type)
-        {
-            case SDL_QUIT:
-                loop = false;
-                break;
-        }
-    }
-
     SDL_FreeSurface(num);
-    SDL_DestroyTexture(texture);
-    SDL_DestroyRenderer(renderer);
-    SDL_DestroyWindow(window);
-    SDL_Quit();
+    TTF_CloseFont(font);
+    TTF_Quit();
 }
 
 void generate_output(int grid[9][9], int solved[9][9], uint32 *dest)
@@ -93,7 +65,7 @@ void generate_output(int grid[9][9], int solved[9][9], uint32 *dest)
         for (int x = 0; x < 9; x++)
         {
             char number[2] = {0};
-            number[0] = (grid[y][x] == '.') ? solved[y][x] : grid[y][x];
+            number[0] = (grid[y][x] == '.') ? '0' + solved[y][x] : '0' + grid[y][x];
             t_color color = (grid[y][x] == '.') ?
                 COLOR_COMPLETED : COLOR_DEFAULT;
 
