@@ -1,13 +1,13 @@
-    /*
-     * main.c in src/
-     * 
-     * Made by julie.fiadino
-     *
-     * OCR main file
-     *
-     * Started on  06/10 julie.fiadino
-     * Last Update 27/10 julie.fiadino
-    */
+/*
+ * main.c in src/
+ * 
+ * Made by julie.fiadino
+ *
+ * OCR main file
+ *
+ * Started on  06/10 julie.fiadino
+ * Last Update 27/10 julie.fiadino
+*/
 #include "utils.h"
 #include "interface/interface.h"
 #include "interface/output.h"
@@ -187,15 +187,20 @@ void on_load(GtkModelButton *button, gpointer user_data)
     // TODO: Load neural network weights
 }
 
-void on_save(GtkToolButton *button, gpointer user_data)
+void on_save(GtkModelButton *button, gpointer user_data)
 {
     // TODO: Save image to file
     // NOTE: See pixbuf class for image saving utility
 }
 
-void on_quit(GtkToolButton *button, gpointer user_data)
+void on_rotate(GtkModelButton *button, gpointer user_data)
 {
-    // TODO: destroy window
+    // TODO: display dialog for rotation
+}
+
+void on_autorot(GtkModelButton *button, gpointer user_data)
+{
+    // TODO: automatic rotation
 }
 
 int main()
@@ -218,8 +223,8 @@ int main()
         GTK_IMAGE(gtk_builder_get_object(builder, "_Sudoku"));
     GtkFileChooserButton *open_button =
         GTK_FILE_CHOOSER_BUTTON(gtk_builder_get_object(builder, "_Open"));
-    GtkToolButton *save_button =
-        GTK_TOOL_BUTTON(gtk_builder_get_object(builder, "_Save"));
+    GtkModelButton *save_button =
+        GTK_MODEL_BUTTON(gtk_builder_get_object(builder, "_Save"));
     GtkModelButton *solve_button =
         GTK_MODEL_BUTTON(gtk_builder_get_object(builder, "_Solve"));
     GtkModelButton *step_button =
@@ -228,8 +233,10 @@ int main()
         GTK_MODEL_BUTTON(gtk_builder_get_object(builder, "_Train"));
     GtkModelButton *load_button =
         GTK_MODEL_BUTTON(gtk_builder_get_object(builder, "_Load"));
-    GtkToolButton *quit_button =
-        GTK_TOOL_BUTTON(gtk_builder_get_object(builder, "_Quit"));
+    GtkModelButton *rotate_button =
+        GTK_MODEL_BUTTON(gtk_builder_get_object(builder, "_Rotate"));
+    GtkModelButton *autorot_button =
+        GTK_MODEL_BUTTON(gtk_builder_get_object(builder, "_AutoRot"));
 
     UI ui = {
         .window = window,
@@ -238,7 +245,8 @@ int main()
         .save_button = save_button,
         .solve_button = solve_button,
         .step_button = step_button,
-        .quit_button = quit_button
+        .rotate_button = rotate_button,
+        .autorot_button = autorot_button
     };
 
     g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
@@ -248,7 +256,6 @@ int main()
     g_signal_connect(train_button, "clicked", G_CALLBACK(on_train), &ui);
     g_signal_connect(load_button, "clicked", G_CALLBACK(on_load), &ui);
     g_signal_connect(save_button, "clicked", G_CALLBACK(on_save), &ui);
-    g_signal_connect(quit_button, "clicked", G_CALLBACK(on_quit), &ui);
 
 
     gtk_main();
