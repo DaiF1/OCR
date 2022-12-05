@@ -32,22 +32,45 @@ void file_set(GtkFileChooserButton *button, gpointer user_data)
 {
     UI *ui = user_data;
 
-    gchar *filename = gtk_file_chooser_get_filename(
-            GTK_FILE_CHOOSER(button));
+    GtkWidget *dialog;
+    GtkFileChooserAction action = GTK_FILE_CHOOSER_ACTION_OPEN;
+    gint res;
 
-    gtk_image_clear(ui->s_image);
-    gtk_image_set_from_file(ui->s_image, filename);
+    dialog = gtk_file_chooser_dialog_new ("Open File",
+            ui->window,
+            action,
+            "_Cancel",
+            GTK_RESPONSE_CANCEL,
+            "_Open",
+            GTK_RESPONSE_ACCEPT,
+            NULL);
 
-    GdkPixbuf *pixbuf = gtk_image_get_pixbuf(ui->s_image);
-    pixbuf = gdk_pixbuf_add_alpha(pixbuf, FALSE, 0, 0, 0);
+    res = gtk_dialog_run(GTK_DIALOG(dialog));
+    if (res == GTK_RESPONSE_ACCEPT)
+    {
+        char *filename;
+        GtkFileChooser *chooser = GTK_FILE_CHOOSER(dialog);
+        filename = gtk_file_chooser_get_filename(chooser);
+        
+        gtk_image_clear(ui->s_image);
+        gtk_image_set_from_file(ui->s_image, filename);
 
-    int src_width = (int)gdk_pixbuf_get_width(pixbuf);
-    int src_height = (int)gdk_pixbuf_get_height(pixbuf);
+        GdkPixbuf *pixbuf = gtk_image_get_pixbuf(ui->s_image);
+        pixbuf = gdk_pixbuf_add_alpha(pixbuf, FALSE, 0, 0, 0);
 
-    pixbuf = gdk_pixbuf_scale_simple(pixbuf,
-            src_width * 500 / src_height, 500, GDK_INTERP_BILINEAR);
+        int src_width = (int)gdk_pixbuf_get_width(pixbuf);
+        int src_height = (int)gdk_pixbuf_get_height(pixbuf);
 
-    gtk_image_set_from_pixbuf(ui->s_image, pixbuf);
+        pixbuf = gdk_pixbuf_scale_simple(pixbuf,
+                src_width * 500 / src_height, 500,
+                GDK_INTERP_BILINEAR);
+
+        gtk_image_set_from_pixbuf(ui->s_image, pixbuf);
+
+        g_free(filename);
+    }
+
+    gtk_widget_destroy (dialog); 
 }
 
 void on_solve(GtkModelButton *button, gpointer user_data)
@@ -164,9 +187,20 @@ void on_solve(GtkModelButton *button, gpointer user_data)
         // TODO: Show message box with error
         return;
     }
+
+    pixbuf = gdk_pixbuf_new_from_file("img/empty.png", NULL);
+    pixbuf = gdk_pixbuf_add_alpha(pixbuf, FALSE, 0, 0, 0);
+
+    int src_width = (int)gdk_pixbuf_get_width(pixbuf);
+    int src_height = (int)gdk_pixbuf_get_height(pixbuf);
+
+    pixbuf = gdk_pixbuf_scale_simple(pixbuf,
+            src_width * 500 / src_height, 500, GDK_INTERP_BILINEAR);
+
+    uint32 *pixels = (uint32 *)gdk_pixbuf_get_pixels(pixbuf);
     
     // TODO: write to image
-    generate_output(grid, grid_solved, img.pixels);
+    generate_output(grid, grid_solved, pixels);
 
     gtk_widget_destroy(GTK_WIDGET(dialog));
     gtk_widget_destroy(GTK_WIDGET(progress));
@@ -279,8 +313,8 @@ int main()
         GTK_WINDOW(gtk_builder_get_object(builder, "org.gtk.ocr"));
     GtkImage *sudoku_image =
         GTK_IMAGE(gtk_builder_get_object(builder, "_Sudoku"));
-    GtkFileChooserButton *open_button =
-        GTK_FILE_CHOOSER_BUTTON(gtk_builder_get_object(builder, "_Open"));
+    GtkModelButton *open_button =
+        GTK_MODEL_BUTTON(gtk_builder_get_object(builder, "_Open"));
     GtkModelButton *save_button =
         GTK_MODEL_BUTTON(gtk_builder_get_object(builder, "_Save"));
     GtkModelButton *solve_button =
@@ -308,7 +342,7 @@ int main()
     };
 
     g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
-    g_signal_connect(open_button, "file-set", G_CALLBACK(file_set), &ui);
+    g_signal_connect(open_button, "clicked", G_CALLBACK(file_set), &ui);
     g_signal_connect(solve_button, "clicked", G_CALLBACK(on_solve), &ui);
     g_signal_connect(step_button, "clicked", G_CALLBACK(on_step), &ui);
     g_signal_connect(train_button, "clicked", G_CALLBACK(on_train), &ui);

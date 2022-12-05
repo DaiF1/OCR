@@ -12,7 +12,8 @@
 
 #include "loader.h"
 
-#define DEST_IMG_SIZE 450
+#define DEST_TILE_SIZE 28
+#define DEST_IMG_SIZE (DEST_TILE_SIZE * 9)
 
 typedef struct
 {
