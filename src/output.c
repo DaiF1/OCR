@@ -19,7 +19,7 @@ void print_number(SDL_Surface *surface, char number[],
         int x, int y, t_color color)
 {
     TTF_Init();
-    TTF_Font *font = TTF_OpenFont("FreeMono.otf", 24);
+    TTF_Font *font = TTF_OpenFont("fonts/FreeMono.otf", 24);
     SDL_Color c = {color.r, color.g, color.b, 255};
 
     if (!font)
