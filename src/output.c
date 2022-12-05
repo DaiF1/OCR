@@ -19,7 +19,7 @@ void print_number(SDL_Surface *surface, char number[],
         int x, int y, t_color color)
 {
     TTF_Init();
-    TTF_Font *font = TTF_OpenFont("fonts/FreeMono.otf", 24);
+    TTF_Font *font = TTF_OpenFont("fonts/FreeMonoBold.otf", 54);
     SDL_Color c = {color.r, color.g, color.b, 255};
 
     if (!font)
@@ -28,14 +28,10 @@ void print_number(SDL_Surface *surface, char number[],
     SDL_Surface *num = TTF_RenderText_Solid(font, number, c);
 
     if (!num)
-    {
-        printf("%s\n", number);
-        printf("%s\n", SDL_GetError());
         return;
-    }
 
     int tile_size = 500 / 9;
-    SDL_Rect numpos = {x * tile_size, y * tile_size, tile_size, tile_size};
+    SDL_Rect numpos = {x * tile_size + 14, y * tile_size + 4, tile_size - 28, tile_size - 8};
     SDL_BlitSurface(num, NULL, surface, &numpos);
 
     SDL_FreeSurface(num);
@@ -65,8 +61,8 @@ void generate_output(int grid[9][9], int solved[9][9], uint32 *dest)
         for (int x = 0; x < 9; x++)
         {
             char number[2] = {0};
-            number[0] = (grid[y][x] == '.') ? '0' + solved[y][x] : '0' + grid[y][x];
-            t_color color = (grid[y][x] == '.') ?
+            number[0] = (grid[y][x] == -1) ? '0' + solved[y][x] : '0' + grid[y][x];
+            t_color color = (grid[y][x] == -1) ?
                 COLOR_COMPLETED : COLOR_DEFAULT;
 
             print_number(surface, number, x, y, color);

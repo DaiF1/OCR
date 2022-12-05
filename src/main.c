@@ -175,7 +175,7 @@ void on_solve(GtkModelButton *button, gpointer user_data)
             // TODO: number recognition
             int number = 0;
 
-            grid[y][x] = number;
+            grid[y][x] = -1;
             grid_solved[y][x] = number;
         }
     }
