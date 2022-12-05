@@ -8,6 +8,7 @@
  * Started on  06/10 julie.fiadino
  * Last Update 27/10 julie.fiadino
 */
+#include <stdio.h>
 #include "utils.h"
 #include "interface/interface.h"
 #include "interface/output.h"
@@ -163,13 +164,22 @@ void on_load(GtkModelButton *button, gpointer user_data)
 
 void on_save(GtkToolButton *button, gpointer user_data)
 {
+    printf("debut\n");
+    UI *ui = user_data;
+
+    gchar *filename = gtk_file_chooser_get_filename(
+            GTK_FILE_CHOOSER(button));
+    printf("eee\n");
+    GdkPixbuf *pixbuf = gtk_image_get_pixbuf(ui->s_image);
+    pixbuf = gdk_pixbuf_add_alpha(pixbuf, FALSE, 0, 0, 0);
+    gdk_pixbuf_save(pixbuf, filename, "png", NULL, NULL);
     // TODO: Save image to file
     // NOTE: See pixbuf class for image saving utility
 }
 
 void on_quit(GtkToolButton *button, gpointer user_data)
 {
-    // TODO: destroy window
+    
 }
 
 int main()
