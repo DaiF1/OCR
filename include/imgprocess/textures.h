@@ -12,7 +12,8 @@
 
 #include "loader.h"
 
-#define DEST_IMG_SIZE 252
+#define DEST_TILE_SIZE 28
+#define DEST_IMG_SIZE (DEST_TILE_SIZE * 9)
 
 typedef struct
 {
@@ -57,6 +58,15 @@ t_coords lerp_c(t_coords a, t_coords b, float w);
  * param bounds: rectangle to remap (t_bounds). Bounds must be within src.
 */
 void remap(t_image *src, t_image *dest, t_bounds bounds);
+
+/*
+ * split(src): Split each tile of the image.
+ * Writes the result in the format 'boxes/grid_xy.png', x and y
+ * being the coordinates of the tile.
+ *
+ * param src: image to split
+*/
+void split(t_image *src);
 
 #if DEBUG
 

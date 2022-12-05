@@ -9,6 +9,7 @@
  * Last Update 29/10 julie.fiadino
 */
 #include "textures.h"
+#include "saver.h"
 
 float lerp(float a, float b, float w)
 {
@@ -39,6 +40,23 @@ void remap(t_image *src, t_image *dest, t_bounds bounds)
 
             dest->pixels[y * DEST_IMG_SIZE + x] =
                 src->pixels[(int)uv.y * src->width + (int)uv.x];
+        }
+    }
+}
+
+void split(t_image *src)
+{
+    int response = system("mkdir boxes");
+    (void)response;
+    for (int y = 0; y < 9; y++)
+    {
+        for (int x = 0; x < 9; x++)
+        {
+            // format 'grid_xy.png'
+            char *buffer = malloc(sizeof(char) * 18);
+            sprintf(buffer, "boxes/grid_%i%i.png", x, y);
+            save_and_crop_image(src, x * DEST_TILE_SIZE, y * DEST_TILE_SIZE,
+                    DEST_TILE_SIZE, DEST_TILE_SIZE, buffer);
         }
     }
 }
