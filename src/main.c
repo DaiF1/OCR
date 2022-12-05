@@ -1,13 +1,13 @@
-/*
- * main.c in src/
- * 
- * Made by julie.fiadino
- *
- * OCR main file
- *
- * Started on  06/10 julie.fiadino
- * Last Update 27/10 julie.fiadino
-*/
+    /*
+     * main.c in src/
+     * 
+     * Made by julie.fiadino
+     *
+     * OCR main file
+     *
+     * Started on  06/10 julie.fiadino
+     * Last Update 27/10 julie.fiadino
+    */
 #include "utils.h"
 #include "interface/interface.h"
 #include "interface/output.h"
@@ -114,7 +114,31 @@ void on_solve(GtkModelButton *button, gpointer user_data)
     // TODO: image crop
 
     system("mkdir boxes");
-    int grid[9][9] = {0};
+
+    int grid[9][9] = {
+        {-1, -1, -1, -1, -1, -1, -1, -1, -1},
+        {-1, -1, -1, -1, -1, -1, -1, -1, -1},
+        {-1, -1, -1, -1, -1, -1, -1, -1, -1},
+        {-1, -1, -1, -1, -1, -1, -1, -1, -1},
+        {-1, -1, -1, -1, -1, -1, -1, -1, -1},
+        {-1, -1, -1, -1, -1, -1, -1, -1, -1},
+        {-1, -1, -1, -1, -1, -1, -1, -1, -1},
+        {-1, -1, -1, -1, -1, -1, -1, -1, -1},
+        {-1, -1, -1, -1, -1, -1, -1, -1, -1},
+    };
+
+    int grid_solved[9][9] = {
+        {-1, -1, -1, -1, -1, -1, -1, -1, -1},
+        {-1, -1, -1, -1, -1, -1, -1, -1, -1},
+        {-1, -1, -1, -1, -1, -1, -1, -1, -1},
+        {-1, -1, -1, -1, -1, -1, -1, -1, -1},
+        {-1, -1, -1, -1, -1, -1, -1, -1, -1},
+        {-1, -1, -1, -1, -1, -1, -1, -1, -1},
+        {-1, -1, -1, -1, -1, -1, -1, -1, -1},
+        {-1, -1, -1, -1, -1, -1, -1, -1, -1},
+        {-1, -1, -1, -1, -1, -1, -1, -1, -1},
+    };
+
     for (int y = 0; y < 9; y++)
     {
         for (int x = 0; x < 9; x++)
@@ -128,18 +152,20 @@ void on_solve(GtkModelButton *button, gpointer user_data)
             int number = 0;
 
             grid[y][x] = number;
+            grid_solved[y][x] = number;
         }
     }
 
     system("rm -r boxes/ && rmdir boxes");
 
-    if (!solver(grid, 0))
+    if (!solver(grid_solved, 0))
     {
         // TODO: Show message box with error
         return;
     }
     
     // TODO: write to image
+    generate_output(grid, grid_solved, img.pixels);
 
     gtk_widget_destroy(GTK_WIDGET(dialog));
     gtk_widget_destroy(GTK_WIDGET(progress));
