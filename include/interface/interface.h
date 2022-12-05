@@ -16,7 +16,7 @@ typedef struct UI
 {
     GtkWindow               *window;
     GtkImage                *s_image;
-    GtkFileChooserButton    *file_chooser;
+    GtkModelButton    *file_chooser;
     GtkModelButton          *save_button;
     GtkModelButton          *solve_button;
     GtkModelButton          *step_button;

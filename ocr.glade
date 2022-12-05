@@ -93,10 +93,12 @@
         <property name="can-focus">False</property>
         <property name="orientation">vertical</property>
         <child>
-          <object class="GtkFileChooserButton" id="_Open">
+          <object class="GtkModelButton" id="_Open">
             <property name="visible">True</property>
-            <property name="can-focus">False</property>
-            <property name="title" translatable="yes"/>
+            <property name="can-focus">True</property>
+            <property name="receives-default">True</property>
+            <property name="text" translatable="yes">Open...</property>
+            <property name="centered">True</property>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -105,10 +107,12 @@
           </packing>
         </child>
         <child>
-          <object class="GtkFileChooserButton" id="_Save">
+          <object class="GtkModelButton" id="_Save">
             <property name="visible">True</property>
-            <property name="can-focus">False</property>
-            <property name="title" translatable="yes"/>
+            <property name="can-focus">True</property>
+            <property name="receives-default">True</property>
+            <property name="text" translatable="yes">Save...</property>
+            <property name="centered">True</property>
           </object>
           <packing>
             <property name="expand">False</property>
