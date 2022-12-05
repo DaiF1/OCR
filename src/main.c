@@ -190,15 +190,63 @@ void on_load(GtkModelButton *button, gpointer user_data)
 
 void on_save(GtkModelButton *button, gpointer user_data)
 {
-    printf("debut\n");
     UI *ui = user_data;
+    printf("debut\n");
 
+    GtkWidget *dialog;
+    GtkFileChooser *chooser;
+    gint res;
+
+    dialog = gtk_file_chooser_dialog_new ("Save File",
+                                          ui->window,
+                                          GTK_FILE_CHOOSER_ACTION_SAVE,
+                                          "Cancel",
+                                          GTK_RESPONSE_CANCEL,
+                                          "Save",
+                                          GTK_RESPONSE_ACCEPT,
+                                          NULL);
+    chooser = GTK_FILE_CHOOSER (dialog);
+
+    gtk_file_chooser_set_do_overwrite_confirmation (chooser, TRUE);
+
+        gtk_file_chooser_set_current_name (chooser,
+                                           "Untitled document");
+
+    res = gtk_dialog_run (GTK_DIALOG (dialog));
+    if (res == GTK_RESPONSE_ACCEPT)
+    {
+        char *filename;
+
+        filename = gtk_file_chooser_get_filename (chooser);
+        //save_to_file (filename);
+        GdkPixbuf *pixbuf = gtk_image_get_pixbuf(ui->s_image);
+        pixbuf = gdk_pixbuf_add_alpha(pixbuf, FALSE, 0, 0, 0);
+        gdk_pixbuf_save(pixbuf, filename, "png", NULL, NULL);
+        g_free (filename);
+    }
+
+    gtk_widget_destroy (dialog);
+
+    /*
+    GtkWidget* dialogue = gtk_file_chooser_dialog_new("Select a destination", ui->window, GTK_FILE_CHOOSER_ACTION_SAVE,
+                                                      "test",
+                                                      "Cancel", GTK_RESPONSE_CANCEL,
+                                                      "Ok", GTK_RESPONSE_OK,
+                                                      NULL);
+
+    gtk_dialog_add_button(GTK_DIALOG(dialogue), "Cancel", GTK_RESPONSE_CANCEL);
+    gtk_dialog_add_button(GTK_DIALOG(dialogue), "Ok", GTK_RESPONSE_OK);
     gchar *filename = gtk_file_chooser_get_filename(
             GTK_FILE_CHOOSER(button));
+    printf("%s\n", filename);*/
+    /*
+    GtkWidget *dialog gtk_file_chooser_dialog_new
+    gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(button), "");
+
     printf("eee\n");
     GdkPixbuf *pixbuf = gtk_image_get_pixbuf(ui->s_image);
     pixbuf = gdk_pixbuf_add_alpha(pixbuf, FALSE, 0, 0, 0);
-    gdk_pixbuf_save(pixbuf, filename, "png", NULL, NULL);
+    gdk_pixbuf_save(pixbuf, filename, "png", NULL, NULL);*/
     // TODO: Save image to file
     // NOTE: See pixbuf class for image saving utility
 }
