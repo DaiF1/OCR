@@ -163,9 +163,20 @@ void on_solve(GtkModelButton *button, gpointer user_data)
         // TODO: Show message box with error
         return;
     }
+
+    pixbuf = gdk_pixbuf_new_from_file("img/empty.png", NULL);
+    pixbuf = gdk_pixbuf_add_alpha(pixbuf, FALSE, 0, 0, 0);
+
+    int src_width = (int)gdk_pixbuf_get_width(pixbuf);
+    int src_height = (int)gdk_pixbuf_get_height(pixbuf);
+
+    pixbuf = gdk_pixbuf_scale_simple(pixbuf,
+            src_width * 500 / src_height, 500, GDK_INTERP_BILINEAR);
+
+    uint32 *pixels = (uint32 *)gdk_pixbuf_get_pixels(pixbuf);
     
     // TODO: write to image
-    generate_output(grid, grid_solved, img.pixels);
+    generate_output(grid, grid_solved, pixels);
 
     gtk_widget_destroy(GTK_WIDGET(dialog));
     gtk_widget_destroy(GTK_WIDGET(progress));
