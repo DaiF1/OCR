@@ -27,4 +27,4 @@ typedef struct s_color
 void print_number(SDL_Surface *surface, char *text, int x, int y, t_color color);
 
 // Generate output image
-uint32 *generate_output(char *grid);
+void generate_output(int grid[9][9], int solved[9][9], uint32 *dest);

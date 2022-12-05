@@ -17,12 +17,13 @@ typedef struct UI
     GtkWindow               *window;
     GtkImage                *s_image;
     GtkFileChooserButton    *file_chooser;
-    GtkToolButton           *save_button;
+    GtkModelButton          *save_button;
     GtkModelButton          *solve_button;
     GtkModelButton          *step_button;
     GtkModelButton          *train_button;
     GtkModelButton          *load_button;
-    GtkToolButton           *quit_button;
+    GtkModelButton          *rotate_button;
+    GtkModelButton          *autorot_button;
 } UI;
 
 typedef struct Progress
@@ -53,8 +54,12 @@ void on_load(GtkModelButton *button, gpointer user_data);
 
 /* on_save(button, user_data): called when pressing the save button
  */
-void on_save(GtkToolButton *button, gpointer user_data);
+void on_save(GtkModelButton *button, gpointer user_data);
 
-/* on_quit(button, user_data): called when pressig the quit button
+/* on_rotate(button, user_data): called when pressig the rotate button
  */
-void on_quit(GtkToolButton *button, gpointer user_data);
+void on_rotate(GtkModelButton *button, gpointer user_data);
+
+/* on_autorot(button, user_data): called when pressing the auto rotation button
+ */
+void on_autorot(GtkModelButton *button, gpointer user_data);

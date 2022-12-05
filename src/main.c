@@ -115,7 +115,31 @@ void on_solve(GtkModelButton *button, gpointer user_data)
     // TODO: image crop
 
     system("mkdir boxes");
-    int grid[9][9] = {0};
+
+    int grid[9][9] = {
+        {-1, -1, -1, -1, -1, -1, -1, -1, -1},
+        {-1, -1, -1, -1, -1, -1, -1, -1, -1},
+        {-1, -1, -1, -1, -1, -1, -1, -1, -1},
+        {-1, -1, -1, -1, -1, -1, -1, -1, -1},
+        {-1, -1, -1, -1, -1, -1, -1, -1, -1},
+        {-1, -1, -1, -1, -1, -1, -1, -1, -1},
+        {-1, -1, -1, -1, -1, -1, -1, -1, -1},
+        {-1, -1, -1, -1, -1, -1, -1, -1, -1},
+        {-1, -1, -1, -1, -1, -1, -1, -1, -1},
+    };
+
+    int grid_solved[9][9] = {
+        {-1, -1, -1, -1, -1, -1, -1, -1, -1},
+        {-1, -1, -1, -1, -1, -1, -1, -1, -1},
+        {-1, -1, -1, -1, -1, -1, -1, -1, -1},
+        {-1, -1, -1, -1, -1, -1, -1, -1, -1},
+        {-1, -1, -1, -1, -1, -1, -1, -1, -1},
+        {-1, -1, -1, -1, -1, -1, -1, -1, -1},
+        {-1, -1, -1, -1, -1, -1, -1, -1, -1},
+        {-1, -1, -1, -1, -1, -1, -1, -1, -1},
+        {-1, -1, -1, -1, -1, -1, -1, -1, -1},
+    };
+
     for (int y = 0; y < 9; y++)
     {
         for (int x = 0; x < 9; x++)
@@ -129,18 +153,20 @@ void on_solve(GtkModelButton *button, gpointer user_data)
             int number = 0;
 
             grid[y][x] = number;
+            grid_solved[y][x] = number;
         }
     }
 
     system("rm -r boxes/ && rmdir boxes");
 
-    if (!solver(grid, 0))
+    if (!solver(grid_solved, 0))
     {
         // TODO: Show message box with error
         return;
     }
     
     // TODO: write to image
+    generate_output(grid, grid_solved, img.pixels);
 
     gtk_widget_destroy(GTK_WIDGET(dialog));
     gtk_widget_destroy(GTK_WIDGET(progress));
@@ -162,7 +188,7 @@ void on_load(GtkModelButton *button, gpointer user_data)
     // TODO: Load neural network weights
 }
 
-void on_save(GtkToolButton *button, gpointer user_data)
+void on_save(GtkModelButton *button, gpointer user_data)
 {
     printf("debut\n");
     UI *ui = user_data;
@@ -177,9 +203,14 @@ void on_save(GtkToolButton *button, gpointer user_data)
     // NOTE: See pixbuf class for image saving utility
 }
 
-void on_quit(GtkToolButton *button, gpointer user_data)
+void on_rotate(GtkModelButton *button, gpointer user_data)
 {
-    
+    // TODO: display dialog for rotation
+}
+
+void on_autorot(GtkModelButton *button, gpointer user_data)
+{
+    // TODO: automatic rotation
 }
 
 int main()
@@ -202,8 +233,8 @@ int main()
         GTK_IMAGE(gtk_builder_get_object(builder, "_Sudoku"));
     GtkFileChooserButton *open_button =
         GTK_FILE_CHOOSER_BUTTON(gtk_builder_get_object(builder, "_Open"));
-    GtkToolButton *save_button =
-        GTK_TOOL_BUTTON(gtk_builder_get_object(builder, "_Save"));
+    GtkModelButton *save_button =
+        GTK_MODEL_BUTTON(gtk_builder_get_object(builder, "_Save"));
     GtkModelButton *solve_button =
         GTK_MODEL_BUTTON(gtk_builder_get_object(builder, "_Solve"));
     GtkModelButton *step_button =
@@ -212,8 +243,10 @@ int main()
         GTK_MODEL_BUTTON(gtk_builder_get_object(builder, "_Train"));
     GtkModelButton *load_button =
         GTK_MODEL_BUTTON(gtk_builder_get_object(builder, "_Load"));
-    GtkToolButton *quit_button =
-        GTK_TOOL_BUTTON(gtk_builder_get_object(builder, "_Quit"));
+    GtkModelButton *rotate_button =
+        GTK_MODEL_BUTTON(gtk_builder_get_object(builder, "_Rotate"));
+    GtkModelButton *autorot_button =
+        GTK_MODEL_BUTTON(gtk_builder_get_object(builder, "_AutoRot"));
 
     UI ui = {
         .window = window,
@@ -222,7 +255,8 @@ int main()
         .save_button = save_button,
         .solve_button = solve_button,
         .step_button = step_button,
-        .quit_button = quit_button
+        .rotate_button = rotate_button,
+        .autorot_button = autorot_button
     };
 
     g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
@@ -232,7 +266,6 @@ int main()
     g_signal_connect(train_button, "clicked", G_CALLBACK(on_train), &ui);
     g_signal_connect(load_button, "clicked", G_CALLBACK(on_load), &ui);
     g_signal_connect(save_button, "clicked", G_CALLBACK(on_save), &ui);
-    g_signal_connect(quit_button, "clicked", G_CALLBACK(on_quit), &ui);
 
 
     gtk_main();
