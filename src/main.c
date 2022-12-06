@@ -41,7 +41,7 @@ void dialog_error(GtkWindow *window, char *msg)
                                       flags,
                                       GTK_MESSAGE_ERROR,
                                       GTK_BUTTONS_CLOSE,
-                                      msg);
+                                      "%s", msg);
 
     gtk_window_set_title(GTK_WINDOW(dialog), "Error");
     gtk_dialog_run(GTK_DIALOG(dialog));
