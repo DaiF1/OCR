@@ -92,6 +92,12 @@ void on_solve(GtkModelButton *button, gpointer user_data)
 {
     Interface *interface = user_data;
 
+    if (!interface->data.trained)
+    {
+        dialog_error(interface->ui.window,
+                "<b>Warning:</b> Neural Network not trained");
+    }
+
     if (interface->data.solved)
     {
         dialog_error(interface->ui.window, "Grid already solved");
@@ -118,14 +124,6 @@ void on_solve(GtkModelButton *button, gpointer user_data)
             GTK_MESSAGE_ERROR,
             GTK_BUTTONS_CLOSE,
             "Solving Sudoku..."));
-
-    GtkProgressBar *progress = GTK_PROGRESS_BAR(gtk_progress_bar_new());
-    gtk_widget_set_parent_window(GTK_WIDGET(progress), GDK_WINDOW(dialog));
-    gtk_widget_show(GTK_WIDGET(progress));
- 
-    Progress bar = {dialog, progress};
-
-    g_thread_new("dialog", thread_progress, &bar);
 
     // TODO: rotation auto
 
@@ -184,7 +182,7 @@ void on_solve(GtkModelButton *button, gpointer user_data)
         }
     }
 
-    system("rm -r boxes/ && rmdir boxes");
+    system("rm -r boxes/");
 
     if (!solver(grid_solved, 0))
     {
@@ -207,7 +205,6 @@ void on_solve(GtkModelButton *button, gpointer user_data)
     generate_output(grid, grid_solved, pixels);
 
     gtk_widget_destroy(GTK_WIDGET(dialog));
-    gtk_widget_destroy(GTK_WIDGET(progress));
     gtk_image_set_from_pixbuf(interface->ui.s_image, pixbuf);
 
     interface->data.solved = true;
