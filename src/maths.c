@@ -16,7 +16,7 @@ float lerp(float a, float b, float w)
     return (1.0 - w) * a + w * b;
 }
 
-t_vector lerp_c(t_vector a, t_vector b, float w)
+t_vector lerp_v(t_vector a, t_vector b, float w)
 {
     t_vector result = {};
     result.x = lerp(a.x, b.x, w);

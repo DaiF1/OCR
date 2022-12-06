@@ -125,6 +125,12 @@ void on_solve(GtkModelButton *button, gpointer user_data)
     img.width = (int32)gdk_pixbuf_get_width(pixbuf);
     img.height = (int32)gdk_pixbuf_get_height(pixbuf);
 
+    // TODO: rotation auto
+
+    gray_scale(&img);
+    adjust_image(&img, 2);
+    otsu(&img);
+
     t_image copy = {
         calloc(img.width * img.height, sizeof(uint32)),
         img.width,
@@ -134,24 +140,12 @@ void on_solve(GtkModelButton *button, gpointer user_data)
     memcpy(copy.pixels, img.pixels,
             img.width * img.height * sizeof(uint32));
 
-    // TODO: rotation auto
-
-    gray_scale(&copy);
-    adjust_image(&copy, 2);
-    otsu(&copy);
-
-    t_image label_copy = {
-        calloc(img.width * img.height, sizeof(uint32)),
-        img.width,
-        img.height
-    };
-
-    int *labels = component_analysis(&label_copy);
+    int *labels = component_analysis(&copy);
     int nb_labels = get_nb_of_labels(labels, copy.height*copy.width);
     int *size_of_labels = get_size_of_labels(labels, copy.height*copy.width);
     int max_label = get_max_label(size_of_labels, nb_labels);
 
-    isolate_label(&label_copy, labels, max_label);
+    isolate_label(&copy, labels, max_label);
 
     // TODO: grid detection
 
@@ -164,23 +158,6 @@ void on_solve(GtkModelButton *button, gpointer user_data)
 
     
     // TODO: image crop
-    t_bounds bounds = {
-        {100, 67},
-        {500, 67},
-        {100, 468},
-        {500, 468},
-    };
-
-    DEBUG_draw_bounds(&img, bounds);
-
-    t_image cropped = {
-        malloc(sizeof(uint32) * DEST_IMG_SIZE * DEST_IMG_SIZE),
-        DEST_IMG_SIZE,
-        DEST_IMG_SIZE
-    };
-    remap(&copy, &cropped, bounds);
-
-    DEBUG_display_image(&cropped);
 
     system("mkdir boxes");
 
@@ -213,7 +190,6 @@ void on_solve(GtkModelButton *button, gpointer user_data)
         return;
     }
 
-    /*
     pixbuf = gdk_pixbuf_new_from_file("img/empty.png", NULL);
     pixbuf = gdk_pixbuf_add_alpha(pixbuf, FALSE, 0, 0, 0);
 
@@ -224,17 +200,10 @@ void on_solve(GtkModelButton *button, gpointer user_data)
             src_width * DEST_IMG_SIZE / src_height, DEST_IMG_SIZE, GDK_INTERP_BILINEAR);
 
     uint32 *pixels = (uint32 *)gdk_pixbuf_get_pixels(pixbuf);
-    */
-    
-    // TODO: write to image
-    generate_output(grid, grid_solved, cropped.pixels);
 
-    DEBUG_display_image(&cropped);
-
-    revert_mapping(&cropped, &img, bounds);
+    generate_output(grid, grid_solved, pixels);
 
     gtk_image_set_from_pixbuf(interface->ui.s_image, pixbuf);
-
     interface->data.solved = true;
 }
 

@@ -33,16 +33,6 @@ typedef struct
 */
 void remap(t_image *src, t_image *dest, t_bounds bounds);
 
-
-/*
- * remap(src, dest, bounds): Map src bounds to dest image
- *
- * param src: source image
- * param dest: destination image
- * param bounds: rectangle to remap (t_bounds). Bounds must be within dest.
-*/
-void revert_mapping(t_image *src, t_image *dest, t_bounds bounds);
-
 #if DEBUG
 
 /*

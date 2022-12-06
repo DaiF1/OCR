@@ -32,45 +32,6 @@ void remap(t_image *src, t_image *dest, t_bounds bounds)
     }
 }
 
-void revert_mapping(t_image *src, t_image *dest, t_bounds bounds)
-{
-    for (int x = 0; x < dest->height; x++)
-    {
-        for (int y = 0; y < dest->width; y++)
-        {
-            float dx = (float)x / (float)DEST_IMG_SIZE;
-            float dy = (float)y / (float)DEST_IMG_SIZE;
-
-            t_vector cb = lerp_v(bounds.bl, bounds.br, dx);
-            t_vector ct = lerp_v(bounds.tl, bounds.tr, dx);
-
-            t_vector uv = lerp_v(ct, cb, dy);
-
-            float c_tl =
-                (float)(src->pixels[y * DEST_IMG_SIZE + x]
-                        & 0x000000ff) / 255.0;
-            float c_tr =
-                (float)(src->pixels[y * DEST_IMG_SIZE + x + 1]
-                        & 0x000000ff) / 255.0;
-            float c_bl =
-                (float)(src->pixels[(y + 1) * DEST_IMG_SIZE + x]
-                        & 0x000000ff) / 255.0;
-            float c_br =
-                (float)(src->pixels[(y + 1) * DEST_IMG_SIZE + x + 1]
-                    & 0x000000ff) / 255.0;
-
-            float c_top = lerp(c_tl, c_tr, uv.x - (float)((int)uv.x));
-            float c_bottom = lerp(c_bl, c_br, uv.x - (float)((int)uv.x));
-
-            float c = lerp(c_top, c_bottom, uv.y - (float)((int)uv.y));
-
-            uint32 color = 0xffffff00 + (c * 255.0);
-
-            dest->pixels[(int)uv.y * dest->width + (int)uv.x] = color;
-        }
-    }
-}
-
 #if DEBUG
 #include <err.h>
 
