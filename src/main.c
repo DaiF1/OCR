@@ -105,6 +105,14 @@ void on_solve(GtkModelButton *button, gpointer user_data)
 {
     Interface *interface = user_data;
 
+    if (gtk_image_get_storage_type(interface->ui.s_image) ==
+            GTK_IMAGE_EMPTY)
+    {
+        dialog_error(interface->ui.window, GTK_MESSAGE_ERROR,
+                "No Image Given");
+        return;
+    }
+
     if (!interface->data.trained)
     {
         dialog_error(interface->ui.window, GTK_MESSAGE_WARNING,
@@ -115,14 +123,6 @@ void on_solve(GtkModelButton *button, gpointer user_data)
     {
         dialog_error(interface->ui.window, GTK_MESSAGE_WARNING,
                 "Grid already solved");
-    }
-
-    if (gtk_image_get_storage_type(interface->ui.s_image) ==
-            GTK_IMAGE_EMPTY)
-    {
-        dialog_error(interface->ui.window, GTK_MESSAGE_ERROR,
-                "No Image Given");
-        return;
     }
 
     GdkPixbuf *pixbuf = gtk_image_get_pixbuf(interface->ui.s_image);
