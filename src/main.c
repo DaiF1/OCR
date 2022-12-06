@@ -45,14 +45,14 @@ void dialog_error(GtkWindow *window, char *msg)
 
 void file_set(GtkFileChooserButton *button, gpointer user_data)
 {
-    UI *ui = user_data;
+    Interface *interface = user_data;
 
     GtkWidget *dialog;
     GtkFileChooserAction action = GTK_FILE_CHOOSER_ACTION_OPEN;
     gint res;
 
     dialog = gtk_file_chooser_dialog_new ("Open File",
-            ui->window,
+            interface->ui.window,
             action,
             "_Cancel",
             GTK_RESPONSE_CANCEL,
@@ -67,10 +67,10 @@ void file_set(GtkFileChooserButton *button, gpointer user_data)
         GtkFileChooser *chooser = GTK_FILE_CHOOSER(dialog);
         filename = gtk_file_chooser_get_filename(chooser);
         
-        gtk_image_clear(ui->s_image);
-        gtk_image_set_from_file(ui->s_image, filename);
+        gtk_image_clear(interface->ui.s_image);
+        gtk_image_set_from_file(interface->ui.s_image, filename);
 
-        GdkPixbuf *pixbuf = gtk_image_get_pixbuf(ui->s_image);
+        GdkPixbuf *pixbuf = gtk_image_get_pixbuf(interface->ui.s_image);
         pixbuf = gdk_pixbuf_add_alpha(pixbuf, FALSE, 0, 0, 0);
 
         int src_width = (int)gdk_pixbuf_get_width(pixbuf);
@@ -80,7 +80,7 @@ void file_set(GtkFileChooserButton *button, gpointer user_data)
                 src_width * 500 / src_height, 500,
                 GDK_INTERP_BILINEAR);
 
-        gtk_image_set_from_pixbuf(ui->s_image, pixbuf);
+        gtk_image_set_from_pixbuf(interface->ui.s_image, pixbuf);
 
         g_free(filename);
     }
@@ -90,16 +90,22 @@ void file_set(GtkFileChooserButton *button, gpointer user_data)
 
 void on_solve(GtkModelButton *button, gpointer user_data)
 {
-    UI *ui = user_data;
+    Interface *interface = user_data;
 
-    if (gtk_image_get_storage_type(ui->s_image) ==
-            GTK_IMAGE_EMPTY)
+    if (interface->data.solved)
     {
-        dialog_error(ui->window, "No Image Given");
+        dialog_error(interface->ui.window, "Grid already solved");
         return;
     }
 
-    GdkPixbuf *pixbuf = gtk_image_get_pixbuf(ui->s_image);
+    if (gtk_image_get_storage_type(interface->ui.s_image) ==
+            GTK_IMAGE_EMPTY)
+    {
+        dialog_error(interface->ui.window, "<b>Error:</b> No Image Given");
+        return;
+    }
+
+    GdkPixbuf *pixbuf = gtk_image_get_pixbuf(interface->ui.s_image);
 
     t_image img = {0};
     img.pixels = (uint32 *)gdk_pixbuf_get_pixels(pixbuf);
@@ -107,7 +113,7 @@ void on_solve(GtkModelButton *button, gpointer user_data)
     img.height = (int32)gdk_pixbuf_get_height(pixbuf);
 
     GtkDialogFlags flags = GTK_DIALOG_DESTROY_WITH_PARENT;
-    GtkDialog *dialog = GTK_DIALOG(gtk_message_dialog_new(ui->window,
+    GtkDialog *dialog = GTK_DIALOG(gtk_message_dialog_new(interface->ui.window,
             flags,
             GTK_MESSAGE_ERROR,
             GTK_BUTTONS_CLOSE,
@@ -157,29 +163,9 @@ void on_solve(GtkModelButton *button, gpointer user_data)
 
     system("mkdir boxes");
 
-    int grid[9][9] = {
-        {-1, -1, -1, -1, -1, -1, -1, -1, -1},
-        {-1, -1, -1, -1, -1, -1, -1, -1, -1},
-        {-1, -1, -1, -1, -1, -1, -1, -1, -1},
-        {-1, -1, -1, -1, -1, -1, -1, -1, -1},
-        {-1, -1, -1, -1, -1, -1, -1, -1, -1},
-        {-1, -1, -1, -1, -1, -1, -1, -1, -1},
-        {-1, -1, -1, -1, -1, -1, -1, -1, -1},
-        {-1, -1, -1, -1, -1, -1, -1, -1, -1},
-        {-1, -1, -1, -1, -1, -1, -1, -1, -1},
-    };
+    int grid[9][9] = {0};
 
-    int grid_solved[9][9] = {
-        {-1, -1, -1, -1, -1, -1, -1, -1, -1},
-        {-1, -1, -1, -1, -1, -1, -1, -1, -1},
-        {-1, -1, -1, -1, -1, -1, -1, -1, -1},
-        {-1, -1, -1, -1, -1, -1, -1, -1, -1},
-        {-1, -1, -1, -1, -1, -1, -1, -1, -1},
-        {-1, -1, -1, -1, -1, -1, -1, -1, -1},
-        {-1, -1, -1, -1, -1, -1, -1, -1, -1},
-        {-1, -1, -1, -1, -1, -1, -1, -1, -1},
-        {-1, -1, -1, -1, -1, -1, -1, -1, -1},
-    };
+    int grid_solved[9][9] = {0};
 
     for (int y = 0; y < 9; y++)
     {
@@ -202,7 +188,7 @@ void on_solve(GtkModelButton *button, gpointer user_data)
 
     if (!solver(grid_solved, 0))
     {
-        dialog_error(ui->window, "Unable to Solve Grid");
+        dialog_error(interface->ui.window, "<b>Error:</b> Unable to Solve Grid");
         return;
     }
 
@@ -222,7 +208,9 @@ void on_solve(GtkModelButton *button, gpointer user_data)
 
     gtk_widget_destroy(GTK_WIDGET(dialog));
     gtk_widget_destroy(GTK_WIDGET(progress));
-    gtk_image_set_from_pixbuf(ui->s_image, pixbuf);
+    gtk_image_set_from_pixbuf(interface->ui.s_image, pixbuf);
+
+    interface->data.solved = true;
 }
 
 void on_step(GtkModelButton *button, gpointer user_data)
@@ -264,14 +252,14 @@ char* to_png(const char* filename)
 
 void on_save(GtkModelButton *button, gpointer user_data)
 {
-    UI *ui = user_data;
+    Interface *interface = user_data;
 
     GtkWidget *dialog;
     GtkFileChooser *chooser;
     gint res;
 
     dialog = gtk_file_chooser_dialog_new ("Save File",
-                                          ui->window,
+                                          interface->ui.window,
                                           GTK_FILE_CHOOSER_ACTION_SAVE,
                                           "Cancel",
                                           GTK_RESPONSE_CANCEL,
@@ -292,7 +280,7 @@ void on_save(GtkModelButton *button, gpointer user_data)
 
         filename = gtk_file_chooser_get_filename (chooser);
         //save_to_file (filename);
-        GdkPixbuf *pixbuf = gtk_image_get_pixbuf(ui->s_image);
+        GdkPixbuf *pixbuf = gtk_image_get_pixbuf(interface->ui.s_image);
         pixbuf = gdk_pixbuf_add_alpha(pixbuf, FALSE, 0, 0, 0);
         gdk_pixbuf_save(pixbuf, to_png(filename), "png", NULL, NULL);
         g_free (filename);
@@ -357,13 +345,24 @@ int main()
         .autorot_button = autorot_button
     };
 
+    Data data = {
+        .angle = 0.0f,
+        .trained = false,
+        .solved = false,
+    };
+
+    Interface interface = {
+        .ui = ui,
+        .data = data,
+    };
+
     g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
-    g_signal_connect(open_button, "clicked", G_CALLBACK(file_set), &ui);
-    g_signal_connect(solve_button, "clicked", G_CALLBACK(on_solve), &ui);
-    g_signal_connect(step_button, "clicked", G_CALLBACK(on_step), &ui);
-    g_signal_connect(train_button, "clicked", G_CALLBACK(on_train), &ui);
-    g_signal_connect(load_button, "clicked", G_CALLBACK(on_load), &ui);
-    g_signal_connect(save_button, "clicked", G_CALLBACK(on_save), &ui);
+    g_signal_connect(open_button, "clicked", G_CALLBACK(file_set), &interface);
+    g_signal_connect(solve_button, "clicked", G_CALLBACK(on_solve), &interface);
+    g_signal_connect(step_button, "clicked", G_CALLBACK(on_step), &interface);
+    g_signal_connect(train_button, "clicked", G_CALLBACK(on_train), &interface);
+    g_signal_connect(load_button, "clicked", G_CALLBACK(on_load), &interface);
+    g_signal_connect(save_button, "clicked", G_CALLBACK(on_save), &interface);
 
 
     gtk_main();

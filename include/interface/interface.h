@@ -11,6 +11,7 @@
 
 #pragma once
 #include <gtk/gtk.h>
+#include "utils.h"
 
 typedef struct UI
 {
@@ -26,11 +27,24 @@ typedef struct UI
     GtkModelButton          *autorot_button;
 } UI;
 
+typedef struct Data
+{
+    float angle;     // Rotation angle in degrees
+    bool  trained;   // If the neural network is trained
+    bool  solved;    // If the grid was solved
+} Data;
+
 typedef struct Progress
 {
     GtkDialog       *dialog;
     GtkProgressBar  *bar;
 } Progress;
+
+typedef struct Interface
+{
+    UI      ui;
+    Data    data;
+} Interface;
 
 /* dialog_error(window, msg): Shows up a dialog with an error msg
  */
