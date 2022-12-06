@@ -8,6 +8,7 @@
  * Started on  06/10 julie.fiadino
  * Last Update 27/10 julie.fiadino
 */
+#include <stddef.h>
 #include "utils.h"
 #include "interface/interface.h"
 #include "interface/output.h"
@@ -221,10 +222,31 @@ void on_load(GtkModelButton *button, gpointer user_data)
     // TODO: Load neural network weights
 }
 
+char* to_png(const char* filename)
+{
+    char* filename2;
+    size_t len = 0;
+    while (*(filename + len))
+    {
+        len++;
+    }
+    filename2 = malloc(sizeof(char)*(len+4) + 1);
+    size_t i = 0;
+    while (i < len)
+    {
+        *(filename2 + i) = *(filename + i);
+        i++;
+    }
+    *(filename2 + i++) = '.';
+    *(filename2 + i++) = 'p';
+    *(filename2 + i++) = 'n';
+    *(filename2 + i++) = 'g';
+    return filename2;
+}
+
 void on_save(GtkModelButton *button, gpointer user_data)
 {
     UI *ui = user_data;
-    printf("debut\n");
 
     GtkWidget *dialog;
     GtkFileChooser *chooser;
@@ -243,7 +265,7 @@ void on_save(GtkModelButton *button, gpointer user_data)
     gtk_file_chooser_set_do_overwrite_confirmation (chooser, TRUE);
 
         gtk_file_chooser_set_current_name (chooser,
-                                           "Untitled document");
+                                           "Untitled document.png");
 
     res = gtk_dialog_run (GTK_DIALOG (dialog));
     if (res == GTK_RESPONSE_ACCEPT)
@@ -254,7 +276,7 @@ void on_save(GtkModelButton *button, gpointer user_data)
         //save_to_file (filename);
         GdkPixbuf *pixbuf = gtk_image_get_pixbuf(ui->s_image);
         pixbuf = gdk_pixbuf_add_alpha(pixbuf, FALSE, 0, 0, 0);
-        gdk_pixbuf_save(pixbuf, filename, "png", NULL, NULL);
+        gdk_pixbuf_save(pixbuf, to_png(filename), "png", NULL, NULL);
         g_free (filename);
     }
 
