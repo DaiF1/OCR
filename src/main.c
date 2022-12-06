@@ -179,7 +179,7 @@ void on_solve(GtkModelButton *button, gpointer user_data)
             // format 'grid_xy.png'
             char *buffer = malloc(sizeof(char) * 18);
             sprintf(buffer, "boxes/grid_%i%i.png", x, y);
-            save_and_crop_image(&copy, x * 24, y * 24, 24, 24, buffer);
+            save_and_crop_image(&img, x * 24, y * 24, 24, 24, buffer);
 
             // TODO: number recognition
             int number = 0;
@@ -216,7 +216,144 @@ void on_solve(GtkModelButton *button, gpointer user_data)
 
 void on_step(GtkModelButton *button, gpointer user_data)
 {
-    // TODO: Solve but show steps
+    Interface *interface = user_data;
+
+    if (gtk_image_get_storage_type(interface->ui.s_image) ==
+            GTK_IMAGE_EMPTY)
+    {
+        dialog_error(interface->ui.window, GTK_MESSAGE_ERROR,
+                "No Image Given");
+        return;
+    }
+
+    if (!interface->data.trained)
+        dialog_error(interface->ui.window, GTK_MESSAGE_WARNING,
+                "Neural Network not trained");
+    else
+        interface->data.solved = true;
+
+    if (interface->data.solved)
+    {
+        dialog_error(interface->ui.window, GTK_MESSAGE_WARNING,
+                "Grid already solved");
+        return;
+    }
+
+    GdkPixbuf *pixbuf = gtk_image_get_pixbuf(interface->ui.s_image);
+
+    t_image img = {0};
+    img.pixels = (uint32 *)gdk_pixbuf_get_pixels(pixbuf);
+    img.width = (int32)gdk_pixbuf_get_width(pixbuf);
+    img.height = (int32)gdk_pixbuf_get_height(pixbuf);
+
+    // TODO: rotation auto
+
+    gray_scale(&img);
+
+    gtk_image_set_from_pixbuf(interface->ui.s_image, pixbuf);
+    dialog_error(interface->ui.window, GTK_MESSAGE_OTHER,
+                "Grayscale");
+
+    adjust_image(&img, 2);
+
+    gtk_image_set_from_pixbuf(interface->ui.s_image, pixbuf);
+    dialog_error(interface->ui.window, GTK_MESSAGE_OTHER,
+                "Luminosity Adjusments");
+
+    otsu(&img);
+
+    gtk_image_set_from_pixbuf(interface->ui.s_image, pixbuf);
+    dialog_error(interface->ui.window, GTK_MESSAGE_OTHER,
+                "Binarisation");
+
+    t_image copy = {
+        calloc(img.width * img.height, sizeof(uint32)),
+        img.width,
+        img.height
+    };
+
+    memcpy(copy.pixels, img.pixels,
+            img.width * img.height * sizeof(uint32));
+
+    int *labels = component_analysis(&img);
+    int nb_labels = get_nb_of_labels(labels, img.height*img.width);
+    int *size_of_labels = get_size_of_labels(labels, img.height*img.width);
+    int max_label = get_max_label(size_of_labels, nb_labels);
+
+    isolate_label(&img, labels, max_label);
+
+    gtk_image_set_from_pixbuf(interface->ui.s_image, pixbuf);
+    dialog_error(interface->ui.window, GTK_MESSAGE_OTHER,
+                "Grid Isolation");
+
+    // TODO: grid detection
+
+    //int32 *ce = malloc(sizeof(int32) * 25);
+    //circle_element(ce, 2);
+    //morpho_erosion(&copy, &img, ce, 2);
+    get_corners(&img, &img);
+
+    gtk_image_set_from_pixbuf(interface->ui.s_image, pixbuf);
+    dialog_error(interface->ui.window, GTK_MESSAGE_OTHER,
+                "Grid Detection");
+    
+    // TODO: image crop
+
+    gtk_image_set_from_pixbuf(interface->ui.s_image, pixbuf);
+    dialog_error(interface->ui.window, GTK_MESSAGE_OTHER,
+                "Image Crop");
+
+    system("mkdir boxes");
+
+    int grid[9][9] = {0};
+    int grid_solved[9][9] = {0};
+
+    for (int y = 0; y < 9; y++)
+    {
+        for (int x = 0; x < 9; x++)
+        {
+            // format 'grid_xy.png'
+            char *buffer = malloc(sizeof(char) * 18);
+            sprintf(buffer, "boxes/grid_%i%i.png", x, y);
+            save_and_crop_image(&copy, x * 24, y * 24, 24, 24, buffer);
+
+            // TODO: number recognition
+            int number = 0;
+
+            grid[y][x] = -1;
+            grid_solved[y][x] = number;
+        }
+    }
+
+    system("rm -r boxes/");
+
+    dialog_error(interface->ui.window, GTK_MESSAGE_OTHER,
+                "Image Splitting");
+
+    if (!solver(grid_solved, 0))
+    {
+        dialog_error(interface->ui.window, GTK_MESSAGE_ERROR,
+                "Unable to Solve Grid");
+        return;
+    }
+
+    dialog_error(interface->ui.window, GTK_MESSAGE_OTHER,
+                "Grid Resolution");
+
+    pixbuf = gdk_pixbuf_new_from_file("img/empty.png", NULL);
+    pixbuf = gdk_pixbuf_add_alpha(pixbuf, FALSE, 0, 0, 0);
+
+    int src_width = (int)gdk_pixbuf_get_width(pixbuf);
+    int src_height = (int)gdk_pixbuf_get_height(pixbuf);
+
+    pixbuf = gdk_pixbuf_scale_simple(pixbuf,
+            src_width * DEST_IMG_SIZE / src_height, DEST_IMG_SIZE, GDK_INTERP_BILINEAR);
+
+    uint32 *pixels = (uint32 *)gdk_pixbuf_get_pixels(pixbuf);
+
+    generate_output(grid, grid_solved, pixels);
+
+    gtk_image_set_from_pixbuf(interface->ui.s_image, pixbuf);
 }
 
 void on_train(GtkModelButton *button, gpointer user_data)
@@ -230,7 +367,11 @@ void on_train(GtkModelButton *button, gpointer user_data)
 
 void on_load(GtkModelButton *button, gpointer user_data)
 {
+    Interface *interface = user_data;
+
     // TODO: Load neural network weights
+    
+    interface->data.trained = true;
 }
 
 char* to_png(const char* filename)
