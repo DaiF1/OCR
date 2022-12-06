@@ -268,7 +268,7 @@ void on_save(GtkModelButton *button, gpointer user_data)
     gtk_file_chooser_set_do_overwrite_confirmation (chooser, TRUE);
 
         gtk_file_chooser_set_current_name (chooser,
-                                           "Untitled document");
+                                           "Untitled_document");
 
     res = gtk_dialog_run (GTK_DIALOG (dialog));
     if (res == GTK_RESPONSE_ACCEPT)
