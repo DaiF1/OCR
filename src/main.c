@@ -140,12 +140,18 @@ void on_solve(GtkModelButton *button, gpointer user_data)
     adjust_image(&copy, 2);
     otsu(&copy);
 
-    int *labels = component_analysis(&copy);
+    t_image label_copy = {
+        calloc(img.width * img.height, sizeof(uint32)),
+        img.width,
+        img.height
+    };
+
+    int *labels = component_analysis(&label_copy);
     int nb_labels = get_nb_of_labels(labels, copy.height*copy.width);
     int *size_of_labels = get_size_of_labels(labels, copy.height*copy.width);
     int max_label = get_max_label(size_of_labels, nb_labels);
 
-    isolate_label(&copy, labels, max_label);
+    isolate_label(&label_copy, labels, max_label);
 
     // TODO: grid detection
 
