@@ -14,12 +14,13 @@
 
 #include "interface/output.h"
 #include "loader.h"
+#include "textures.h"
 
 void print_number(SDL_Surface *surface, char number[],
         int x, int y, t_color color)
 {
     TTF_Init();
-    TTF_Font *font = TTF_OpenFont("fonts/FreeMonoBold.otf", 54);
+    TTF_Font *font = TTF_OpenFont("fonts/FreeMonoBold.otf", 24);
     SDL_Color c = {color.r, color.g, color.b, 255};
 
     if (!font)
@@ -30,8 +31,8 @@ void print_number(SDL_Surface *surface, char number[],
     if (!num)
         return;
 
-    int tile_size = 500 / 9;
-    SDL_Rect numpos = {x * tile_size + 14, y * tile_size + 4, tile_size - 28, tile_size - 8};
+    int tile_size = DEST_IMG_SIZE / 9;
+    SDL_Rect numpos = {x * tile_size + 8, y * tile_size + 2, tile_size - 16, tile_size - 4};
     SDL_BlitSurface(num, NULL, surface, &numpos);
 
     SDL_FreeSurface(num);
@@ -43,8 +44,8 @@ void generate_output(int grid[9][9], int solved[9][9], uint32 *dest)
 {
     SDL_Surface *surface = SDL_CreateRGBSurfaceFrom(
             dest,
-            500, 500,
-            32, 4 * 500,
+            DEST_IMG_SIZE, DEST_IMG_SIZE,
+            32, 4 * DEST_IMG_SIZE,
             0x000000ff, 0x0000ff00, 0x00ff0000, 0xff000000);
 
     if (!surface)

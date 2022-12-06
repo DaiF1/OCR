@@ -9,15 +9,20 @@
  * Last Update 27/10 julie.fiadino
 */
 #include <stddef.h>
+#include "loader.h"
 #include "utils.h"
+
 #include "interface/interface.h"
 #include "interface/output.h"
+
 #include "imgprocess.h"
+#include "sobel.h"
+#include "morpho.h"
+#include "textures.h"
+
 #include "reader.h"
 #include "solver.h"
 #include "saver.h"
-#include "sobel.h"
-#include "morpho.h"
 
 gpointer thread_progress(gpointer user_data)
 {
@@ -158,6 +163,23 @@ void on_solve(GtkModelButton *button, gpointer user_data)
 
     
     // TODO: image crop
+    t_bounds bounds = {
+        {100, 67},
+        {500, 67},
+        {100, 468},
+        {500, 468},
+    };
+
+    DEBUG_draw_bounds(&img, bounds);
+
+    t_image cropped = {
+        malloc(sizeof(uint32) * DEST_IMG_SIZE * DEST_IMG_SIZE),
+        DEST_IMG_SIZE,
+        DEST_IMG_SIZE
+    };
+    remap(&img, &cropped, bounds);
+
+    DEBUG_display_image(&cropped);
 
     system("mkdir boxes");
 
@@ -190,6 +212,7 @@ void on_solve(GtkModelButton *button, gpointer user_data)
         return;
     }
 
+    /*
     pixbuf = gdk_pixbuf_new_from_file("img/empty.png", NULL);
     pixbuf = gdk_pixbuf_add_alpha(pixbuf, FALSE, 0, 0, 0);
 
@@ -197,12 +220,17 @@ void on_solve(GtkModelButton *button, gpointer user_data)
     int src_height = (int)gdk_pixbuf_get_height(pixbuf);
 
     pixbuf = gdk_pixbuf_scale_simple(pixbuf,
-            src_width * 500 / src_height, 500, GDK_INTERP_BILINEAR);
+            src_width * DEST_IMG_SIZE / src_height, DEST_IMG_SIZE, GDK_INTERP_BILINEAR);
 
     uint32 *pixels = (uint32 *)gdk_pixbuf_get_pixels(pixbuf);
+    */
     
     // TODO: write to image
-    generate_output(grid, grid_solved, pixels);
+    generate_output(grid, grid_solved, cropped.pixels);
+
+    DEBUG_display_image(&cropped);
+
+    revert_mapping(&cropped, &img, bounds);
 
     gtk_widget_destroy(GTK_WIDGET(dialog));
     gtk_image_set_from_pixbuf(interface->ui.s_image, pixbuf);
