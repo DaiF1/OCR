@@ -8,7 +8,6 @@
  * Started on  06/10 julie.fiadino
  * Last Update 27/10 julie.fiadino
 */
-#include <stdio.h>
 #include "utils.h"
 #include "interface/interface.h"
 #include "interface/output.h"
@@ -260,29 +259,6 @@ void on_save(GtkModelButton *button, gpointer user_data)
     }
 
     gtk_widget_destroy (dialog);
-
-    /*
-    GtkWidget* dialogue = gtk_file_chooser_dialog_new("Select a destination", ui->window, GTK_FILE_CHOOSER_ACTION_SAVE,
-                                                      "test",
-                                                      "Cancel", GTK_RESPONSE_CANCEL,
-                                                      "Ok", GTK_RESPONSE_OK,
-                                                      NULL);
-
-    gtk_dialog_add_button(GTK_DIALOG(dialogue), "Cancel", GTK_RESPONSE_CANCEL);
-    gtk_dialog_add_button(GTK_DIALOG(dialogue), "Ok", GTK_RESPONSE_OK);
-    gchar *filename = gtk_file_chooser_get_filename(
-            GTK_FILE_CHOOSER(button));
-    printf("%s\n", filename);*/
-    /*
-    GtkWidget *dialog gtk_file_chooser_dialog_new
-    gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(button), "");
-
-    printf("eee\n");
-    GdkPixbuf *pixbuf = gtk_image_get_pixbuf(ui->s_image);
-    pixbuf = gdk_pixbuf_add_alpha(pixbuf, FALSE, 0, 0, 0);
-    gdk_pixbuf_save(pixbuf, filename, "png", NULL, NULL);*/
-    // TODO: Save image to file
-    // NOTE: See pixbuf class for image saving utility
 }
 
 void on_rotate(GtkModelButton *button, gpointer user_data)
