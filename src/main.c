@@ -87,6 +87,8 @@ void file_set(GtkFileChooserButton *button, gpointer user_data)
 
         gtk_image_set_from_pixbuf(interface->ui.s_image, pixbuf);
 
+        interface->data.solved = false;
+
         g_free(filename);
     }
 
