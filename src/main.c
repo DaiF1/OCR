@@ -71,6 +71,19 @@ void file_set(GtkFileChooserButton *button, gpointer user_data)
             GTK_RESPONSE_ACCEPT,
             NULL);
 
+    GtkFileFilter *filter = gtk_file_filter_new();
+    gtk_file_filter_add_pattern(filter, "*.png");
+    gtk_file_filter_add_pattern(filter, "*.jpg");
+    gtk_file_filter_add_pattern(filter, "*.bmp");
+    gtk_file_filter_set_name(filter, "Images (.png/.jpg/.bmp)");
+
+    GtkFileFilter *filter_none = gtk_file_filter_new();
+    gtk_file_filter_add_pattern(filter_none, "*");
+    gtk_file_filter_set_name(filter_none, "All Files");
+
+    gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(dialog), filter);
+    gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(dialog), filter_none);
+
     res = gtk_dialog_run(GTK_DIALOG(dialog));
     if (res == GTK_RESPONSE_ACCEPT)
     {
@@ -328,7 +341,7 @@ void on_step(GtkModelButton *button, gpointer user_data)
     system("rm -r boxes/");
 
     dialog_error(interface->ui.window, GTK_MESSAGE_OTHER,
-                "Image Splitting");
+                "Character Recognition");
 
     if (!solver(grid_solved, 0))
     {
