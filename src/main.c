@@ -123,19 +123,6 @@ void on_solve(GtkModelButton *button, gpointer user_data)
     img.width = (int32)gdk_pixbuf_get_width(pixbuf);
     img.height = (int32)gdk_pixbuf_get_height(pixbuf);
 
-    GtkDialogFlags flags = GTK_DIALOG_DESTROY_WITH_PARENT;
-    GtkDialog *dialog = GTK_DIALOG(gtk_message_dialog_new(interface->ui.window,
-            flags,
-            GTK_MESSAGE_ERROR,
-            GTK_BUTTONS_CLOSE,
-            "Solving Sudoku..."));
-
-    // TODO: rotation auto
-
-    gray_scale(&img);
-    adjust_image(&img, 2);
-    otsu(&img);
-
     t_image copy = {
         calloc(img.width * img.height, sizeof(uint32)),
         img.width,
@@ -145,7 +132,13 @@ void on_solve(GtkModelButton *button, gpointer user_data)
     memcpy(copy.pixels, img.pixels,
             img.width * img.height * sizeof(uint32));
 
-    int *labels = component_analysis(&img);
+    // TODO: rotation auto
+
+    gray_scale(&copy);
+    adjust_image(&copy, 2);
+    otsu(&copy);
+
+    int *labels = component_analysis(&copy);
     int nb_labels = get_nb_of_labels(labels, copy.height*copy.width);
     int *size_of_labels = get_size_of_labels(labels, copy.height*copy.width);
     int max_label = get_max_label(size_of_labels, nb_labels);
@@ -177,7 +170,7 @@ void on_solve(GtkModelButton *button, gpointer user_data)
         DEST_IMG_SIZE,
         DEST_IMG_SIZE
     };
-    remap(&img, &cropped, bounds);
+    remap(&copy, &cropped, bounds);
 
     DEBUG_display_image(&cropped);
 
@@ -194,7 +187,7 @@ void on_solve(GtkModelButton *button, gpointer user_data)
             // format 'grid_xy.png'
             char *buffer = malloc(sizeof(char) * 18);
             sprintf(buffer, "boxes/grid_%i%i.png", x, y);
-            save_and_crop_image(&img, x * 24, y * 24, 24, 24, buffer);
+            save_and_crop_image(&copy, x * 24, y * 24, 24, 24, buffer);
 
             // TODO: number recognition
             int number = 0;
@@ -232,7 +225,6 @@ void on_solve(GtkModelButton *button, gpointer user_data)
 
     revert_mapping(&cropped, &img, bounds);
 
-    gtk_widget_destroy(GTK_WIDGET(dialog));
     gtk_image_set_from_pixbuf(interface->ui.s_image, pixbuf);
 
     interface->data.solved = true;
