@@ -16,7 +16,7 @@ typedef struct UI
 {
     GtkWindow               *window;
     GtkImage                *s_image;
-    GtkModelButton    *file_chooser;
+    GtkModelButton          *file_chooser;
     GtkModelButton          *save_button;
     GtkModelButton          *solve_button;
     GtkModelButton          *step_button;
@@ -31,6 +31,10 @@ typedef struct Progress
     GtkDialog       *dialog;
     GtkProgressBar  *bar;
 } Progress;
+
+/* dialog_error(window, msg): Shows up a dialog with an error msg
+ */
+void dialog_error(GtkWindow *window, char *msg);
 
 /* file_set(button, user_data): called when pressing the open file button
  */

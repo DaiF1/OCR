@@ -28,6 +28,21 @@ gpointer thread_progress(gpointer user_data)
     return NULL;
 }
 
+void dialog_error(GtkWindow *window, char *msg)
+{
+    GtkWidget *dialog;
+    GtkDialogFlags flags = GTK_DIALOG_DESTROY_WITH_PARENT;
+    dialog = gtk_message_dialog_new_with_markup(window,
+                                      flags,
+                                      GTK_MESSAGE_ERROR,
+                                      GTK_BUTTONS_CLOSE,
+                                      msg);
+
+    gtk_window_set_title(GTK_WINDOW(dialog), "Error");
+    gtk_dialog_run(GTK_DIALOG(dialog));
+    gtk_widget_destroy(dialog);
+}
+
 void file_set(GtkFileChooserButton *button, gpointer user_data)
 {
     UI *ui = user_data;
@@ -79,7 +94,10 @@ void on_solve(GtkModelButton *button, gpointer user_data)
 
     if (gtk_image_get_storage_type(ui->s_image) ==
             GTK_IMAGE_EMPTY)
+    {
+        dialog_error(ui->window, "No Image Given");
         return;
+    }
 
     GdkPixbuf *pixbuf = gtk_image_get_pixbuf(ui->s_image);
 
@@ -184,7 +202,7 @@ void on_solve(GtkModelButton *button, gpointer user_data)
 
     if (!solver(grid_solved, 0))
     {
-        // TODO: Show message box with error
+        dialog_error(ui->window, "Unable to Solve Grid");
         return;
     }
 
