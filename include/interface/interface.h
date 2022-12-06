@@ -48,7 +48,7 @@ typedef struct Interface
 
 /* dialog_error(window, msg): Shows up a dialog with an error msg
  */
-void dialog_error(GtkWindow *window, char *msg);
+void dialog_msg(GtkWindow *window, GtkMessageType type, char *msg);
 
 /* file_set(button, user_data): called when pressing the open file button
  */

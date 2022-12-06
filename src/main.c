@@ -33,17 +33,23 @@ gpointer thread_progress(gpointer user_data)
     return NULL;
 }
 
-void dialog_error(GtkWindow *window, char *msg)
+void dialog_error(GtkWindow *window, GtkMessageType type, char *msg)
 {
+    char *title = "Info";
+    if (type == GTK_MESSAGE_ERROR)
+        title = "Error";
+    if (type == GTK_MESSAGE_WARNING)
+        title = "Warning";
+
     GtkWidget *dialog;
     GtkDialogFlags flags = GTK_DIALOG_DESTROY_WITH_PARENT;
     dialog = gtk_message_dialog_new_with_markup(window,
                                       flags,
-                                      GTK_MESSAGE_ERROR,
+                                      type,
                                       GTK_BUTTONS_CLOSE,
-                                      "%s", msg);
+                                      "<b>%s</b>: %s", title, msg);
 
-    gtk_window_set_title(GTK_WINDOW(dialog), "Error");
+    gtk_window_set_title(GTK_WINDOW(dialog), title);
     gtk_dialog_run(GTK_DIALOG(dialog));
     gtk_widget_destroy(dialog);
 }
@@ -101,20 +107,21 @@ void on_solve(GtkModelButton *button, gpointer user_data)
 
     if (!interface->data.trained)
     {
-        dialog_error(interface->ui.window,
-                "Warning: Neural Network not trained");
+        dialog_error(interface->ui.window, GTK_MESSAGE_WARNING,
+                "Neural Network not trained");
     }
 
     if (interface->data.solved)
     {
-        dialog_error(interface->ui.window, "Grid already solved");
-        return;
+        dialog_error(interface->ui.window, GTK_MESSAGE_WARNING,
+                "Grid already solved");
     }
 
     if (gtk_image_get_storage_type(interface->ui.s_image) ==
             GTK_IMAGE_EMPTY)
     {
-        dialog_error(interface->ui.window, "Error: No Image Given");
+        dialog_error(interface->ui.window, GTK_MESSAGE_ERROR,
+                "No Image Given");
         return;
     }
 
@@ -155,7 +162,6 @@ void on_solve(GtkModelButton *button, gpointer user_data)
     morpho_erosion(&copy, &img, ce, 2);
     get_corners(&img, &img);
     */
-
     
     // TODO: image crop
 
@@ -186,7 +192,8 @@ void on_solve(GtkModelButton *button, gpointer user_data)
 
     if (!solver(grid_solved, 0))
     {
-        dialog_error(interface->ui.window, "Error: Unable to Solve Grid");
+        dialog_error(interface->ui.window, GTK_MESSAGE_ERROR,
+                "Unable to Solve Grid");
         return;
     }
 
