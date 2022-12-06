@@ -114,15 +114,16 @@ void on_solve(GtkModelButton *button, gpointer user_data)
     }
 
     if (!interface->data.trained)
-    {
         dialog_error(interface->ui.window, GTK_MESSAGE_WARNING,
                 "Neural Network not trained");
-    }
+    else
+        interface->data.solved = true;
 
     if (interface->data.solved)
     {
         dialog_error(interface->ui.window, GTK_MESSAGE_WARNING,
                 "Grid already solved");
+        return;
     }
 
     GdkPixbuf *pixbuf = gtk_image_get_pixbuf(interface->ui.s_image);
@@ -211,7 +212,6 @@ void on_solve(GtkModelButton *button, gpointer user_data)
     generate_output(grid, grid_solved, pixels);
 
     gtk_image_set_from_pixbuf(interface->ui.s_image, pixbuf);
-    interface->data.solved = true;
 }
 
 void on_step(GtkModelButton *button, gpointer user_data)
