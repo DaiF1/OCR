@@ -102,7 +102,7 @@ void on_solve(GtkModelButton *button, gpointer user_data)
     if (!interface->data.trained)
     {
         dialog_error(interface->ui.window,
-                "<b>Warning:</b> Neural Network not trained");
+                "Warning: Neural Network not trained");
     }
 
     if (interface->data.solved)
@@ -114,7 +114,7 @@ void on_solve(GtkModelButton *button, gpointer user_data)
     if (gtk_image_get_storage_type(interface->ui.s_image) ==
             GTK_IMAGE_EMPTY)
     {
-        dialog_error(interface->ui.window, "<b>Error:</b> No Image Given");
+        dialog_error(interface->ui.window, "Error: No Image Given");
         return;
     }
 
@@ -186,7 +186,7 @@ void on_solve(GtkModelButton *button, gpointer user_data)
 
     if (!solver(grid_solved, 0))
     {
-        dialog_error(interface->ui.window, "<b>Error:</b> Unable to Solve Grid");
+        dialog_error(interface->ui.window, "Error: Unable to Solve Grid");
         return;
     }
 
@@ -214,7 +214,11 @@ void on_step(GtkModelButton *button, gpointer user_data)
 
 void on_train(GtkModelButton *button, gpointer user_data)
 {
+    Interface *interface = user_data;
+
     // TODO: Train the neural network
+
+    interface->data.trained = true;
 }
 
 void on_load(GtkModelButton *button, gpointer user_data)
