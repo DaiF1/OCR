@@ -2,6 +2,7 @@
 <!-- Generated with glade 3.40.0 -->
 <interface>
   <requires lib="gtk+" version="3.24"/>
+  <object class="GtkTextBuffer"/>
   <object class="GtkMenu" id="menu1">
     <property name="visible">True</property>
     <property name="can-focus">False</property>
@@ -80,6 +81,48 @@
             <property name="expand">False</property>
             <property name="fill">True</property>
             <property name="position">1</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkBox">
+            <property name="visible">True</property>
+            <property name="can-focus">False</property>
+            <child>
+              <object class="GtkModelButton" id="_Rotate2">
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="receives-default">True</property>
+                <property name="tooltip-text" translatable="yes">Rotate the image manually</property>
+                <property name="text" translatable="yes">Manual Rotation</property>
+                <property name="centered">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">0</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkScaleButton" id="_Rotate1">
+                <property name="visible">True</property>
+                <property name="can-focus">True</property>
+                <property name="focus-on-click">False</property>
+                <property name="receives-default">True</property>
+                <property name="relief">none</property>
+                <property name="orientation">vertical</property>
+                <property name="size">invalid</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">3</property>
           </packing>
         </child>
       </object>
@@ -230,7 +273,6 @@
                     <property name="focus-on-click">False</property>
                     <property name="receives-default">True</property>
                     <property name="tooltip-text" translatable="yes">Solve the sudoku</property>
-                    <property name="popover">popovermenu1</property>
                     <child>
                       <object class="GtkLabel">
                         <property name="visible">True</property>
@@ -267,38 +309,20 @@
       </object>
     </child>
   </object>
-  <object class="GtkPopoverMenu" id="popovermenu1">
+  <object class="GtkPopover" id="popover4">
     <property name="can-focus">False</property>
-    <property name="relative-to">menubutton1</property>
-    <property name="position">bottom</property>
     <child>
       <object class="GtkBox">
         <property name="visible">True</property>
         <property name="can-focus">False</property>
         <property name="orientation">vertical</property>
         <child>
-          <object class="GtkModelButton" id="_Solve">
+          <object class="GtkModelButton" id="_AutoRot1">
             <property name="visible">True</property>
             <property name="can-focus">True</property>
             <property name="receives-default">True</property>
-            <property name="tooltip-text" translatable="yes">Solve the sudoku</property>
-            <property name="text" translatable="yes">Solve</property>
-            <property name="centered">True</property>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">0</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkModelButton" id="_Step">
-            <property name="visible">True</property>
-            <property name="can-focus">True</property>
-            <property name="receives-default">True</property>
-            <property name="tooltip-text" translatable="yes">Step through the sudoku solving process</property>
-            <property name="text" translatable="yes">Step Through</property>
-            <property name="centered">True</property>
+            <property name="tooltip-text" translatable="yes">Automatic image rotation</property>
+            <property name="text" translatable="yes">Automatic Rotation</property>
           </object>
           <packing>
             <property name="expand">False</property>
@@ -307,10 +331,6 @@
           </packing>
         </child>
       </object>
-      <packing>
-        <property name="submenu">main</property>
-        <property name="position">1</property>
-      </packing>
     </child>
   </object>
 </interface>

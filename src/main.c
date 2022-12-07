@@ -450,22 +450,34 @@ void on_save(GtkModelButton *button, gpointer user_data)
 
 void on_rotate(GtkModelButton *button, gdouble v, gpointer user_data)
 {
+    v = v * 3.6;
+    Interface *interface = user_data;
+    v -= interface->data.angle;
+    if (v < 0)
+    {
+        v += 360;
+    }
+    interface->data.angle = v;
     printf("debut %f\n", v);
-    Interface *interface = user_data;
-    rotate(interface->ui.s_image, interface->ui.s_image, v);
-    /*
-    Interface *interface = user_data;
-    GtkWidget *dialog;
-    GtkDialogFlags flags = GTK_DIALOG_DESTROY_WITH_PARENT;
-    dialog = gtk_dialog_new_with_buttons("Rotation",
-                                         interface->ui.window,
-                                         flags,
-                                         "_OK",
-                                         GTK_RESPONSE_ACCEPT,
-                                         NULL);
-    //GtkWidget *slider = gtk_scale_button_new(GtkIconSize(10), 0, 360, 1, NULL);
-    gtk_dialog_run(GTK_DIALOG(dialog));
-    gtk_widget_destroy(dialog);*/
+
+    GdkPixbuf *pixbuf = gtk_image_get_pixbuf(interface->ui.s_image);
+    t_image img = {0};
+    img.pixels = (uint32 *)gdk_pixbuf_get_pixels(pixbuf);
+    img.width = (int32)gdk_pixbuf_get_width(pixbuf);
+    img.height = (int32)gdk_pixbuf_get_height(pixbuf);
+
+    t_image copy = {
+            calloc(img.width * img.height, sizeof(uint32)),
+            img.width,
+            img.height
+    };
+
+    memcpy(copy.pixels, img.pixels,
+           img.width * img.height * sizeof(uint32));
+
+
+    rotate(&copy, &img, v);
+    gtk_image_set_from_pixbuf(interface->ui.s_image, pixbuf);
     // TODO: display dialog for rotation
 }
 
