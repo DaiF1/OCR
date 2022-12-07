@@ -42,7 +42,6 @@ void dialog_error(GtkWindow *window, char *msg)
                                       GTK_MESSAGE_ERROR,
                                       GTK_BUTTONS_CLOSE,
                                       "%s", msg);
-
     gtk_window_set_title(GTK_WINDOW(dialog), "Error");
     gtk_dialog_run(GTK_DIALOG(dialog));
     gtk_widget_destroy(dialog);
@@ -308,10 +307,27 @@ void on_save(GtkModelButton *button, gpointer user_data)
     gtk_widget_destroy (dialog);
 }
 
-void on_rotate(GtkModelButton *button, gpointer user_data)
+void on_rotate(GtkModelButton *button, gdouble v, gpointer user_data)
 {
+    printf("debut %f\n", v);
+    Interface *interface = user_data;
+    rotate(interface->ui.s_image, interface->ui.s_image, v);
+    /*
+    Interface *interface = user_data;
+    GtkWidget *dialog;
+    GtkDialogFlags flags = GTK_DIALOG_DESTROY_WITH_PARENT;
+    dialog = gtk_dialog_new_with_buttons("Rotation",
+                                         interface->ui.window,
+                                         flags,
+                                         "_OK",
+                                         GTK_RESPONSE_ACCEPT,
+                                         NULL);
+    //GtkWidget *slider = gtk_scale_button_new(GtkIconSize(10), 0, 360, 1, NULL);
+    gtk_dialog_run(GTK_DIALOG(dialog));
+    gtk_widget_destroy(dialog);*/
     // TODO: display dialog for rotation
 }
+
 
 void on_autorot(GtkModelButton *button, gpointer user_data)
 {
@@ -349,7 +365,7 @@ int main()
     GtkModelButton *load_button =
         GTK_MODEL_BUTTON(gtk_builder_get_object(builder, "_Load"));
     GtkModelButton *rotate_button =
-        GTK_MODEL_BUTTON(gtk_builder_get_object(builder, "_Rotate"));
+        GTK_MODEL_BUTTON(gtk_builder_get_object(builder, "_Rotate1"));
     GtkModelButton *autorot_button =
         GTK_MODEL_BUTTON(gtk_builder_get_object(builder, "_AutoRot"));
 
@@ -382,6 +398,7 @@ int main()
     g_signal_connect(train_button, "clicked", G_CALLBACK(on_train), &interface);
     g_signal_connect(load_button, "clicked", G_CALLBACK(on_load), &interface);
     g_signal_connect(save_button, "clicked", G_CALLBACK(on_save), &interface);
+    g_signal_connect(rotate_button, "value-changed", G_CALLBACK(on_rotate), &interface);
 
 
     gtk_main();

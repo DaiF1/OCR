@@ -76,7 +76,7 @@ void on_save(GtkModelButton *button, gpointer user_data);
 
 /* on_rotate(button, user_data): called when pressig the rotate button
  */
-void on_rotate(GtkModelButton *button, gpointer user_data);
+void on_rotate(GtkModelButton *button, gdouble v, gpointer user_data);
 
 /* on_autorot(button, user_data): called when pressing the auto rotation button
  */
