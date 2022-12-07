@@ -10,19 +10,7 @@
 */
 #include "textures.h"
 #include "loader.h"
-
-float lerp(float a, float b, float w)
-{
-    return (1.0 - w) * a + w * b;
-}
-
-t_coords lerp_c(t_coords a, t_coords b, float w)
-{
-    t_coords result = {};
-    result.x = lerp(a.x, b.x, w);
-    result.y = lerp(a.y, b.y, w);
-    return result;
-}
+#include "maths.h"
 
 void remap(t_image *src, t_image *dest, t_bounds bounds)
 {
@@ -33,53 +21,13 @@ void remap(t_image *src, t_image *dest, t_bounds bounds)
             float dx = (float)x / (float)DEST_IMG_SIZE;
             float dy = (float)y / (float)DEST_IMG_SIZE;
 
-            t_coords cb = lerp_c(bounds.bl, bounds.br, dx);
-            t_coords ct = lerp_c(bounds.tl, bounds.tr, dx);
+            t_vector cb = lerp_v(bounds.bl, bounds.br, dx);
+            t_vector ct = lerp_v(bounds.tl, bounds.tr, dx);
 
-            t_coords uv = lerp_c(ct, cb, dy);
+            t_vector uv = lerp_v(ct, cb, dy);
 
             dest->pixels[y * DEST_IMG_SIZE + x] =
                 src->pixels[(int)uv.y * src->width + (int)uv.x];
-        }
-    }
-}
-
-void revert_mapping(t_image *src, t_image *dest, t_bounds bounds)
-{
-    for (int x = 0; x < DEST_IMG_SIZE; x++)
-    {
-        for (int y = 0; y < DEST_IMG_SIZE; y++)
-        {
-            float dx = (float)x / (float)DEST_IMG_SIZE;
-            float dy = (float)y / (float)DEST_IMG_SIZE;
-
-            t_coords cb = lerp_c(bounds.bl, bounds.br, dx);
-            t_coords ct = lerp_c(bounds.tl, bounds.tr, dx);
-
-            t_coords uv = lerp_c(ct, cb, dy);
-
-            float c_tl =
-                (float)(src->pixels[y * DEST_IMG_SIZE + x]
-                        & 0x000000ff) / 255.0;
-            float c_tr =
-                (float)(src->pixels[y * DEST_IMG_SIZE + x + 1]
-                        & 0x000000ff) / 255.0;
-            float c_bl =
-                (float)(src->pixels[(y + 1) * DEST_IMG_SIZE + x]
-                        & 0x000000ff) / 255.0;
-            float c_br =
-                (float)(src->pixels[(y + 1) * DEST_IMG_SIZE + x + 1]
-                    & 0x000000ff) / 255.0;
-
-            float c_top = lerp(c_tl, c_tr, uv.x - (float)((int)uv.x));
-            float c_bottom = lerp(c_bl, c_br, uv.x - (float)((int)uv.x));
-
-            float c = lerp(c_top, c_bottom, uv.y - (float)((int)uv.y));
-
-            uint32 color = 0xff000000 + (((int)(c * 255.0)) << 8) +
-                (((int)(c * 255.0)) << 4) + ((int)(c * 255.0));
-
-            dest->pixels[(int)uv.y * dest->width + (int)uv.x] = color;
         }
     }
 }
