@@ -170,14 +170,52 @@ void on_solve(GtkModelButton *button, gpointer user_data)
 
     // TODO: grid detection
 
-    /*
-    int32 *ce = malloc(sizeof(int32) * 25);
-    circle_element(ce, 2);
-    morpho_erosion(&copy, &img, ce, 2);
-    get_corners(&img, &img);
-    */
-    
-    // TODO: image crop
+    get_corners(&copy, &copy);
+
+    t_bounds bounds = {
+        {-1, -1},
+        {-1, -1},
+        {-1, -1},
+        {-1, -1}
+    };
+
+    for (int y = 0; y < copy.height; y++)
+    {
+        for (int x = 0; x < copy.width; x++)
+        {
+            if (copy.pixels[y * copy.width + x] == 0xffffffff)
+                continue;
+
+            float tl = mag(build((t_vector){0, 0},
+                        (t_vector){x, y}));
+            float tr = mag(build((t_vector){copy.width, 0},
+                        (t_vector){x, y}));
+            float bl = mag(build((t_vector){0, copy.height},
+                        (t_vector){x, y}));
+            float br = mag(build((t_vector){copy.width, copy.height},
+                        (t_vector){x, y}));
+
+            if (tl < mag(build((t_vector){0, 0}, bounds.tl)) || bounds.tl.x == -1)
+                bounds.tl = (t_vector){x, y};
+            if (tr < mag(build((t_vector){copy.width, 0}, bounds.tr)) || bounds.tr.x == -1)
+                bounds.tr = (t_vector){x, y};
+            if (bl < mag(build((t_vector){0, copy.height}, bounds.bl)) || bounds.bl.x == -1)
+                bounds.bl = (t_vector){x, y};
+            if (br < mag(build((t_vector){copy.width, copy.height}, bounds.br)) || bounds.br.x == -1)
+                bounds.br = (t_vector){x, y};
+        }
+    }
+
+    DEBUG_draw_bounds(&img, bounds);
+
+    t_image result = {
+        malloc(sizeof(uint32) * DEST_IMG_SIZE * DEST_IMG_SIZE),
+        DEST_IMG_SIZE,
+        DEST_IMG_SIZE
+    };
+
+    remap(&img, &result, bounds);
+    DEBUG_display_image(&result);
 
     system("mkdir boxes");
 
@@ -192,7 +230,7 @@ void on_solve(GtkModelButton *button, gpointer user_data)
             // format 'grid_xy.png'
             char *buffer = malloc(sizeof(char) * 18);
             sprintf(buffer, "boxes/grid_%i%i.png", x, y);
-            save_and_crop_image(&img, x * 24, y * 24, 24, 24, buffer);
+            save_and_crop_image(&result, x * DEST_TILE_SIZE, y * DEST_TILE_SIZE, DEST_TILE_SIZE, DEST_TILE_SIZE, buffer);
 
             // TODO: number recognition
             int number = 0;
@@ -299,12 +337,52 @@ void on_step(GtkModelButton *button, gpointer user_data)
     dialog_error(interface->ui.window, GTK_MESSAGE_OTHER,
                 "Grid Isolation");
 
-    // TODO: grid detection
+    get_corners(&copy, &copy);
 
-    //int32 *ce = malloc(sizeof(int32) * 25);
-    //circle_element(ce, 2);
-    //morpho_erosion(&copy, &img, ce, 2);
-    get_corners(&img, &img);
+    t_bounds bounds = {
+        {-1, -1},
+        {-1, -1},
+        {-1, -1},
+        {-1, -1}
+    };
+
+    for (int y = 0; y < copy.height; y++)
+    {
+        for (int x = 0; x < copy.width; x++)
+        {
+            if (copy.pixels[y * copy.width + x] == 0xffffffff)
+                continue;
+
+            float tl = mag(build((t_vector){0, 0},
+                        (t_vector){x, y}));
+            float tr = mag(build((t_vector){copy.width, 0},
+                        (t_vector){x, y}));
+            float bl = mag(build((t_vector){0, copy.height},
+                        (t_vector){x, y}));
+            float br = mag(build((t_vector){copy.width, copy.height},
+                        (t_vector){x, y}));
+
+            if (tl < mag(build((t_vector){0, 0}, bounds.tl)) || bounds.tl.x == -1)
+                bounds.tl = (t_vector){x, y};
+            if (tr < mag(build((t_vector){copy.width, 0}, bounds.tr)) || bounds.tr.x == -1)
+                bounds.tr = (t_vector){x, y};
+            if (bl < mag(build((t_vector){0, copy.height}, bounds.bl)) || bounds.bl.x == -1)
+                bounds.bl = (t_vector){x, y};
+            if (br < mag(build((t_vector){copy.width, copy.height}, bounds.br)) || bounds.br.x == -1)
+                bounds.br = (t_vector){x, y};
+        }
+    }
+
+    DEBUG_draw_bounds(&img, bounds);
+
+    t_image result = {
+        malloc(sizeof(uint32) * DEST_IMG_SIZE * DEST_IMG_SIZE),
+        DEST_IMG_SIZE,
+        DEST_IMG_SIZE
+    };
+
+    remap(&img, &result, bounds);
+    DEBUG_display_image(&result);
 
     gtk_image_set_from_pixbuf(interface->ui.s_image, pixbuf);
     dialog_error(interface->ui.window, GTK_MESSAGE_OTHER,
@@ -328,7 +406,7 @@ void on_step(GtkModelButton *button, gpointer user_data)
             // format 'grid_xy.png'
             char *buffer = malloc(sizeof(char) * 18);
             sprintf(buffer, "boxes/grid_%i%i.png", x, y);
-            save_and_crop_image(&copy, x * 24, y * 24, 24, 24, buffer);
+            save_and_crop_image(&result, x * DEST_TILE_SIZE, y * DEST_TILE_SIZE, DEST_TILE_SIZE, DEST_TILE_SIZE, buffer);
 
             // TODO: number recognition
             int number = 0;
