@@ -104,6 +104,15 @@ void file_set(GtkFileChooserButton *button, gpointer user_data)
                 src_width * 500 / src_height, 500,
                 GDK_INTERP_BILINEAR);
 
+        uint32 *pixels = (uint32 *)gdk_pixbuf_get_pixels(pixbuf);
+        interface->data.img.width = src_width * 500 / src_height;
+        interface->data.img.height = 500;
+
+        interface->data.img.pixels = malloc(sizeof(uint32) *
+                interface->data.img.width * interface->data.img.height);
+        memcpy(interface->data.img.pixels, pixels, 
+                sizeof(uint32) * interface->data.img.width * interface->data.img.height);
+
         gtk_image_set_from_pixbuf(interface->ui.s_image, pixbuf);
 
         interface->data.solved = false;
@@ -530,13 +539,11 @@ void on_rotate(GtkModelButton *button, gdouble v, gpointer user_data)
 {
     v = v * 3.6;
     Interface *interface = user_data;
-    v -= interface->data.angle;
     if (v < 0)
     {
         v += 360;
     }
     interface->data.angle = v;
-    printf("debut %f\n", v);
 
     GdkPixbuf *pixbuf = gtk_image_get_pixbuf(interface->ui.s_image);
     t_image img = {0};
@@ -544,17 +551,7 @@ void on_rotate(GtkModelButton *button, gdouble v, gpointer user_data)
     img.width = (int32)gdk_pixbuf_get_width(pixbuf);
     img.height = (int32)gdk_pixbuf_get_height(pixbuf);
 
-    t_image copy = {
-            calloc(img.width * img.height, sizeof(uint32)),
-            img.width,
-            img.height
-    };
-
-    memcpy(copy.pixels, img.pixels,
-           img.width * img.height * sizeof(uint32));
-
-
-    rotate(&copy, &img, v);
+    rotate(&interface->data.img, &img, v);
     gtk_image_set_from_pixbuf(interface->ui.s_image, pixbuf);
     // TODO: display dialog for rotation
 }
@@ -612,6 +609,7 @@ int main()
     };
 
     Data data = {
+        .img = {0},
         .angle = 0.0f,
         .trained = false,
         .solved = false,

@@ -55,21 +55,6 @@
         <property name="can-focus">False</property>
         <property name="orientation">vertical</property>
         <child>
-          <object class="GtkModelButton" id="_Rotate">
-            <property name="visible">True</property>
-            <property name="can-focus">True</property>
-            <property name="receives-default">True</property>
-            <property name="tooltip-text" translatable="yes">Rotate the image manually</property>
-            <property name="text" translatable="yes">Manual Rotation</property>
-            <property name="centered">True</property>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">0</property>
-          </packing>
-        </child>
-        <child>
           <object class="GtkModelButton" id="_AutoRot">
             <property name="visible">True</property>
             <property name="can-focus">True</property>
@@ -88,13 +73,11 @@
             <property name="visible">True</property>
             <property name="can-focus">False</property>
             <child>
-              <object class="GtkModelButton" id="_Rotate2">
+              <object class="GtkLabel">
                 <property name="visible">True</property>
-                <property name="can-focus">True</property>
-                <property name="receives-default">True</property>
-                <property name="tooltip-text" translatable="yes">Rotate the image manually</property>
-                <property name="text" translatable="yes">Manual Rotation</property>
-                <property name="centered">True</property>
+                <property name="can-focus">False</property>
+                <property name="label" translatable="yes"> Manual Rotation </property>
+                <property name="justify">center</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -111,6 +94,18 @@
                 <property name="relief">none</property>
                 <property name="orientation">vertical</property>
                 <property name="size">invalid</property>
+                <child internal-child="plus_button">
+                  <object class="GtkButton">
+                    <property name="can-focus">False</property>
+                    <property name="receives-default">False</property>
+                  </object>
+                </child>
+                <child internal-child="minus_button">
+                  <object class="GtkButton">
+                    <property name="can-focus">False</property>
+                    <property name="receives-default">False</property>
+                  </object>
+                </child>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -155,6 +150,45 @@
             <property name="can-focus">True</property>
             <property name="receives-default">True</property>
             <property name="text" translatable="yes">Save...</property>
+            <property name="centered">True</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+  </object>
+  <object class="GtkPopover" id="popover4">
+    <property name="can-focus">False</property>
+    <child>
+      <object class="GtkBox">
+        <property name="visible">True</property>
+        <property name="can-focus">False</property>
+        <property name="orientation">vertical</property>
+        <child>
+          <object class="GtkModelButton" id="_Solve">
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">True</property>
+            <property name="text" translatable="yes">Solve</property>
+            <property name="centered">True</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="fill">True</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkModelButton" id="_Step">
+            <property name="visible">True</property>
+            <property name="can-focus">True</property>
+            <property name="receives-default">True</property>
+            <property name="tooltip-text" translatable="yes">Automatic image rotation</property>
+            <property name="text" translatable="yes">Step Through</property>
             <property name="centered">True</property>
           </object>
           <packing>
@@ -273,6 +307,7 @@
                     <property name="focus-on-click">False</property>
                     <property name="receives-default">True</property>
                     <property name="tooltip-text" translatable="yes">Solve the sudoku</property>
+                    <property name="popover">popover4</property>
                     <child>
                       <object class="GtkLabel">
                         <property name="visible">True</property>
@@ -304,30 +339,6 @@
           <packing>
             <property name="resize">True</property>
             <property name="shrink">True</property>
-          </packing>
-        </child>
-      </object>
-    </child>
-  </object>
-  <object class="GtkPopover" id="popover4">
-    <property name="can-focus">False</property>
-    <child>
-      <object class="GtkBox">
-        <property name="visible">True</property>
-        <property name="can-focus">False</property>
-        <property name="orientation">vertical</property>
-        <child>
-          <object class="GtkModelButton" id="_AutoRot1">
-            <property name="visible">True</property>
-            <property name="can-focus">True</property>
-            <property name="receives-default">True</property>
-            <property name="tooltip-text" translatable="yes">Automatic image rotation</property>
-            <property name="text" translatable="yes">Automatic Rotation</property>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">1</property>
           </packing>
         </child>
       </object>
