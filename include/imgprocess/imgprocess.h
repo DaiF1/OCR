@@ -2,6 +2,8 @@
 
 #include "loader.h"
 
+void otsu(t_image *img);
+
 /*
  * component_analysis(..): 
  * analyse pieces of black in a image and giving them a label

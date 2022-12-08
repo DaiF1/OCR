@@ -336,11 +336,76 @@ void get_corners(const t_image *src, t_image *dest)
 
     for (int i = 0; i < src->width * src->height; i++)
     {
-        uint32 px = (dx.pixels[i] << 8) >> 8;
-        uint32 py = (dy.pixels[i] << 8) >> 8;
-        uint32 c = ((0xffffff - px) & (0xffffff - py));
-        dest->pixels[i] = 0xffffffff + ((c << 8) >> 8);
+        dest->pixels[i] = dx.pixels[i] & dy.pixels[i];
     }
+}
+
+void otsu(t_image *img)
+{
+
+	float threshold = 0;
+    unsigned long histogramme[256] = {0};
+    for (int i = 0; i < img->width*img->height; i++)
+    {
+
+        int r = (int) ((uint8)(img->pixels[i] >> 16));
+        histogramme[r]++;
+        /* printf("%u\n", img->pixels[i]); */
+    }
+
+	int total = img->width*img->height;
+
+
+
+	float varMax = 0;
+
+	int wB = 0;
+	int wF = 0;
+    float sum = 0;
+    float sumB = 0;
+
+	for (int t=0 ; t<256 ; t++) sum += t * histogramme[t];
+
+    for (int i = 0; i < 256; i++)
+    {
+        wB += histogramme[i];
+        if (i == 0)
+            continue;
+
+        wF = total - wB;
+        if (wF == 0)
+            break;
+
+        sumB += (float) (i * histogramme[i]);
+
+
+	   float mB = sumB / wB;            // Mean Background
+	   float mF = (sum - sumB) / wF;    // Mean Foreground
+       
+
+	   // Calculate Between Class Variance
+	   float varBetween = (float)wB * (float)wF * (mB - mF) * (mB - mF);
+
+	   // Check if new maximum found
+	   if (varBetween > varMax) {
+		  varMax = varBetween;
+		  threshold = i;
+	   }
+    }
+
+    for (int i = 0; i < img->width * img->height; i++)
+    {
+        // get the grey level of the current pixel
+        float grey_level = (float)((uint8)(img->pixels[i] >> 16));
+
+        // binary_color contain black or white value
+        uint32 binary_color = grey_level < threshold ? 0 : 255; 
+
+        //apply
+        img->pixels[i] = 0xff000000 + (binary_color << 16) +
+            (binary_color << 8) + binary_color;
+    }
+
 }
 
 void gray_scale(t_image *img)
@@ -354,6 +419,7 @@ void gray_scale(t_image *img)
 
         float m = max(max(r, g), b);
 
+        /* printf("%06F\n", m); */
         img->pixels[i] = 0xff000000 +
             ((uint8)(m * 255.0) << 16) +
             ((uint8)(m * 255.0) << 8) +

@@ -99,16 +99,6 @@ int recursive_solver(int grill[9][9], size_t x, size_t y, int possibilities[9][9
         return tmp;
     }
 
-    //size_t previous_x = x, previous_y = y;
-    // fix to remove
-    //while(1)
-    //{
-        // fix to remove
-        //tmp = next_free_case(grill, &x, &y);
-        //if(!tmp)
-        //{
-        //    return 0;
-        //}
     for (int i = 1; i < 10; ++i)
     {
         grill[y][x] = i;
@@ -131,6 +121,5 @@ int recursive_solver(int grill[9][9], size_t x, size_t y, int possibilities[9][9
         }
     }
         grill[y][x] = -1;
-    //}
     return 0;
 }

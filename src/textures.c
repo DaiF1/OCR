@@ -9,20 +9,9 @@
  * Last Update 29/10 julie.fiadino
 */
 #include "textures.h"
+#include "loader.h"
+#include "maths.h"
 #include "saver.h"
-
-float lerp(float a, float b, float w)
-{
-    return (1.0 - w) * a + w * b;
-}
-
-t_coords lerp_c(t_coords a, t_coords b, float w)
-{
-    t_coords result = {};
-    result.x = lerp(a.x, b.x, w);
-    result.y = lerp(a.y, b.y, w);
-    return result;
-}
 
 void remap(t_image *src, t_image *dest, t_bounds bounds)
 {
@@ -33,10 +22,10 @@ void remap(t_image *src, t_image *dest, t_bounds bounds)
             float dx = (float)x / (float)DEST_IMG_SIZE;
             float dy = (float)y / (float)DEST_IMG_SIZE;
 
-            t_coords cb = lerp_c(bounds.bl, bounds.br, dx);
-            t_coords ct = lerp_c(bounds.tl, bounds.tr, dx);
+            t_vector cb = lerp_v(bounds.bl, bounds.br, dx);
+            t_vector ct = lerp_v(bounds.tl, bounds.tr, dx);
 
-            t_coords uv = lerp_c(ct, cb, dy);
+            t_vector uv = lerp_v(ct, cb, dy);
 
             dest->pixels[y * DEST_IMG_SIZE + x] =
                 src->pixels[(int)uv.y * src->width + (int)uv.x];
