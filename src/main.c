@@ -101,12 +101,12 @@ void file_set(GtkFileChooserButton *button, gpointer user_data)
         int src_height = (int)gdk_pixbuf_get_height(pixbuf);
 
         pixbuf = gdk_pixbuf_scale_simple(pixbuf,
-                src_width * 500 / src_height, 500,
+                src_width * MAX_IMG_SIZE / src_height, MAX_IMG_SIZE,
                 GDK_INTERP_BILINEAR);
 
         uint32 *pixels = (uint32 *)gdk_pixbuf_get_pixels(pixbuf);
-        interface->data.img.width = src_width * 500 / src_height;
-        interface->data.img.height = 500;
+        interface->data.img.width = src_width * MAX_IMG_SIZE / src_height;
+        interface->data.img.height = MAX_IMG_SIZE;
 
         interface->data.img.pixels = malloc(sizeof(uint32) *
                 interface->data.img.width * interface->data.img.height);

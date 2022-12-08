@@ -14,6 +14,8 @@
 #include "utils.h"
 #include "loader.h"
 
+#define MAX_IMG_SIZE 800
+
 typedef struct UI
 {
     GtkWindow               *window;
