@@ -515,8 +515,8 @@ void rotate(t_image *src, t_image *dest, float angle)
             int u = x - middle_x;
             int v = y - middle_y;
 
-            int cx = u * sn + v * cs + middle_x;
-            int cy = u * cs - v * sn + middle_y;
+            int cx = (int)((float)u * sn + (float)v * cs) + middle_x;
+            int cy = (int)((float)u * cs - (float)v * sn) + middle_y;
 
             cx = max(min(cx, src->width - 1), 0);
             cy = max(min(cy, src->height - 1), 0);
