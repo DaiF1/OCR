@@ -12,6 +12,7 @@
 #include <stdlib.h>
 #include <float.h>
 
+#include "loader.h"
 #include "utils.h"
 #include "sobel.h"
 #include "morpho.h"
@@ -123,8 +124,8 @@ void extract_hv(const t_image *src, t_image *dest_v, t_image *dest_h)
 
     invert_img(&dx);
     invert_img(&dy);
-    morpho_opening(&dx, dest_v, rx, precision);
-    morpho_opening(&dy, dest_h, ry, precision);
+    morpho_opening(&dx, dest_v, ry, precision);
+    morpho_opening(&dy, dest_h, rx, precision);
 
     free(dx.pixels);
     free(dy.pixels);

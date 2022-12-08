@@ -338,6 +338,9 @@ void get_corners(const t_image *src, t_image *dest)
     {
         dest->pixels[i] = dx.pixels[i] & dy.pixels[i];
     }
+    
+    free(dx.pixels);
+    free(dy.pixels);
 }
 
 void otsu(t_image *img)

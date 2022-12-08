@@ -14,7 +14,7 @@
 #include "utils.h"
 #include "loader.h"
 
-#define MAX_IMG_SIZE 800
+#define MAX_IMG_SIZE 600
 
 typedef struct UI
 {
