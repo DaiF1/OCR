@@ -215,8 +215,6 @@ void on_solve(GtkModelButton *button, gpointer user_data)
         }
     }
 
-    DEBUG_draw_bounds(&img, bounds);
-
     t_image result = {
         malloc(sizeof(uint32) * DEST_IMG_SIZE * DEST_IMG_SIZE),
         DEST_IMG_SIZE,
@@ -224,9 +222,8 @@ void on_solve(GtkModelButton *button, gpointer user_data)
     };
 
     remap(&img, &result, bounds);
-    DEBUG_display_image(&result);
 
-    system("mkdir boxes");
+    (void)system("mkdir boxes");
 
     int grid[9][9] = {0};
 
@@ -249,7 +246,7 @@ void on_solve(GtkModelButton *button, gpointer user_data)
         }
     }
 
-    system("rm -r boxes/");
+    (void)system("rm -r boxes/");
 
     if (!solver(grid_solved, 0))
     {
@@ -382,8 +379,6 @@ void on_step(GtkModelButton *button, gpointer user_data)
         }
     }
     
-    DEBUG_draw_bounds(&copy, bounds);
-
     gtk_image_set_from_pixbuf(interface->ui.s_image, pixbuf);
     dialog_error(interface->ui.window, GTK_MESSAGE_OTHER,
                 "Grid Detection");
@@ -395,7 +390,6 @@ void on_step(GtkModelButton *button, gpointer user_data)
     };
 
     remap(&copy, &result, bounds);
-    DEBUG_display_image(&result);
 
     gtk_image_set_from_pixbuf(interface->ui.s_image, pixbuf);
     dialog_error(interface->ui.window, GTK_MESSAGE_OTHER,
