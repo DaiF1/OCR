@@ -346,7 +346,7 @@ void on_step(GtkModelButton *button, gpointer user_data)
     dialog_error(interface->ui.window, GTK_MESSAGE_OTHER,
                 "Grid Isolation");
 
-    get_corners(&copy, &copy);
+    get_corners(&img, &img);
 
     t_bounds bounds = {
         {-1, -1},
@@ -355,34 +355,38 @@ void on_step(GtkModelButton *button, gpointer user_data)
         {-1, -1}
     };
 
-    for (int y = 0; y < copy.height; y++)
+    for (int y = 0; y < img.height; y++)
     {
-        for (int x = 0; x < copy.width; x++)
+        for (int x = 0; x < img.width; x++)
         {
-            if (copy.pixels[y * copy.width + x] == 0xffffffff)
+            if (img.pixels[y * img.width + x] == 0xffffffff)
                 continue;
 
             float tl = mag(build((t_vector){0, 0},
                         (t_vector){x, y}));
-            float tr = mag(build((t_vector){copy.width, 0},
+            float tr = mag(build((t_vector){img.width, 0},
                         (t_vector){x, y}));
-            float bl = mag(build((t_vector){0, copy.height},
+            float bl = mag(build((t_vector){0, img.height},
                         (t_vector){x, y}));
-            float br = mag(build((t_vector){copy.width, copy.height},
+            float br = mag(build((t_vector){img.width, img.height},
                         (t_vector){x, y}));
 
             if (tl < mag(build((t_vector){0, 0}, bounds.tl)) || bounds.tl.x == -1)
                 bounds.tl = (t_vector){x, y};
-            if (tr < mag(build((t_vector){copy.width, 0}, bounds.tr)) || bounds.tr.x == -1)
+            if (tr < mag(build((t_vector){img.width, 0}, bounds.tr)) || bounds.tr.x == -1)
                 bounds.tr = (t_vector){x, y};
-            if (bl < mag(build((t_vector){0, copy.height}, bounds.bl)) || bounds.bl.x == -1)
+            if (bl < mag(build((t_vector){0, img.height}, bounds.bl)) || bounds.bl.x == -1)
                 bounds.bl = (t_vector){x, y};
-            if (br < mag(build((t_vector){copy.width, copy.height}, bounds.br)) || bounds.br.x == -1)
+            if (br < mag(build((t_vector){img.width, img.height}, bounds.br)) || bounds.br.x == -1)
                 bounds.br = (t_vector){x, y};
         }
     }
+    
+    DEBUG_draw_bounds(&copy, bounds);
 
-    DEBUG_draw_bounds(&img, bounds);
+    gtk_image_set_from_pixbuf(interface->ui.s_image, pixbuf);
+    dialog_error(interface->ui.window, GTK_MESSAGE_OTHER,
+                "Grid Detection");
 
     t_image result = {
         malloc(sizeof(uint32) * DEST_IMG_SIZE * DEST_IMG_SIZE),
@@ -390,14 +394,8 @@ void on_step(GtkModelButton *button, gpointer user_data)
         DEST_IMG_SIZE
     };
 
-    remap(&img, &result, bounds);
+    remap(&copy, &result, bounds);
     DEBUG_display_image(&result);
-
-    gtk_image_set_from_pixbuf(interface->ui.s_image, pixbuf);
-    dialog_error(interface->ui.window, GTK_MESSAGE_OTHER,
-                "Grid Detection");
-    
-    // TODO: image crop
 
     gtk_image_set_from_pixbuf(interface->ui.s_image, pixbuf);
     dialog_error(interface->ui.window, GTK_MESSAGE_OTHER,
@@ -415,7 +413,8 @@ void on_step(GtkModelButton *button, gpointer user_data)
             // format 'grid_xy.png'
             char *buffer = malloc(sizeof(char) * 18);
             sprintf(buffer, "boxes/grid_%i%i.png", x, y);
-            save_and_crop_image(&result, x * DEST_TILE_SIZE, y * DEST_TILE_SIZE, DEST_TILE_SIZE, DEST_TILE_SIZE, buffer);
+            save_and_crop_image(&result, x * DEST_TILE_SIZE, y * DEST_TILE_SIZE,
+                    DEST_TILE_SIZE, DEST_TILE_SIZE, buffer);
 
             // TODO: number recognition
             int number = 0;
