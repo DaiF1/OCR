@@ -33,6 +33,15 @@ typedef struct
 */
 void remap(t_image *src, t_image *dest, t_bounds bounds);
 
+/*
+ * split(src): Split each tile of the image.
+ * Writes the result in the format 'boxes/grid_xy.png', x and y
+ * being the coordinates of the tile.
+ *
+ * param src: image to split
+*/
+void split(t_image *src);
+
 #if DEBUG
 
 /*
