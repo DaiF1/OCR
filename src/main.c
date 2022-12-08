@@ -223,7 +223,13 @@ void on_solve(GtkModelButton *button, gpointer user_data)
 
     remap(&img, &result, bounds);
 
-    (void)system("mkdir boxes");
+    int answ = system("mkdir boxes");
+    if (answ)
+    {
+        dialog_error(interface->ui.window, GTK_MESSAGE_ERROR,
+                "Unable to generate tiles");
+        return;
+    }
 
     int grid[9][9] = {0};
 
@@ -246,7 +252,12 @@ void on_solve(GtkModelButton *button, gpointer user_data)
         }
     }
 
-    (void)system("rm -r boxes/");
+    answ = system("rm -r boxes/");
+    if (answ)
+    {
+        dialog_error(interface->ui.window, GTK_MESSAGE_WARNING,
+                "Unable to delete tiles");
+    }
 
     if (!solver(grid_solved, 0))
     {
@@ -395,7 +406,13 @@ void on_step(GtkModelButton *button, gpointer user_data)
     dialog_error(interface->ui.window, GTK_MESSAGE_OTHER,
                 "Image Crop");
 
-    system("mkdir boxes");
+    int answ = system("mkdir boxes");
+    if (answ)
+    {
+        dialog_error(interface->ui.window, GTK_MESSAGE_ERROR,
+                "Unable to generate tiles");
+        return;
+    }
 
     int grid[9][9] = {0};
     int grid_solved[9][9] = {0};
@@ -418,7 +435,12 @@ void on_step(GtkModelButton *button, gpointer user_data)
         }
     }
 
-    system("rm -r boxes/");
+    answ = system("rm -r boxes/");
+    if (answ)
+    {
+        dialog_error(interface->ui.window, GTK_MESSAGE_WARNING,
+                "Unable to delete tiles");
+    }
 
     dialog_error(interface->ui.window, GTK_MESSAGE_OTHER,
                 "Character Recognition");
