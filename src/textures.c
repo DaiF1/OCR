@@ -11,6 +11,7 @@
 #include "textures.h"
 #include "loader.h"
 #include "maths.h"
+#include "saver.h"
 
 void remap(t_image *src, t_image *dest, t_bounds bounds)
 {
