@@ -24,7 +24,7 @@ typedef struct UI
     GtkModelButton          *step_button;
     GtkModelButton          *train_button;
     GtkModelButton          *load_button;
-    GtkModelButton          *rotate_button;
+    GtkScaleButton          *rotate_button;
     GtkModelButton          *autorot_button;
 } UI;
 

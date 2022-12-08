@@ -591,8 +591,8 @@ int main()
         GTK_MODEL_BUTTON(gtk_builder_get_object(builder, "_Train"));
     GtkModelButton *load_button =
         GTK_MODEL_BUTTON(gtk_builder_get_object(builder, "_Load"));
-    GtkModelButton *rotate_button =
-        GTK_MODEL_BUTTON(gtk_builder_get_object(builder, "_Rotate1"));
+    GtkScaleButton *rotate_button =
+        GTK_SCALE_BUTTON(gtk_builder_get_object(builder, "_Rotate1"));
     GtkModelButton *autorot_button =
         GTK_MODEL_BUTTON(gtk_builder_get_object(builder, "_AutoRot"));
 
