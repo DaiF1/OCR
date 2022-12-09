@@ -25,7 +25,7 @@ int result_network(
 
             // color 0 or 255
             int color = pix.r;
-            if (color == 0)
+            if (color == 255)
             {
                 m_setIndex(&input, 0, count, 0.0);
             }
@@ -36,7 +36,33 @@ int result_network(
             count++;
         }
     }
+   
+    // result of the hidden layer
+    Matrix result_hidden;
+    m_mult(&input, hw, &result_hidden);
+    m_add(&result_hidden, hb);
+    m_map(&result_hidden, relu);
+
+    // output layer
+    Matrix result_output;
+    m_mult(&result_hidden, ow, &result_output);
+    m_add(&result_output, ob);
+    softmax(&result_output);
+
+    int res = max_mat(&result_output);
+
+    // m_full_print(&input);
+    // m_full_print(&result_hidden);
+    // m_full_print(&result_output);
+
+    // free all memory
+    m_free(&input);
+    m_free(&result_hidden);
+    m_free(&result_output);
+
+    return res;
 }
+
 
 int neural_network_execute(Image *image)
 {

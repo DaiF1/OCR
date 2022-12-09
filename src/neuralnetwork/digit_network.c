@@ -7,12 +7,12 @@
 #include "../../include/neuralnetwork/matrix.h"
 
 // number of "generation" of AI
-static const int EPOCHS = 1200;
+static const int EPOCHS = 3000;
 
 // learning rate
 static double LR = 0.01;
 
-static const int num_training = 3380;
+static const int num_training = 218;
 
 char *concat(const char *s1, const char *s2)
 {
@@ -40,7 +40,7 @@ void trainingInput(Matrix *training_inputs, size_t numTest, char *path)
 
             // color 0 or 255
             int color = pix.r;
-            if (color == 0)
+            if (color == 255)
             {
                 m_setIndex(training_inputs, numTest, count, 0.0);
             }
@@ -351,7 +351,7 @@ int main(int argc, char *argv[])
     {
         if (argc != 2)
         {
-            printf("Usage: %s <train/test> <filename>\n", argv[0]);
+            printf("Usage: %s <train/test> <(test) filename>\n", argv[0]);
             return 1;
         }
 
@@ -362,7 +362,7 @@ int main(int argc, char *argv[])
     {
         if (argc != 3)
         {
-            printf("Usage: %s <train/test> <filename>\n", argv[0]);
+            printf("Usage: %s <train/test> <(test) filename>\n", argv[0]);
             return 1;
         }
 
@@ -371,7 +371,7 @@ int main(int argc, char *argv[])
         int res = neural_network_execute(&image);
 
         free_Image(&image);
-        return res;
+        printf("%li",res);
     }
     else
     {
