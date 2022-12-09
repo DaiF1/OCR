@@ -1,5 +1,5 @@
 #include <math.h>
-#include "maths_extra.h"
+#include "../../../include/neuralnetwork/maths_extra.h"
 
 double abs_val(double x)
 {
@@ -41,4 +41,27 @@ double rand_input_XOR()
     }
     return 0.0;
     
+}
+
+double relu(double x)
+{
+    /*
+    if(x >= 0){
+        return 1.0;
+    }
+    else{
+        return 0.01 * x;
+    }*/
+    return 0.01 * x;
+}
+
+double d_relu(double x)
+{
+    /*if(x >= 0){
+        return 1;
+    }
+    else{
+        return 0.01;
+    }*/
+    return 0.01;
 }
