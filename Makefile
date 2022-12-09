@@ -1,8 +1,8 @@
 CC = gcc
 CPPFLAGS = -I include/ -I include/imgprocess -I include/solver -I include/neuralnetwork
-CFLAGS = -Wall -Wextra -Werror -std=c99 -D__NO_INLINE__
+CFLAGS = -Wall -Wextra -Werror -std=c99 -D__NO_INLINE__ -Wno-unused-parameter
 LDFLAGS =
-LDLIBS = `pkg-config --libs sdl2 SDL2_image` -lm
+LDLIBS = `pkg-config --libs sdl2 SDL2_image SDL2_ttf gtk+-3.0` -lm
 
 all: main
 
@@ -17,6 +17,7 @@ OBJ = ${SRC:.c=.o}
 $(OBJ): $(notdir %.o): %.c
 
 src/loader.o: CFLAGS += `pkg-config --cflags sdl2 SDL2_image`
+src/main.o: CFLAGS += `pkg-config --cflags gtk+-3.0`
 
 src/main: CFLAGS += -O2
 src/main: ${OBJ}

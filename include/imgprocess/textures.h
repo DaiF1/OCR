@@ -11,44 +11,18 @@
 #pragma once
 
 #include "loader.h"
+#include "maths.h"
 
 #define DEST_TILE_SIZE 28
 #define DEST_IMG_SIZE (DEST_TILE_SIZE * 9)
 
 typedef struct
 {
-    float x;
-    float y;
-} t_coords;
-
-typedef struct
-{
-    t_coords tl;
-    t_coords tr;
-    t_coords bl;
-    t_coords br;
+    t_vector tl;
+    t_vector tr;
+    t_vector bl;
+    t_vector br;
 } t_bounds;
-
-/*
- * lerp(a, b, w): linearly interpolate between a and b by w
- *
- * param a: a float
- * param b: a float
- * param w: a float between 0 and 1. A value of 0 will return a, 
- *  a value of 1 will return b
-*/
-float lerp(float a, float b, float w);
-
-/*
- * lerp_c(a, b, w): linearly interpolate between a and b by w
- *
- * param a: xy coordinates
- * param b: xy coordinates
- * param w: a float between 0 and 1. A value of 0 will return a, 
- *  a value of 1 will return b
-*/
-t_coords lerp_c(t_coords a, t_coords b, float w);
-
 
 /*
  * remap(src, dest, bounds): Map src bounds to dest image
