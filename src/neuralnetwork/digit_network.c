@@ -7,7 +7,7 @@
 #include "../../include/neuralnetwork/matrix.h"
 
 // number of "generation" of AI
-static const int EPOCHS = 3000;
+static const int EPOCHS = 10000;
 
 // learning rate
 static double LR = 0.01;
