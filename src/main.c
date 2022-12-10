@@ -143,10 +143,9 @@ void file_set(GtkFileChooserButton *button, gpointer user_data)
 
             uint32 *pixels = (uint32 *)gdk_pixbuf_get_pixels(pixbuf);
     
-            int grid[9][9] = {0};
-            read_sudoku(grid, filename, 0);
+            read_sudoku(interface->data.grid, filename, 0);
 
-            generate_output(grid, grid, pixels);
+            generate_output(interface->data.grid, interface->data.grid, pixels);
 
             gtk_image_set_from_pixbuf(interface->ui.s_image, pixbuf);
         }
@@ -159,7 +158,7 @@ void file_set(GtkFileChooserButton *button, gpointer user_data)
     gtk_widget_destroy (dialog); 
 }
 
-void on_solve(GtkModelButton *button, gpointer user_data)
+void on_preproc(GtkModelButton *button, gpointer user_data)
 {
     Interface *interface = user_data;
 
@@ -267,8 +266,6 @@ void on_solve(GtkModelButton *button, gpointer user_data)
         return;
     }
 
-    int grid_solved[9][9] = {0};
-
     for (int y = 0; y < 9; y++)
     {
         for (int x = 0; x < 9; x++)
@@ -280,10 +277,9 @@ void on_solve(GtkModelButton *button, gpointer user_data)
                     DEST_TILE_SIZE, DEST_TILE_SIZE, buffer);
 
             // TODO: number recognition
-            int number = 0;
+            int number = -1;
 
-            interface->data.grid[y][x] = -1;
-            grid_solved[y][x] = number;
+            interface->data.grid[y][x] = number;
         }
     }
 
@@ -294,12 +290,31 @@ void on_solve(GtkModelButton *button, gpointer user_data)
                 "Unable to delete tiles");
     }
 
+    gtk_image_set_from_pixbuf(interface->ui.s_image, pixbuf);
+}
+
+void on_solve(GtkToolButton *button, gpointer user_data)
+{
+    Interface *interface = user_data;
+
+    int grid_solved[9][9] = {0};
+
+    for (int y = 0; y < 9; y++)
+    {
+        for (int x = 0; x < 9; x++)
+        {
+            grid_solved[y][x] = interface->data.grid[y][x];
+        }
+    }
+
     if (!solver(grid_solved, 0))
     {
         dialog_error(interface->ui.window, GTK_MESSAGE_ERROR,
                 "Unable to Solve Grid");
         return;
     }
+
+    GdkPixbuf *pixbuf = gtk_image_get_pixbuf(interface->ui.s_image);
 
     pixbuf = gdk_pixbuf_new_from_file("img/empty.png", NULL);
     pixbuf = gdk_pixbuf_add_alpha(pixbuf, FALSE, 0, 0, 0);
@@ -459,9 +474,6 @@ void on_step(GtkModelButton *button, gpointer user_data)
         return;
     }
 
-    int grid[9][9] = {0};
-    int grid_solved[9][9] = {0};
-
     for (int y = 0; y < 9; y++)
     {
         for (int x = 0; x < 9; x++)
@@ -473,10 +485,9 @@ void on_step(GtkModelButton *button, gpointer user_data)
                     DEST_TILE_SIZE, DEST_TILE_SIZE, buffer);
 
             // TODO: number recognition
-            int number = 0;
+            int number = -1;
 
-            grid[y][x] = -1;
-            grid_solved[y][x] = number;
+            interface->data.grid[y][x] = number;
         }
     }
 
@@ -489,29 +500,6 @@ void on_step(GtkModelButton *button, gpointer user_data)
 
     dialog_error(interface->ui.window, GTK_MESSAGE_OTHER,
                 "Character Recognition");
-
-    if (!solver(grid_solved, 0))
-    {
-        dialog_error(interface->ui.window, GTK_MESSAGE_ERROR,
-                "Unable to Solve Grid");
-        return;
-    }
-
-    dialog_error(interface->ui.window, GTK_MESSAGE_OTHER,
-                "Grid Resolution");
-
-    pixbuf = gdk_pixbuf_new_from_file("img/empty.png", NULL);
-    pixbuf = gdk_pixbuf_add_alpha(pixbuf, FALSE, 0, 0, 0);
-
-    int src_width = (int)gdk_pixbuf_get_width(pixbuf);
-    int src_height = (int)gdk_pixbuf_get_height(pixbuf);
-
-    pixbuf = gdk_pixbuf_scale_simple(pixbuf,
-            src_width * DEST_IMG_SIZE / src_height, DEST_IMG_SIZE, GDK_INTERP_BILINEAR);
-
-    uint32 *pixels = (uint32 *)gdk_pixbuf_get_pixels(pixbuf);
-
-    generate_output(grid, grid_solved, pixels);
 
     gtk_image_set_from_pixbuf(interface->ui.s_image, pixbuf);
 }
@@ -642,8 +630,8 @@ int main()
         GTK_MODEL_BUTTON(gtk_builder_get_object(builder, "_Open"));
     GtkModelButton *save_button =
         GTK_MODEL_BUTTON(gtk_builder_get_object(builder, "_Save"));
-    GtkModelButton *solve_button =
-        GTK_MODEL_BUTTON(gtk_builder_get_object(builder, "_Solve"));
+    GtkModelButton *preproc_button =
+        GTK_MODEL_BUTTON(gtk_builder_get_object(builder, "_Preprocess"));
     GtkModelButton *step_button =
         GTK_MODEL_BUTTON(gtk_builder_get_object(builder, "_Step"));
     GtkModelButton *train_button =
@@ -654,16 +642,19 @@ int main()
         GTK_SCALE_BUTTON(gtk_builder_get_object(builder, "_Rotate1"));
     GtkModelButton *autorot_button =
         GTK_MODEL_BUTTON(gtk_builder_get_object(builder, "_AutoRot"));
+    GtkToolButton *solve_button =
+        GTK_TOOL_BUTTON(gtk_builder_get_object(builder, "_Solve"));
 
     UI ui = {
         .window = window,
         .s_image = sudoku_image,
         .file_chooser = open_button,
         .save_button = save_button,
-        .solve_button = solve_button,
+        .preproc_button = preproc_button,
         .step_button = step_button,
         .rotate_button = rotate_button,
-        .autorot_button = autorot_button
+        .autorot_button = autorot_button,
+        .solve_button = solve_button,
     };
 
     Data data = {
@@ -671,7 +662,7 @@ int main()
         .angle = 0.0f,
         .trained = false,
         .solved = false,
-        .grid = {0},
+        .grid = {},
     };
 
     Interface interface = {
@@ -681,12 +672,13 @@ int main()
 
     g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
     g_signal_connect(open_button, "clicked", G_CALLBACK(file_set), &interface);
-    g_signal_connect(solve_button, "clicked", G_CALLBACK(on_solve), &interface);
+    g_signal_connect(preproc_button, "clicked", G_CALLBACK(on_preproc), &interface);
     g_signal_connect(step_button, "clicked", G_CALLBACK(on_step), &interface);
     g_signal_connect(train_button, "clicked", G_CALLBACK(on_train), &interface);
     g_signal_connect(load_button, "clicked", G_CALLBACK(on_load), &interface);
     g_signal_connect(save_button, "clicked", G_CALLBACK(on_save), &interface);
     g_signal_connect(rotate_button, "value-changed", G_CALLBACK(on_rotate), &interface);
+    g_signal_connect(solve_button, "clicked", G_CALLBACK(on_solve), &interface);
 
 
     gtk_main();
