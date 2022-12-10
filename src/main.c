@@ -389,6 +389,10 @@ void on_step(GtkModelButton *button, gpointer user_data)
                 bounds.br = (t_vector){x, y};
         }
     }
+
+#if DEBUG
+    DEBUG_draw_bounds(&img, bounds);
+#endif
     
     gtk_image_set_from_pixbuf(interface->ui.s_image, pixbuf);
     dialog_error(interface->ui.window, GTK_MESSAGE_OTHER,
@@ -401,6 +405,11 @@ void on_step(GtkModelButton *button, gpointer user_data)
     };
 
     remap(&copy, &result, bounds);
+
+#if DEBUG
+    DEBUG_display_image(&result);
+#endif
+
 
     gtk_image_set_from_pixbuf(interface->ui.s_image, pixbuf);
     dialog_error(interface->ui.window, GTK_MESSAGE_OTHER,
