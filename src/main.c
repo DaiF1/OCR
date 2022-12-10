@@ -574,6 +574,8 @@ void on_train(GtkModelButton *button, gpointer user_data)
     Interface *interface = user_data;
 
     train();
+    load("save", interface->data.hw, interface->data.hb,
+            interface->data.ow, interface->data.ob);
 
     interface->data.trained = true;
 }
