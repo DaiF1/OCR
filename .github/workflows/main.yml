@@ -56,7 +56,7 @@ jobs:
           make test
           ./test
           make network
-          ./network
+          ./network test src/neuralnetwork/training_set/0-102.png
           
   deploy:
       runs-on: ubuntu-latest
