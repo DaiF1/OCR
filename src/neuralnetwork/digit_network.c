@@ -7,12 +7,12 @@
 #include "matrix.h"
 
 // number of "generation" of AI
-static const int EPOCHS = 10000;
+static const int EPOCHS = 25000;
 
 // learning rate
 static double LR = 0.01;
 
-static const int num_training = 218;
+static const int num_training = 429;
 
 char *concat(const char *s1, const char *s2)
 {
