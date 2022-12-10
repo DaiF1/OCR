@@ -65,6 +65,7 @@ double get_vertical_angle(t_image img)
     t_vector left_side = build(corner_t, corner_b); 
     t_vector vertical = build(vertical_tl, vertical_bl);
 
+#if DEBUG
     t_bounds hihi = {
         vertical_tl,
         corner_t,
@@ -72,7 +73,6 @@ double get_vertical_angle(t_image img)
         corner_b
     };
 
-#if DEBUG
     DEBUG_draw_bounds(&img, hihi);
 #endif
     
