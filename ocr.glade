@@ -155,11 +155,12 @@
         <property name="can-focus">False</property>
         <property name="orientation">vertical</property>
         <child>
-          <object class="GtkModelButton" id="_Solve">
+          <object class="GtkModelButton" id="_Preprocess">
             <property name="visible">True</property>
             <property name="can-focus">True</property>
             <property name="receives-default">True</property>
-            <property name="text" translatable="yes">Solve</property>
+            <property name="tooltip-text" translatable="yes">Analyse the image</property>
+            <property name="text" translatable="yes">Analyse</property>
             <property name="centered">True</property>
           </object>
           <packing>
@@ -173,7 +174,7 @@
             <property name="visible">True</property>
             <property name="can-focus">True</property>
             <property name="receives-default">True</property>
-            <property name="tooltip-text" translatable="yes">Automatic image rotation</property>
+            <property name="tooltip-text" translatable="yes">Step through the image analysis</property>
             <property name="text" translatable="yes">Step Through</property>
             <property name="centered">True</property>
           </object>
@@ -298,11 +299,23 @@
                       <object class="GtkLabel">
                         <property name="visible">True</property>
                         <property name="can-focus">False</property>
-                        <property name="label" translatable="yes">Solve</property>
+                        <property name="label" translatable="yes">Analysis</property>
                       </object>
                     </child>
                   </object>
                 </child>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="homogeneous">True</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkToolButton" id="_Solve">
+                <property name="visible">True</property>
+                <property name="can-focus">False</property>
+                <property name="label" translatable="yes">Solve</property>
+                <property name="use-underline">True</property>
               </object>
               <packing>
                 <property name="expand">False</property>

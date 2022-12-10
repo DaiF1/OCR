@@ -209,6 +209,7 @@ Matrix *m_scalar_add(Matrix *a, double x)
     return a;
 }
 
+
 /* Accessors */
 
 Matrix *m_mult(Matrix *a, Matrix *b, Matrix *dest)
@@ -342,6 +343,8 @@ void m_full_print(Matrix *a)
     m_print(a);
 }
 
+
+
 bool m_equals(Matrix *a, Matrix *b)
 {
     if (!(a->rows == b->rows) || !(a->cols == b->cols))
@@ -359,4 +362,64 @@ bool m_equals(Matrix *a, Matrix *b)
         }
     }
     return true;
+}
+
+Matrix *softmax(Matrix *src)
+{
+    double sum = 0;
+    double max = max_mat_value(src);
+
+    for (int i = 0; i < src->rows; i++)
+    {
+        for (int j = 0; j < src->cols; j++)
+        {
+            sum += exp(m_get(src, i, j)-max);
+        }
+    }
+
+    for (int i = 0; i < src->rows; i++)
+    {
+        for (int j = 0; j < src->cols; j++)
+        {
+            double tmp = exp(m_get(src, i, j)-max)/sum;
+            m_setIndex(src ,i, j, tmp);
+        }
+    }
+    return src;
+}
+
+int max_mat(Matrix *a){
+    double max = m_get(a, 0, 0);
+    int max_ind = 0;
+    for (int i = 0; i < a->rows; i++)
+    {
+        for (int j = 0; j < a->cols; j++)
+        {
+            double val = m_get(a, i, j);
+            if (val > max)
+            {
+                max = val;
+                max_ind = j;
+            }
+        }
+    }
+    return max_ind;
+}
+
+double max_mat_value(Matrix *a){
+    double max = m_get(a, 0, 0);
+    
+    for (int i = 0; i < a->rows; i++)
+    {
+        for (int j = 0; j < a->cols; j++)
+        {
+            double val = m_get(a, i, j);
+            if (val > max)
+            {
+                max = val;
+                
+            }
+        }
+    }
+    return max;
 }

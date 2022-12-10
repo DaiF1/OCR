@@ -77,4 +77,10 @@ void m_print(Matrix *a);
 void m_full_print(Matrix *a);
 bool m_equals(Matrix *a, Matrix *b);
 
+Matrix *softmax(Matrix *src);
+
+int max_mat(Matrix *a);
+
+double max_mat_value(Matrix *a);
+
 #endif

@@ -10,5 +10,6 @@ void saveMatrix(Matrix* a, FILE *fp);
 
 void save(Matrix *hw, Matrix *hb, Matrix *ow, Matrix *ob, char* filename);
 
+int load(char *filename, Matrix *hw, Matrix *hb, Matrix *ow, Matrix *ob);
 
 #endif
