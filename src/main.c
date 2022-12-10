@@ -286,10 +286,14 @@ void on_preproc(GtkModelButton *button, gpointer user_data)
                     DEST_TILE_SIZE, DEST_TILE_SIZE, buffer);
 
             Image image = SDL_Surface_to_Image(load_image(buffer));
-            int number = neural_network_execute(&image);
+            int number = result_network(&image,
+                    interface->data.hw,
+                    interface->data.hb,
+                    interface->data.ow,
+                    interface->data.ob);
             free_Image(&image);
 
-            interface->data.grid[y][x] = number;
+            interface->data.grid[y][x] = (number == 0) ? -1 : number;
         }
     }
 
@@ -530,7 +534,9 @@ void on_step(GtkModelButton *button, gpointer user_data)
                     interface->data.ob);
             free_Image(&image);
 
-            interface->data.grid[y][x] = number;
+            
+            interface->data.grid[y][x] = (number == 0) ? -1 : number;
+
         }
     }
 
