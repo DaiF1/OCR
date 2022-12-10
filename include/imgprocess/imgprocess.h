@@ -2,6 +2,7 @@
 
 #include "loader.h"
 
+double get_vertical_angle(t_image img);
 void otsu(t_image *img);
 
 /*
