@@ -28,7 +28,6 @@ typedef struct UI
     GtkModelButton          *train_button;
     GtkModelButton          *load_button;
     GtkScaleButton          *rotate_button;
-    GtkModelButton          *autorot_button;
     GtkToolButton           *solve_button;
 } UI;
 
@@ -90,10 +89,6 @@ void on_save(GtkModelButton *button, gpointer user_data);
 /* on_rotate(button, user_data): called when pressig the rotate button
  */
 void on_rotate(GtkModelButton *button, gdouble v, gpointer user_data);
-
-/* on_autorot(button, user_data): called when pressing the auto rotation button
- */
-void on_autorot(GtkModelButton *button, gpointer user_data);
 
 /* on_preproc(button, user_data): called when pressing the preproc button
  */

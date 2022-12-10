@@ -704,13 +704,6 @@ void on_rotate(GtkModelButton *button, gdouble v, gpointer user_data)
 
     rotate(&interface->data.img, &img, v);
     gtk_image_set_from_pixbuf(interface->ui.s_image, pixbuf);
-}
-
-
-void on_autorot(GtkModelButton *button, gpointer user_data)
-{
-    // TODO: automatic rotation
-}
 
 int main()
 {
@@ -744,8 +737,6 @@ int main()
         GTK_MODEL_BUTTON(gtk_builder_get_object(builder, "_Load"));
     GtkScaleButton *rotate_button =
         GTK_SCALE_BUTTON(gtk_builder_get_object(builder, "_Rotate1"));
-    GtkModelButton *autorot_button =
-        GTK_MODEL_BUTTON(gtk_builder_get_object(builder, "_AutoRot"));
     GtkToolButton *solve_button =
         GTK_TOOL_BUTTON(gtk_builder_get_object(builder, "_Solve"));
 
@@ -757,7 +748,6 @@ int main()
         .preproc_button = preproc_button,
         .step_button = step_button,
         .rotate_button = rotate_button,
-        .autorot_button = autorot_button,
         .solve_button = solve_button,
     };
 
@@ -788,7 +778,6 @@ int main()
     g_signal_connect(save_button, "clicked", G_CALLBACK(on_save), &interface);
     g_signal_connect(rotate_button, "value-changed", G_CALLBACK(on_rotate), &interface);
     g_signal_connect(solve_button, "clicked", G_CALLBACK(on_solve), &interface);
-
 
     gtk_main();
 

@@ -15,10 +15,90 @@
 #include "loader.h"
 #include "morpho.h"
 #include "sobel.h"
+#include "textures.h"
+#include "maths.h"
 
 #define PI 3.1415926535
 #define min(a, b) ((a) < (b)) ? (a) : (b)
 #define max(a, b) ((a) > (b)) ? (a) : (b)
+
+double get_vertical_angle(t_image img)
+{
+    double angle = 0;
+
+    t_bounds bounds = {
+        {-1, -1},
+        {-1, -1},
+        {-1, -1},
+        {-1, -1}
+    };
+
+    for (int y = 0; y < img.height; y++)
+    {
+        for (int x = 0; x < img.width; x++)
+        {
+            if (img.pixels[y * img.width + x] == 0xffffffff)
+                continue;
+
+            float tl = mag(build((t_vector){0, 0}, (t_vector){x, y}));
+            /* float tr = mag(build((t_vector){img.width, 0}, (t_vector){x, y})); */
+            float bl = mag(build((t_vector){0, img.height}, (t_vector){x, y}));
+            /* float br = mag(build((t_vector){img.width, img.height}, (t_vector){x, y})); */
+
+            if (tl < mag(build((t_vector){0, 0}, bounds.tl)) || bounds.tl.x == -1)
+            {
+                bounds.tl = (t_vector){x, y};
+            }
+            /* if (tr < mag(build((t_vector){img.width, 0}, bounds.tr)) || bounds.tr.x == -1) */
+            /* { */
+            /*     bounds.tr = (t_vector){x, y}; */
+            /* } */
+            if (bl < mag(build((t_vector){0, img.height}, bounds.bl)) || bounds.bl.x == -1)
+            {
+                bounds.bl = (t_vector){x, y};
+            }
+            /* if (br < mag(build((t_vector){img.width, img.height}, bounds.br)) || bounds.br.x == -1) */
+            /* { */
+            /*     bounds.br = (t_vector){x, y}; */
+            /* } */
+        }
+    }
+
+    t_vector vertical_tl = {
+       bounds.bl.x,
+      0 
+    };
+
+    t_vector vertical_bl = {
+       bounds.bl.x,
+       bounds.bl.y 
+    };
+
+    t_vector left_side = build(bounds.tl, bounds.bl); 
+    t_vector vertical = build(vertical_tl, vertical_bl);
+
+    t_bounds hihi = {
+        vertical_tl,
+        bounds.tl,
+        vertical_bl,
+        bounds.bl
+    };
+
+#if DEBUG
+    DEBUG_draw_bounds(&img, hihi);
+#endif
+    
+    vertical = norm(vertical);
+    left_side = norm(left_side);
+    double a = (vertical.x * left_side.x) + (vertical.y * left_side.y);
+    double b = (sqrt(pow(vertical.x, 2) + pow(vertical.y, 2))) * (sqrt(pow(left_side.x, 2)) + sqrt(pow(left_side.y, 2)));
+    printf("a = %f, b = %f\n", a, b);
+
+    angle = acos(a/b);
+    angle *= (180/PI); // convert radian to degree
+    
+    return angle;
+}
 
 // ______________ Projection to find a label use in fill_label(..)
 
