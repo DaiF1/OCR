@@ -95,7 +95,7 @@ void train()
 
     struct dirent *de; // Pointer for directory entry
 
-    char *dir = "./training_set/";
+    char *dir = "src/neuralnetwork/training_set/";
 
     DIR *dr = opendir(dir);
 
