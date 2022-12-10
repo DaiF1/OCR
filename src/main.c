@@ -77,11 +77,16 @@ void file_set(GtkFileChooserButton *button, gpointer user_data)
     gtk_file_filter_add_pattern(filter, "*.bmp");
     gtk_file_filter_set_name(filter, "Images (.png/.jpg/.bmp)");
 
+    GtkFileFilter *filter_grid = gtk_file_filter_new();
+    gtk_file_filter_add_pattern(filter_grid, "grid*");
+    gtk_file_filter_set_name(filter_grid, "Grids");
+
     GtkFileFilter *filter_none = gtk_file_filter_new();
     gtk_file_filter_add_pattern(filter_none, "*");
     gtk_file_filter_set_name(filter_none, "All Files");
 
     gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(dialog), filter);
+    gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(dialog), filter_grid);
     gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(dialog), filter_none);
 
     res = gtk_dialog_run(GTK_DIALOG(dialog));
@@ -90,30 +95,61 @@ void file_set(GtkFileChooserButton *button, gpointer user_data)
         char *filename;
         GtkFileChooser *chooser = GTK_FILE_CHOOSER(dialog);
         filename = gtk_file_chooser_get_filename(chooser);
-        
-        gtk_image_clear(interface->ui.s_image);
-        gtk_image_set_from_file(interface->ui.s_image, filename);
 
-        GdkPixbuf *pixbuf = gtk_image_get_pixbuf(interface->ui.s_image);
-        pixbuf = gdk_pixbuf_add_alpha(pixbuf, FALSE, 0, 0, 0);
+        GtkFileFilter *curr_filter = gtk_file_chooser_get_filter(chooser);
 
-        int src_width = (int)gdk_pixbuf_get_width(pixbuf);
-        int src_height = (int)gdk_pixbuf_get_height(pixbuf);
+        if (strcmp(gtk_file_filter_get_name(curr_filter),
+                    "Images (.png/.jpg/.bmp)") == 0)
+        {
+            gtk_image_clear(interface->ui.s_image);
+            gtk_image_set_from_file(interface->ui.s_image, filename);
 
-        pixbuf = gdk_pixbuf_scale_simple(pixbuf,
-                src_width * MAX_IMG_SIZE / src_height, MAX_IMG_SIZE,
-                GDK_INTERP_BILINEAR);
+            GdkPixbuf *pixbuf = gtk_image_get_pixbuf(interface->ui.s_image);
+            pixbuf = gdk_pixbuf_add_alpha(pixbuf, FALSE, 0, 0, 0);
 
-        uint32 *pixels = (uint32 *)gdk_pixbuf_get_pixels(pixbuf);
-        interface->data.img.width = src_width * MAX_IMG_SIZE / src_height;
-        interface->data.img.height = MAX_IMG_SIZE;
+            int src_width = (int)gdk_pixbuf_get_width(pixbuf);
+            int src_height = (int)gdk_pixbuf_get_height(pixbuf);
 
-        interface->data.img.pixels = malloc(sizeof(uint32) *
-                interface->data.img.width * interface->data.img.height);
-        memcpy(interface->data.img.pixels, pixels, 
-                sizeof(uint32) * interface->data.img.width * interface->data.img.height);
+            pixbuf = gdk_pixbuf_scale_simple(pixbuf,
+                    src_width * MAX_IMG_SIZE / src_height, MAX_IMG_SIZE,
+                    GDK_INTERP_BILINEAR);
 
-        gtk_image_set_from_pixbuf(interface->ui.s_image, pixbuf);
+            uint32 *pixels = (uint32 *)gdk_pixbuf_get_pixels(pixbuf);
+            interface->data.img.width = src_width * MAX_IMG_SIZE / src_height;
+            interface->data.img.height = MAX_IMG_SIZE;
+
+            interface->data.img.pixels = malloc(sizeof(uint32) *
+                    interface->data.img.width * interface->data.img.height);
+            memcpy(interface->data.img.pixels, pixels, 
+                    sizeof(uint32) * interface->data.img.width *
+                    interface->data.img.height);
+
+            gtk_image_set_from_pixbuf(interface->ui.s_image, pixbuf);
+        }
+        else
+        {
+            gtk_image_clear(interface->ui.s_image);
+            gtk_image_set_from_file(interface->ui.s_image, "img/empty.png");
+            
+            GdkPixbuf *pixbuf = gtk_image_get_pixbuf(interface->ui.s_image);
+            pixbuf = gdk_pixbuf_add_alpha(pixbuf, FALSE, 0, 0, 0);
+            pixbuf = gdk_pixbuf_add_alpha(pixbuf, FALSE, 0, 0, 0);
+
+            int src_width = (int)gdk_pixbuf_get_width(pixbuf);
+            int src_height = (int)gdk_pixbuf_get_height(pixbuf);
+
+            pixbuf = gdk_pixbuf_scale_simple(pixbuf,
+                    src_width * DEST_IMG_SIZE / src_height, DEST_IMG_SIZE, GDK_INTERP_BILINEAR);
+
+            uint32 *pixels = (uint32 *)gdk_pixbuf_get_pixels(pixbuf);
+    
+            int grid[9][9] = {0};
+            read_sudoku(grid, filename, 0);
+
+            generate_output(grid, grid, pixels);
+
+            gtk_image_set_from_pixbuf(interface->ui.s_image, pixbuf);
+        }
 
         interface->data.solved = false;
 
@@ -231,8 +267,6 @@ void on_solve(GtkModelButton *button, gpointer user_data)
         return;
     }
 
-    int grid[9][9] = {0};
-
     int grid_solved[9][9] = {0};
 
     for (int y = 0; y < 9; y++)
@@ -242,12 +276,13 @@ void on_solve(GtkModelButton *button, gpointer user_data)
             // format 'grid_xy.png'
             char *buffer = malloc(sizeof(char) * 18);
             sprintf(buffer, "boxes/grid_%i%i.png", x, y);
-            save_and_crop_image(&result, x * DEST_TILE_SIZE, y * DEST_TILE_SIZE, DEST_TILE_SIZE, DEST_TILE_SIZE, buffer);
+            save_and_crop_image(&result, x * DEST_TILE_SIZE, y * DEST_TILE_SIZE,
+                    DEST_TILE_SIZE, DEST_TILE_SIZE, buffer);
 
             // TODO: number recognition
             int number = 0;
 
-            grid[y][x] = -1;
+            interface->data.grid[y][x] = -1;
             grid_solved[y][x] = number;
         }
     }
@@ -273,11 +308,12 @@ void on_solve(GtkModelButton *button, gpointer user_data)
     int src_height = (int)gdk_pixbuf_get_height(pixbuf);
 
     pixbuf = gdk_pixbuf_scale_simple(pixbuf,
-            src_width * DEST_IMG_SIZE / src_height, DEST_IMG_SIZE, GDK_INTERP_BILINEAR);
+            src_width * DEST_IMG_SIZE / src_height, DEST_IMG_SIZE,
+            GDK_INTERP_BILINEAR);
 
     uint32 *pixels = (uint32 *)gdk_pixbuf_get_pixels(pixbuf);
 
-    generate_output(grid, grid_solved, pixels);
+    generate_output(interface->data.grid, grid_solved, pixels);
 
     gtk_image_set_from_pixbuf(interface->ui.s_image, pixbuf);
 }
@@ -549,7 +585,6 @@ void on_save(GtkModelButton *button, gpointer user_data)
         char *filename;
 
         filename = gtk_file_chooser_get_filename (chooser);
-        //save_to_file (filename);
         GdkPixbuf *pixbuf = gtk_image_get_pixbuf(interface->ui.s_image);
         pixbuf = gdk_pixbuf_add_alpha(pixbuf, FALSE, 0, 0, 0);
         gdk_pixbuf_save(pixbuf, to_png(filename), "png", NULL, NULL);
@@ -577,7 +612,6 @@ void on_rotate(GtkModelButton *button, gdouble v, gpointer user_data)
 
     rotate(&interface->data.img, &img, v);
     gtk_image_set_from_pixbuf(interface->ui.s_image, pixbuf);
-    // TODO: display dialog for rotation
 }
 
 
@@ -637,6 +671,7 @@ int main()
         .angle = 0.0f,
         .trained = false,
         .solved = false,
+        .grid = {0},
     };
 
     Interface interface = {
