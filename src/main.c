@@ -201,8 +201,6 @@ void on_preproc(GtkModelButton *button, gpointer user_data)
     img.width = (int32)gdk_pixbuf_get_width(pixbuf);
     img.height = (int32)gdk_pixbuf_get_height(pixbuf);
 
-    // TODO: rotation auto
-
     gray_scale(&img);
     adjust_image(&img, 2);
     otsu(&img);
@@ -212,10 +210,9 @@ void on_preproc(GtkModelButton *button, gpointer user_data)
         img.width,
         img.height
     };
-
     memcpy(copy.pixels, img.pixels,
             img.width * img.height * sizeof(uint32));
-
+    
     int *labels = component_analysis(&copy);
     int nb_labels = get_nb_of_labels(labels, copy.height*copy.width);
     int *size_of_labels = get_size_of_labels(labels, copy.height*copy.width);
@@ -224,6 +221,21 @@ void on_preproc(GtkModelButton *button, gpointer user_data)
     isolate_label(&copy, labels, max_label);
 
     get_corners(&copy, &copy);
+
+    t_image result = {
+        malloc(sizeof(uint32) * copy.width * copy.height),
+        copy.width,
+        copy.height
+    };
+
+    float angle = get_vertical_angle(copy);
+    rotate(&copy, &result, angle);
+    memcpy(copy.pixels, result.pixels,
+            img.width * img.height * sizeof(uint32));
+
+    rotate(&img, &result, angle);
+    memcpy(img.pixels, result.pixels,
+            img.width * img.height * sizeof(uint32));
 
     t_bounds bounds = {
         {-1, -1},
@@ -257,13 +269,12 @@ void on_preproc(GtkModelButton *button, gpointer user_data)
             if (br < mag(build((t_vector){copy.width, copy.height}, bounds.br)) || bounds.br.x == -1)
                 bounds.br = (t_vector){x, y};
         }
-    }
+    } 
 
-    t_image result = {
-        malloc(sizeof(uint32) * DEST_IMG_SIZE * DEST_IMG_SIZE),
-        DEST_IMG_SIZE,
-        DEST_IMG_SIZE
-    };
+    result.pixels = realloc(result.pixels, sizeof(uint32)
+            * DEST_IMG_SIZE * DEST_IMG_SIZE);
+    result.width = DEST_IMG_SIZE;
+    result.height = DEST_IMG_SIZE;
 
     remap(&img, &result, bounds);
 
@@ -446,8 +457,27 @@ void on_step(GtkModelButton *button, gpointer user_data)
     gtk_image_set_from_pixbuf(interface->ui.s_image, pixbuf);
     dialog_error(interface->ui.window, GTK_MESSAGE_OTHER,
                 "Grid Isolation");
-
+    
     get_corners(&img, &img);
+
+    t_image result = {
+        malloc(sizeof(uint32) * copy.width * copy.height),
+        copy.width,
+        copy.height
+    };
+
+    float angle = get_vertical_angle(img);
+    rotate(&img, &result, angle);
+    memcpy(img.pixels, result.pixels,
+            img.width * img.height * sizeof(uint32));
+
+    rotate(&copy, &result, angle);
+    memcpy(copy.pixels, result.pixels,
+            img.width * img.height * sizeof(uint32));
+
+    gtk_image_set_from_pixbuf(interface->ui.s_image, pixbuf);
+    dialog_error(interface->ui.window, GTK_MESSAGE_OTHER,
+                "Image Rotation");
 
     t_bounds bounds = {
         {-1, -1},
@@ -491,11 +521,10 @@ void on_step(GtkModelButton *button, gpointer user_data)
     dialog_error(interface->ui.window, GTK_MESSAGE_OTHER,
                 "Grid Detection");
 
-    t_image result = {
-        malloc(sizeof(uint32) * DEST_IMG_SIZE * DEST_IMG_SIZE),
-        DEST_IMG_SIZE,
-        DEST_IMG_SIZE
-    };
+    result.pixels = realloc(result.pixels, sizeof(uint32)
+            * DEST_IMG_SIZE * DEST_IMG_SIZE);
+    result.width = DEST_IMG_SIZE;
+    result.height = DEST_IMG_SIZE;
 
     remap(&copy, &result, bounds);
 
@@ -704,6 +733,7 @@ void on_rotate(GtkModelButton *button, gdouble v, gpointer user_data)
 
     rotate(&interface->data.img, &img, v);
     gtk_image_set_from_pixbuf(interface->ui.s_image, pixbuf);
+}
 
 int main()
 {
