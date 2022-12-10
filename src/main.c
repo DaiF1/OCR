@@ -124,6 +124,8 @@ void file_set(GtkFileChooserButton *button, gpointer user_data)
                     sizeof(uint32) * interface->data.img.width *
                     interface->data.img.height);
 
+            interface->data.processed = false;
+
             gtk_image_set_from_pixbuf(interface->ui.s_image, pixbuf);
         }
         else
@@ -146,6 +148,8 @@ void file_set(GtkFileChooserButton *button, gpointer user_data)
             read_sudoku(interface->data.grid, filename, 0);
 
             generate_output(interface->data.grid, interface->data.grid, pixels);
+
+            interface->data.processed = true;
 
             gtk_image_set_from_pixbuf(interface->ui.s_image, pixbuf);
         }
@@ -170,18 +174,18 @@ void on_preproc(GtkModelButton *button, gpointer user_data)
         return;
     }
 
+    if (interface->data.processed)
+    {
+        dialog_error(interface->ui.window, GTK_MESSAGE_WARNING,
+                "Grid already analysed");
+        return;
+    }
+
     if (!interface->data.trained)
         dialog_error(interface->ui.window, GTK_MESSAGE_WARNING,
                 "Neural Network not trained");
     else
-        interface->data.solved = true;
-
-    if (interface->data.solved)
-    {
-        dialog_error(interface->ui.window, GTK_MESSAGE_WARNING,
-                "Grid already solved");
-        return;
-    }
+        interface->data.processed = true;
 
     GdkPixbuf *pixbuf = gtk_image_get_pixbuf(interface->ui.s_image);
 
@@ -297,6 +301,13 @@ void on_solve(GtkToolButton *button, gpointer user_data)
 {
     Interface *interface = user_data;
 
+    if (interface->data.solved)
+    {
+        dialog_error(interface->ui.window, GTK_MESSAGE_WARNING,
+                "Sudoku already solved");
+        return;
+    }
+
     int grid_solved[9][9] = {0};
 
     for (int y = 0; y < 9; y++)
@@ -330,6 +341,8 @@ void on_solve(GtkToolButton *button, gpointer user_data)
 
     generate_output(interface->data.grid, grid_solved, pixels);
 
+    interface->data.solved = true;
+
     gtk_image_set_from_pixbuf(interface->ui.s_image, pixbuf);
 }
 
@@ -345,18 +358,18 @@ void on_step(GtkModelButton *button, gpointer user_data)
         return;
     }
 
+    if (interface->data.processed)
+    {
+        dialog_error(interface->ui.window, GTK_MESSAGE_WARNING,
+                "Grid already processed");
+        return;
+    }
+
     if (!interface->data.trained)
         dialog_error(interface->ui.window, GTK_MESSAGE_WARNING,
                 "Neural Network not trained");
     else
-        interface->data.solved = true;
-
-    if (interface->data.solved)
-    {
-        dialog_error(interface->ui.window, GTK_MESSAGE_WARNING,
-                "Grid already solved");
-        return;
-    }
+        interface->data.processed = true;
 
     GdkPixbuf *pixbuf = gtk_image_get_pixbuf(interface->ui.s_image);
 

@@ -36,6 +36,7 @@ typedef struct Data
     t_image img;        // Original image buffer
     float   angle;      // Rotation angle in degrees
     bool    trained;    // If the neural network is trained
+    bool    processed;  // If the grid was preprocessed
     bool    solved;     // If the grid was solved
     int     grid[9][9]; // Current grid
 } Data;
