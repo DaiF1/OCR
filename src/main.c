@@ -278,6 +278,8 @@ void on_preproc(GtkModelButton *button, gpointer user_data)
 
     remap(&img, &result, bounds);
 
+    free(result.pixels);
+
     int answ = system("mkdir boxes");
     if (answ)
     {
@@ -418,8 +420,6 @@ void on_step(GtkModelButton *button, gpointer user_data)
     img.width = (int32)gdk_pixbuf_get_width(pixbuf);
     img.height = (int32)gdk_pixbuf_get_height(pixbuf);
 
-    // TODO: rotation auto
-
     gray_scale(&img);
 
     gtk_image_set_from_pixbuf(interface->ui.s_image, pixbuf);
@@ -475,6 +475,11 @@ void on_step(GtkModelButton *button, gpointer user_data)
     memcpy(copy.pixels, result.pixels,
             img.width * img.height * sizeof(uint32));
 
+    memcpy(copy.pixels, img.pixels,
+            img.width * img.height * sizeof(uint32));
+    memcpy(img.pixels, result.pixels,
+            img.width * img.height * sizeof(uint32));
+
     gtk_image_set_from_pixbuf(interface->ui.s_image, pixbuf);
     dialog_error(interface->ui.window, GTK_MESSAGE_OTHER,
                 "Image Rotation");
@@ -486,29 +491,29 @@ void on_step(GtkModelButton *button, gpointer user_data)
         {-1, -1}
     };
 
-    for (int y = 0; y < img.height; y++)
+    for (int y = 0; y < copy.height; y++)
     {
-        for (int x = 0; x < img.width; x++)
+        for (int x = 0; x < copy.width; x++)
         {
-            if (img.pixels[y * img.width + x] == 0xffffffff)
+            if (copy.pixels[y * copy.width + x] == 0xffffffff)
                 continue;
 
             float tl = mag(build((t_vector){0, 0},
                         (t_vector){x, y}));
-            float tr = mag(build((t_vector){img.width, 0},
+            float tr = mag(build((t_vector){copy.width, 0},
                         (t_vector){x, y}));
-            float bl = mag(build((t_vector){0, img.height},
+            float bl = mag(build((t_vector){0, copy.height},
                         (t_vector){x, y}));
-            float br = mag(build((t_vector){img.width, img.height},
+            float br = mag(build((t_vector){copy.width, copy.height},
                         (t_vector){x, y}));
 
             if (tl < mag(build((t_vector){0, 0}, bounds.tl)) || bounds.tl.x == -1)
                 bounds.tl = (t_vector){x, y};
-            if (tr < mag(build((t_vector){img.width, 0}, bounds.tr)) || bounds.tr.x == -1)
+            if (tr < mag(build((t_vector){copy.width, 0}, bounds.tr)) || bounds.tr.x == -1)
                 bounds.tr = (t_vector){x, y};
-            if (bl < mag(build((t_vector){0, img.height}, bounds.bl)) || bounds.bl.x == -1)
+            if (bl < mag(build((t_vector){0, copy.height}, bounds.bl)) || bounds.bl.x == -1)
                 bounds.bl = (t_vector){x, y};
-            if (br < mag(build((t_vector){img.width, img.height}, bounds.br)) || bounds.br.x == -1)
+            if (br < mag(build((t_vector){copy.width, copy.height}, bounds.br)) || bounds.br.x == -1)
                 bounds.br = (t_vector){x, y};
         }
     }
@@ -526,7 +531,7 @@ void on_step(GtkModelButton *button, gpointer user_data)
     result.width = DEST_IMG_SIZE;
     result.height = DEST_IMG_SIZE;
 
-    remap(&copy, &result, bounds);
+    remap(&img, &result, bounds);
 
 #if DEBUG
     DEBUG_display_image(&result);
@@ -568,6 +573,8 @@ void on_step(GtkModelButton *button, gpointer user_data)
 
         }
     }
+
+    free(result.pixels);
 
     answ = system("rm -r boxes/");
     if (answ)
