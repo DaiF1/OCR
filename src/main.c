@@ -186,10 +186,13 @@ void on_preproc(GtkModelButton *button, gpointer user_data)
     }
 
     if (!interface->data.trained)
-        dialog_error(interface->ui.window, GTK_MESSAGE_WARNING,
+    {
+        dialog_error(interface->ui.window, GTK_MESSAGE_ERROR,
                 "Neural Network not trained");
-    else
-        interface->data.processed = true;
+        return;
+    }
+    
+    interface->data.processed = true;
 
     GdkPixbuf *pixbuf = gtk_image_get_pixbuf(interface->ui.s_image);
 
@@ -250,7 +253,7 @@ void on_preproc(GtkModelButton *button, gpointer user_data)
             if (tr < mag(build((t_vector){copy.width, 0}, bounds.tr)) || bounds.tr.x == -1)
                 bounds.tr = (t_vector){x, y};
             if (bl < mag(build((t_vector){0, copy.height}, bounds.bl)) || bounds.bl.x == -1)
-                bounds.bl = (t_vector){x, y};
+               bounds.bl = (t_vector){x, y};
             if (br < mag(build((t_vector){copy.width, copy.height}, bounds.br)) || bounds.br.x == -1)
                 bounds.br = (t_vector){x, y};
         }
@@ -385,10 +388,13 @@ void on_step(GtkModelButton *button, gpointer user_data)
     }
 
     if (!interface->data.trained)
-        dialog_error(interface->ui.window, GTK_MESSAGE_WARNING,
+    {
+        dialog_error(interface->ui.window, GTK_MESSAGE_ERROR,
                 "Neural Network not trained");
-    else
-        interface->data.processed = true;
+        return;
+    }
+    
+    interface->data.processed = true;
 
     GdkPixbuf *pixbuf = gtk_image_get_pixbuf(interface->ui.s_image);
 
@@ -517,7 +523,11 @@ void on_step(GtkModelButton *button, gpointer user_data)
                     DEST_TILE_SIZE, DEST_TILE_SIZE, buffer);
 
             Image image = SDL_Surface_to_Image(load_image(buffer));
-            int number = neural_network_execute(&image);
+            int number = result_network(&image,
+                    interface->data.hw,
+                    interface->data.hb,
+                    interface->data.ow,
+                    interface->data.ob);
             free_Image(&image);
 
             interface->data.grid[y][x] = number;
@@ -566,8 +576,45 @@ void on_load(GtkModelButton *button, gpointer user_data)
 {
     Interface *interface = user_data;
 
-    // TODO: Load neural network weights
-    
+    GtkWidget *dialog;
+    GtkFileChooserAction action = GTK_FILE_CHOOSER_ACTION_OPEN;
+    gint res;
+
+    dialog = gtk_file_chooser_dialog_new ("Open File",
+            interface->ui.window,
+            action,
+            "_Cancel",
+            GTK_RESPONSE_CANCEL,
+            "_Open",
+            GTK_RESPONSE_ACCEPT,
+            NULL);
+
+    GtkFileFilter *filter_save = gtk_file_filter_new();
+    gtk_file_filter_add_pattern(filter_save, "save*");
+    gtk_file_filter_set_name(filter_save, "Save files");
+
+    GtkFileFilter *filter_none = gtk_file_filter_new();
+    gtk_file_filter_add_pattern(filter_none, "*");
+    gtk_file_filter_set_name(filter_none, "All Files");
+
+    gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(dialog), filter_save);
+    gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(dialog), filter_none);
+
+    res = gtk_dialog_run(GTK_DIALOG(dialog));
+    if (res == GTK_RESPONSE_ACCEPT)
+    {
+        char *filename;
+        GtkFileChooser *chooser = GTK_FILE_CHOOSER(dialog);
+        filename = gtk_file_chooser_get_filename(chooser);
+
+        load(filename, interface->data.hw, interface->data.hb,
+                interface->data.ow, interface->data.ob);
+
+        g_free(filename);
+    }
+
+    gtk_widget_destroy (dialog); 
+
     interface->data.trained = true;
 }
 
@@ -712,6 +759,11 @@ int main()
         .trained = false,
         .solved = false,
         .grid = {},
+
+        .hw = calloc(1, sizeof(Matrix)),
+        .hb = calloc(1, sizeof(Matrix)),
+        .ow = calloc(1, sizeof(Matrix)),
+        .ob = calloc(1, sizeof(Matrix)),
     };
 
     Interface interface = {

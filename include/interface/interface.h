@@ -13,6 +13,7 @@
 #include <gtk/gtk.h>
 #include "utils.h"
 #include "loader.h"
+#include "matrix.h"
 
 #define MAX_IMG_SIZE 600
 
@@ -39,6 +40,11 @@ typedef struct Data
     bool    processed;  // If the grid was preprocessed
     bool    solved;     // If the grid was solved
     int     grid[9][9]; // Current grid
+
+    Matrix *hw;
+    Matrix *hb;
+    Matrix *ow;
+    Matrix *ob;
 } Data;
 
 typedef struct Progress
