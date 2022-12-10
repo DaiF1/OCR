@@ -64,19 +64,37 @@ double get_vertical_angle(t_image img)
         }
     }
 
-    t_vector vertical = {
+    t_vector vertical_tl = {
        bounds.bl.x,
       0 
     };
 
+    t_vector vertical_bl = {
+       bounds.bl.x,
+       bounds.bl.y 
+    };
+
     t_vector left_side = build(bounds.tl, bounds.bl); 
+    t_vector vertical = build(vertical_tl, vertical_bl);
+
+    t_bounds hihi = {
+        vertical_tl,
+        bounds.tl,
+        vertical_bl,
+        bounds.bl
+    };
+
+#if DEBUG
+    DEBUG_draw_bounds(&img, hihi);
+#endif
     
     vertical = norm(vertical);
     left_side = norm(left_side);
     double a = (vertical.x * left_side.x) + (vertical.y * left_side.y);
-    /* printf("a = %f, v.x = %f, v.y = %f, l.x = %f, l.y = %f\n", a, vertical.x, vertical.y, left_side.x, left_side.y); */
+    printf("a = %f, v.x = %f, v.y = %f, l.x = %f, l.y = %f\n", a, vertical.x, vertical.y, left_side.x, left_side.y);
 
-    angle = acos(a/(vertical.x+vertical.y) * (left_side.x*left_side.y));
+    angle = acos(a/sqrt(pow(vertical.x, 2) + pow(vertical.y, 2)) * sqrt(pow(left_side.x, 2)*pow(left_side.y, 2)));
+    angle *= (180/PI); // convert radian to degree
     
     return angle;
 }
