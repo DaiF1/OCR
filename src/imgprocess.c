@@ -15,10 +15,78 @@
 #include "loader.h"
 #include "morpho.h"
 #include "sobel.h"
+#include "textures.h"
+#include "maths.h"
 
 #define PI 3.1415926535
 #define min(a, b) ((a) < (b)) ? (a) : (b)
 #define max(a, b) ((a) > (b)) ? (a) : (b)
+
+double get_vertical_angle(t_image img)
+{
+    double angle = 0;
+
+    t_vector corner_t = {img.width, img.height};
+    t_vector corner_b = {-1, -1};
+    t_vector target_b = {0, (float)img.height / 2};
+
+    for (int y = 0; y < img.height; y++)
+    {
+        for (int x = 0; x < img.width; x++)
+        {
+            if (img.pixels[y * img.width + x] == 0xffffffff)
+                continue;
+
+            float dist_t = mag(build((t_vector){0, 0}, (t_vector){x, y}));
+            float dist_b = mag(build(target_b, (t_vector){x, y}));
+
+            if (dist_t < mag(build((t_vector){0, 0}, corner_t)))
+            {
+                corner_t = (t_vector){x, y};
+            }
+
+            if (dist_b < mag(build(target_b, corner_b)))
+            {
+                corner_b = (t_vector){x, y};
+            }
+        }
+    }
+
+    t_vector vertical_tl = {
+       corner_b.x,
+      0 
+    };
+
+    t_vector vertical_bl = {
+       corner_b.x,
+       corner_b.y 
+    };
+
+    t_vector left_side = build(corner_t, corner_b); 
+    t_vector vertical = build(vertical_tl, vertical_bl);
+
+#if DEBUG
+    t_bounds hihi = {
+        vertical_tl,
+        corner_t,
+        vertical_bl,
+        corner_b
+    };
+
+    DEBUG_draw_bounds(&img, hihi);
+#endif
+    
+    vertical = norm(vertical);
+    left_side = norm(left_side);
+    double a = (vertical.x * left_side.x) + (vertical.y * left_side.y);
+    double b = (mag(vertical) * mag(left_side));
+    printf("a = %f, b = %f\n", a, b);
+
+    angle = acos(a/b);
+    angle *= (180/PI); // convert radian to degree
+    
+    return angle;
+}
 
 // ______________ Projection to find a label use in fill_label(..)
 
@@ -338,6 +406,9 @@ void get_corners(const t_image *src, t_image *dest)
     {
         dest->pixels[i] = dx.pixels[i] & dy.pixels[i];
     }
+    
+    free(dx.pixels);
+    free(dy.pixels);
 }
 
 void otsu(t_image *img)
@@ -515,11 +586,11 @@ void rotate(t_image *src, t_image *dest, float angle)
             int u = x - middle_x;
             int v = y - middle_y;
 
-            int cx = u * sn + v * cs + middle_x;
-            int cy = u * cs - v * sn + middle_y;
+            int cx = (int)((float)u * sn + (float)v * cs) + middle_x;
+            int cy = (int)((float)u * cs - (float)v * sn) + middle_y;
 
-            cx = max(min(cx, src->width), 0);
-            cy = max(min(cy, src->height), 0);
+            cx = max(min(cx, src->width - 1), 0);
+            cy = max(min(cy, src->height - 1), 0);
 
             dest->pixels[y * src->width + x] = src->pixels[cy * src->width + (src->width - cx)];
         }

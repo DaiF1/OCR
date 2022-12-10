@@ -1,5 +1,5 @@
 #include <math.h>
-#include "../../../include/neuralnetwork/maths_extra.h"
+#include "maths_extra.h"
 
 double abs_val(double x)
 {

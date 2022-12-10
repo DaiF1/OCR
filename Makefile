@@ -9,7 +9,7 @@ all: main
 # main build
 
 FILES = $(wildcard src/*.c) $(wildcard src/*/*.c)
-SRC = $(filter-out %/network.c %/main_solver.c,$(FILES))
+SRC = $(filter-out %/main_network.c %/main_solver.c,$(FILES))
 OBJ = ${SRC:.c=.o}
 
 # main build
@@ -30,9 +30,9 @@ main: src/main
 SRC_N = $(wildcard src/neuralnetwork/*.c)
 OBJ_N = $(SRC_N:.c=.o)
 
-src/neuralnetwork/network: ${OBJ_N}
-network: src/neuralnetwork/network
-	mv src/neuralnetwork/network .
+src/neuralnetwork/main_network: ${OBJ_N}
+network: src/neuralnetwork/main_network
+	mv src/neuralnetwork/main_network network
 
 # debug build
 

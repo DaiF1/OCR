@@ -2,9 +2,9 @@
 #include <stdio.h>
 #include <string.h>
 #include "digit_network.h"
-#include "utils/convert.h"
-#include "result/result_network.h"
-#include "../../include/neuralnetwork/matrix.h"
+#include "convert.h"
+#include "result_network.h"
+#include "matrix.h"
 
 // number of "generation" of AI
 static const int EPOCHS = 25000;
@@ -95,7 +95,7 @@ void train()
 
     struct dirent *de; // Pointer for directory entry
 
-    char *dir = "./training_set/";
+    char *dir = "src/neuralnetwork/training_set/";
 
     DIR *dr = opendir(dir);
 
@@ -113,9 +113,8 @@ void train()
 
         if (s[0] != '.')
         {
-            training[count] = malloc(100);
-
-            snprintf(training[count], 100, "%s", s);
+            training[count] = malloc(sizeof(char) * (strlen(s) + 1));
+            sprintf(training[count], "%s", s);
 
             count += 1;
         }
@@ -336,46 +335,5 @@ void train()
     for (int i = 0; i < num_training; i++)
     {
         free(training[i]);
-    }
-}
-
-int main(int argc, char *argv[])
-{
-    if (argc < 2)
-    {
-        printf("Usage: %s <train/test> <filename>\n", argv[0]);
-        return 1;
-    }
-
-    if (strcmp(argv[1], "train") == 0)
-    {
-        if (argc != 2)
-        {
-            printf("Usage: %s <train/test> <(test) filename>\n", argv[0]);
-            return 1;
-        }
-
-        train();
-        return 0;
-    }
-    else if (strcmp(argv[1], "test") == 0)
-    {
-        if (argc != 3)
-        {
-            printf("Usage: %s <train/test> <(test) filename>\n", argv[0]);
-            return 1;
-        }
-
-        Image image = SDL_Surface_to_Image(load_image(argv[2]));
-
-        int res = neural_network_execute(&image);
-
-        free_Image(&image);
-        return res;
-    }
-    else
-    {
-        printf("Usage: %s <save/train> <filename>\n", argv[0]);
-        return 1;
     }
 }

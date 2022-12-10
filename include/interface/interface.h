@@ -13,6 +13,9 @@
 #include <gtk/gtk.h>
 #include "utils.h"
 #include "loader.h"
+#include "matrix.h"
+
+#define MAX_IMG_SIZE 600
 
 typedef struct UI
 {
@@ -20,20 +23,27 @@ typedef struct UI
     GtkImage                *s_image;
     GtkModelButton          *file_chooser;
     GtkModelButton          *save_button;
-    GtkModelButton          *solve_button;
+    GtkModelButton          *preproc_button;
     GtkModelButton          *step_button;
     GtkModelButton          *train_button;
     GtkModelButton          *load_button;
     GtkScaleButton          *rotate_button;
-    GtkModelButton          *autorot_button;
+    GtkToolButton           *solve_button;
 } UI;
 
 typedef struct Data
 {
-    t_image img;       // Original image buffer
-    float   angle;     // Rotation angle in degrees
-    bool    trained;   // If the neural network is trained
-    bool    solved;    // If the grid was solved
+    t_image img;        // Original image buffer
+    float   angle;      // Rotation angle in degrees
+    bool    trained;    // If the neural network is trained
+    bool    processed;  // If the grid was preprocessed
+    bool    solved;     // If the grid was solved
+    int     grid[9][9]; // Current grid
+
+    Matrix *hw;
+    Matrix *hb;
+    Matrix *ow;
+    Matrix *ob;
 } Data;
 
 typedef struct Progress
@@ -58,7 +68,7 @@ void file_set(GtkFileChooserButton *button, gpointer user_data);
 
 /* on_solve(button, user_data): called when pressing the solve button
  */
-void on_solve(GtkModelButton *button, gpointer user_data);
+void on_solve(GtkToolButton *button, gpointer user_data);
 
 /* on_step(button, user_data): called when pressing the step button
  */
@@ -80,6 +90,6 @@ void on_save(GtkModelButton *button, gpointer user_data);
  */
 void on_rotate(GtkModelButton *button, gdouble v, gpointer user_data);
 
-/* on_autorot(button, user_data): called when pressing the auto rotation button
+/* on_preproc(button, user_data): called when pressing the preproc button
  */
-void on_autorot(GtkModelButton *button, gpointer user_data);
+void on_preproc(GtkModelButton *button, gpointer user_data);

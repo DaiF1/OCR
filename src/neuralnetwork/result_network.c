@@ -1,9 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "../digit_network.h"
-#include "../utils/convert.h"
-#include "../../../include/neuralnetwork/maths_extra.h"
-#include "../../../include/neuralnetwork/matrix.h"
+#include "digit_network.h"
+#include "convert.h"
+#include "maths_extra.h"
+#include "matrix.h"
 
 
 int result_network(

@@ -24,6 +24,10 @@
 #include "solver.h"
 #include "saver.h"
 
+#include "digit_network.h"
+#include "convert.h"
+#include "result_network.h"
+
 gpointer thread_progress(gpointer user_data)
 {
     Progress *progress = user_data;
@@ -77,11 +81,16 @@ void file_set(GtkFileChooserButton *button, gpointer user_data)
     gtk_file_filter_add_pattern(filter, "*.bmp");
     gtk_file_filter_set_name(filter, "Images (.png/.jpg/.bmp)");
 
+    GtkFileFilter *filter_grid = gtk_file_filter_new();
+    gtk_file_filter_add_pattern(filter_grid, "grid*");
+    gtk_file_filter_set_name(filter_grid, "Grids");
+
     GtkFileFilter *filter_none = gtk_file_filter_new();
     gtk_file_filter_add_pattern(filter_none, "*");
     gtk_file_filter_set_name(filter_none, "All Files");
 
     gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(dialog), filter);
+    gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(dialog), filter_grid);
     gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(dialog), filter_none);
 
     res = gtk_dialog_run(GTK_DIALOG(dialog));
@@ -90,30 +99,64 @@ void file_set(GtkFileChooserButton *button, gpointer user_data)
         char *filename;
         GtkFileChooser *chooser = GTK_FILE_CHOOSER(dialog);
         filename = gtk_file_chooser_get_filename(chooser);
-        
-        gtk_image_clear(interface->ui.s_image);
-        gtk_image_set_from_file(interface->ui.s_image, filename);
 
-        GdkPixbuf *pixbuf = gtk_image_get_pixbuf(interface->ui.s_image);
-        pixbuf = gdk_pixbuf_add_alpha(pixbuf, FALSE, 0, 0, 0);
+        GtkFileFilter *curr_filter = gtk_file_chooser_get_filter(chooser);
 
-        int src_width = (int)gdk_pixbuf_get_width(pixbuf);
-        int src_height = (int)gdk_pixbuf_get_height(pixbuf);
+        if (strcmp(gtk_file_filter_get_name(curr_filter),
+                    "Images (.png/.jpg/.bmp)") == 0)
+        {
+            gtk_image_clear(interface->ui.s_image);
+            gtk_image_set_from_file(interface->ui.s_image, filename);
 
-        pixbuf = gdk_pixbuf_scale_simple(pixbuf,
-                src_width * 500 / src_height, 500,
-                GDK_INTERP_BILINEAR);
+            GdkPixbuf *pixbuf = gtk_image_get_pixbuf(interface->ui.s_image);
+            pixbuf = gdk_pixbuf_add_alpha(pixbuf, FALSE, 0, 0, 0);
 
-        uint32 *pixels = (uint32 *)gdk_pixbuf_get_pixels(pixbuf);
-        interface->data.img.width = src_width * 500 / src_height;
-        interface->data.img.height = 500;
+            int src_width = (int)gdk_pixbuf_get_width(pixbuf);
+            int src_height = (int)gdk_pixbuf_get_height(pixbuf);
 
-        interface->data.img.pixels = malloc(sizeof(uint32) *
-                interface->data.img.width * interface->data.img.height);
-        memcpy(interface->data.img.pixels, pixels, 
-                sizeof(uint32) * interface->data.img.width * interface->data.img.height);
+            pixbuf = gdk_pixbuf_scale_simple(pixbuf,
+                    src_width * MAX_IMG_SIZE / src_height, MAX_IMG_SIZE,
+                    GDK_INTERP_BILINEAR);
 
-        gtk_image_set_from_pixbuf(interface->ui.s_image, pixbuf);
+            uint32 *pixels = (uint32 *)gdk_pixbuf_get_pixels(pixbuf);
+            interface->data.img.width = src_width * MAX_IMG_SIZE / src_height;
+            interface->data.img.height = MAX_IMG_SIZE;
+
+            interface->data.img.pixels = malloc(sizeof(uint32) *
+                    interface->data.img.width * interface->data.img.height);
+            memcpy(interface->data.img.pixels, pixels, 
+                    sizeof(uint32) * interface->data.img.width *
+                    interface->data.img.height);
+
+            interface->data.processed = false;
+
+            gtk_image_set_from_pixbuf(interface->ui.s_image, pixbuf);
+        }
+        else
+        {
+            gtk_image_clear(interface->ui.s_image);
+            gtk_image_set_from_file(interface->ui.s_image, "img/empty.png");
+            
+            GdkPixbuf *pixbuf = gtk_image_get_pixbuf(interface->ui.s_image);
+            pixbuf = gdk_pixbuf_add_alpha(pixbuf, FALSE, 0, 0, 0);
+            pixbuf = gdk_pixbuf_add_alpha(pixbuf, FALSE, 0, 0, 0);
+
+            int src_width = (int)gdk_pixbuf_get_width(pixbuf);
+            int src_height = (int)gdk_pixbuf_get_height(pixbuf);
+
+            pixbuf = gdk_pixbuf_scale_simple(pixbuf,
+                    src_width * DEST_IMG_SIZE / src_height, DEST_IMG_SIZE, GDK_INTERP_BILINEAR);
+
+            uint32 *pixels = (uint32 *)gdk_pixbuf_get_pixels(pixbuf);
+    
+            read_sudoku(interface->data.grid, filename, 0);
+
+            generate_output(interface->data.grid, interface->data.grid, pixels);
+
+            interface->data.processed = true;
+
+            gtk_image_set_from_pixbuf(interface->ui.s_image, pixbuf);
+        }
 
         interface->data.solved = false;
 
@@ -123,7 +166,7 @@ void file_set(GtkFileChooserButton *button, gpointer user_data)
     gtk_widget_destroy (dialog); 
 }
 
-void on_solve(GtkModelButton *button, gpointer user_data)
+void on_preproc(GtkModelButton *button, gpointer user_data)
 {
     Interface *interface = user_data;
 
@@ -135,18 +178,21 @@ void on_solve(GtkModelButton *button, gpointer user_data)
         return;
     }
 
-    if (!interface->data.trained)
-        dialog_error(interface->ui.window, GTK_MESSAGE_WARNING,
-                "Neural Network not trained");
-    else
-        interface->data.solved = true;
-
-    if (interface->data.solved)
+    if (interface->data.processed)
     {
         dialog_error(interface->ui.window, GTK_MESSAGE_WARNING,
-                "Grid already solved");
+                "Grid already analysed");
         return;
     }
+
+    if (!interface->data.trained)
+    {
+        dialog_error(interface->ui.window, GTK_MESSAGE_ERROR,
+                "Neural Network not trained");
+        return;
+    }
+    
+    interface->data.processed = true;
 
     GdkPixbuf *pixbuf = gtk_image_get_pixbuf(interface->ui.s_image);
 
@@ -154,8 +200,6 @@ void on_solve(GtkModelButton *button, gpointer user_data)
     img.pixels = (uint32 *)gdk_pixbuf_get_pixels(pixbuf);
     img.width = (int32)gdk_pixbuf_get_width(pixbuf);
     img.height = (int32)gdk_pixbuf_get_height(pixbuf);
-
-    // TODO: rotation auto
 
     gray_scale(&img);
     adjust_image(&img, 2);
@@ -166,10 +210,9 @@ void on_solve(GtkModelButton *button, gpointer user_data)
         img.width,
         img.height
     };
-
     memcpy(copy.pixels, img.pixels,
             img.width * img.height * sizeof(uint32));
-
+    
     int *labels = component_analysis(&copy);
     int nb_labels = get_nb_of_labels(labels, copy.height*copy.width);
     int *size_of_labels = get_size_of_labels(labels, copy.height*copy.width);
@@ -177,9 +220,22 @@ void on_solve(GtkModelButton *button, gpointer user_data)
 
     isolate_label(&copy, labels, max_label);
 
-    // TODO: grid detection
-
     get_corners(&copy, &copy);
+
+    t_image result = {
+        malloc(sizeof(uint32) * copy.width * copy.height),
+        copy.width,
+        copy.height
+    };
+
+    float angle = get_vertical_angle(copy);
+    rotate(&copy, &result, angle);
+    memcpy(copy.pixels, result.pixels,
+            img.width * img.height * sizeof(uint32));
+
+    rotate(&img, &result, angle);
+    memcpy(img.pixels, result.pixels,
+            img.width * img.height * sizeof(uint32));
 
     t_bounds bounds = {
         {-1, -1},
@@ -209,17 +265,16 @@ void on_solve(GtkModelButton *button, gpointer user_data)
             if (tr < mag(build((t_vector){copy.width, 0}, bounds.tr)) || bounds.tr.x == -1)
                 bounds.tr = (t_vector){x, y};
             if (bl < mag(build((t_vector){0, copy.height}, bounds.bl)) || bounds.bl.x == -1)
-                bounds.bl = (t_vector){x, y};
+               bounds.bl = (t_vector){x, y};
             if (br < mag(build((t_vector){copy.width, copy.height}, bounds.br)) || bounds.br.x == -1)
                 bounds.br = (t_vector){x, y};
         }
-    }
+    } 
 
-    t_image result = {
-        malloc(sizeof(uint32) * DEST_IMG_SIZE * DEST_IMG_SIZE),
-        DEST_IMG_SIZE,
-        DEST_IMG_SIZE
-    };
+    result.pixels = realloc(result.pixels, sizeof(uint32)
+            * DEST_IMG_SIZE * DEST_IMG_SIZE);
+    result.width = DEST_IMG_SIZE;
+    result.height = DEST_IMG_SIZE;
 
     remap(&img, &result, bounds);
 
@@ -231,10 +286,6 @@ void on_solve(GtkModelButton *button, gpointer user_data)
         return;
     }
 
-    int grid[9][9] = {0};
-
-    int grid_solved[9][9] = {0};
-
     for (int y = 0; y < 9; y++)
     {
         for (int x = 0; x < 9; x++)
@@ -242,13 +293,18 @@ void on_solve(GtkModelButton *button, gpointer user_data)
             // format 'grid_xy.png'
             char *buffer = malloc(sizeof(char) * 18);
             sprintf(buffer, "boxes/grid_%i%i.png", x, y);
-            save_and_crop_image(&result, x * DEST_TILE_SIZE, y * DEST_TILE_SIZE, DEST_TILE_SIZE, DEST_TILE_SIZE, buffer);
+            save_and_crop_image(&result, x * DEST_TILE_SIZE, y * DEST_TILE_SIZE,
+                    DEST_TILE_SIZE, DEST_TILE_SIZE, buffer);
 
-            // TODO: number recognition
-            int number = 0;
+            Image image = SDL_Surface_to_Image(load_image(buffer));
+            int number = result_network(&image,
+                    interface->data.hw,
+                    interface->data.hb,
+                    interface->data.ow,
+                    interface->data.ob);
+            free_Image(&image);
 
-            grid[y][x] = -1;
-            grid_solved[y][x] = number;
+            interface->data.grid[y][x] = (number == 0) ? -1 : number;
         }
     }
 
@@ -259,12 +315,54 @@ void on_solve(GtkModelButton *button, gpointer user_data)
                 "Unable to delete tiles");
     }
 
+    pixbuf = gdk_pixbuf_new_from_file("img/empty.png", NULL);
+    pixbuf = gdk_pixbuf_add_alpha(pixbuf, FALSE, 0, 0, 0);
+
+    int src_width = (int)gdk_pixbuf_get_width(pixbuf);
+    int src_height = (int)gdk_pixbuf_get_height(pixbuf);
+
+    pixbuf = gdk_pixbuf_scale_simple(pixbuf,
+            src_width * DEST_IMG_SIZE / src_height, DEST_IMG_SIZE,
+            GDK_INTERP_BILINEAR);
+
+    uint32 *pixels = (uint32 *)gdk_pixbuf_get_pixels(pixbuf);
+
+    generate_output(interface->data.grid, interface->data.grid, pixels);
+
+    interface->data.processed = true;
+
+    gtk_image_set_from_pixbuf(interface->ui.s_image, pixbuf);
+}
+
+void on_solve(GtkToolButton *button, gpointer user_data)
+{
+    Interface *interface = user_data;
+
+    if (interface->data.solved)
+    {
+        dialog_error(interface->ui.window, GTK_MESSAGE_WARNING,
+                "Sudoku already solved");
+        return;
+    }
+
+    int grid_solved[9][9] = {0};
+
+    for (int y = 0; y < 9; y++)
+    {
+        for (int x = 0; x < 9; x++)
+        {
+            grid_solved[y][x] = interface->data.grid[y][x];
+        }
+    }
+
     if (!solver(grid_solved, 0))
     {
         dialog_error(interface->ui.window, GTK_MESSAGE_ERROR,
                 "Unable to Solve Grid");
         return;
     }
+
+    GdkPixbuf *pixbuf = gtk_image_get_pixbuf(interface->ui.s_image);
 
     pixbuf = gdk_pixbuf_new_from_file("img/empty.png", NULL);
     pixbuf = gdk_pixbuf_add_alpha(pixbuf, FALSE, 0, 0, 0);
@@ -273,11 +371,14 @@ void on_solve(GtkModelButton *button, gpointer user_data)
     int src_height = (int)gdk_pixbuf_get_height(pixbuf);
 
     pixbuf = gdk_pixbuf_scale_simple(pixbuf,
-            src_width * DEST_IMG_SIZE / src_height, DEST_IMG_SIZE, GDK_INTERP_BILINEAR);
+            src_width * DEST_IMG_SIZE / src_height, DEST_IMG_SIZE,
+            GDK_INTERP_BILINEAR);
 
     uint32 *pixels = (uint32 *)gdk_pixbuf_get_pixels(pixbuf);
 
-    generate_output(grid, grid_solved, pixels);
+    generate_output(interface->data.grid, grid_solved, pixels);
+
+    interface->data.solved = true;
 
     gtk_image_set_from_pixbuf(interface->ui.s_image, pixbuf);
 }
@@ -294,18 +395,21 @@ void on_step(GtkModelButton *button, gpointer user_data)
         return;
     }
 
-    if (!interface->data.trained)
-        dialog_error(interface->ui.window, GTK_MESSAGE_WARNING,
-                "Neural Network not trained");
-    else
-        interface->data.solved = true;
-
-    if (interface->data.solved)
+    if (interface->data.processed)
     {
         dialog_error(interface->ui.window, GTK_MESSAGE_WARNING,
-                "Grid already solved");
+                "Grid already processed");
         return;
     }
+
+    if (!interface->data.trained)
+    {
+        dialog_error(interface->ui.window, GTK_MESSAGE_ERROR,
+                "Neural Network not trained");
+        return;
+    }
+    
+    interface->data.processed = true;
 
     GdkPixbuf *pixbuf = gtk_image_get_pixbuf(interface->ui.s_image);
 
@@ -353,8 +457,27 @@ void on_step(GtkModelButton *button, gpointer user_data)
     gtk_image_set_from_pixbuf(interface->ui.s_image, pixbuf);
     dialog_error(interface->ui.window, GTK_MESSAGE_OTHER,
                 "Grid Isolation");
-
+    
     get_corners(&img, &img);
+
+    t_image result = {
+        malloc(sizeof(uint32) * copy.width * copy.height),
+        copy.width,
+        copy.height
+    };
+
+    float angle = get_vertical_angle(img);
+    rotate(&img, &result, angle);
+    memcpy(img.pixels, result.pixels,
+            img.width * img.height * sizeof(uint32));
+
+    rotate(&copy, &result, angle);
+    memcpy(copy.pixels, result.pixels,
+            img.width * img.height * sizeof(uint32));
+
+    gtk_image_set_from_pixbuf(interface->ui.s_image, pixbuf);
+    dialog_error(interface->ui.window, GTK_MESSAGE_OTHER,
+                "Image Rotation");
 
     t_bounds bounds = {
         {-1, -1},
@@ -389,18 +512,26 @@ void on_step(GtkModelButton *button, gpointer user_data)
                 bounds.br = (t_vector){x, y};
         }
     }
+
+#if DEBUG
+    DEBUG_draw_bounds(&img, bounds);
+#endif
     
     gtk_image_set_from_pixbuf(interface->ui.s_image, pixbuf);
     dialog_error(interface->ui.window, GTK_MESSAGE_OTHER,
                 "Grid Detection");
 
-    t_image result = {
-        malloc(sizeof(uint32) * DEST_IMG_SIZE * DEST_IMG_SIZE),
-        DEST_IMG_SIZE,
-        DEST_IMG_SIZE
-    };
+    result.pixels = realloc(result.pixels, sizeof(uint32)
+            * DEST_IMG_SIZE * DEST_IMG_SIZE);
+    result.width = DEST_IMG_SIZE;
+    result.height = DEST_IMG_SIZE;
 
     remap(&copy, &result, bounds);
+
+#if DEBUG
+    DEBUG_display_image(&result);
+#endif
+
 
     gtk_image_set_from_pixbuf(interface->ui.s_image, pixbuf);
     dialog_error(interface->ui.window, GTK_MESSAGE_OTHER,
@@ -414,9 +545,6 @@ void on_step(GtkModelButton *button, gpointer user_data)
         return;
     }
 
-    int grid[9][9] = {0};
-    int grid_solved[9][9] = {0};
-
     for (int y = 0; y < 9; y++)
     {
         for (int x = 0; x < 9; x++)
@@ -427,11 +555,17 @@ void on_step(GtkModelButton *button, gpointer user_data)
             save_and_crop_image(&result, x * DEST_TILE_SIZE, y * DEST_TILE_SIZE,
                     DEST_TILE_SIZE, DEST_TILE_SIZE, buffer);
 
-            // TODO: number recognition
-            int number = 0;
+            Image image = SDL_Surface_to_Image(load_image(buffer));
+            int number = result_network(&image,
+                    interface->data.hw,
+                    interface->data.hb,
+                    interface->data.ow,
+                    interface->data.ob);
+            free_Image(&image);
 
-            grid[y][x] = -1;
-            grid_solved[y][x] = number;
+            
+            interface->data.grid[y][x] = (number == 0) ? -1 : number;
+
         }
     }
 
@@ -442,19 +576,6 @@ void on_step(GtkModelButton *button, gpointer user_data)
                 "Unable to delete tiles");
     }
 
-    dialog_error(interface->ui.window, GTK_MESSAGE_OTHER,
-                "Character Recognition");
-
-    if (!solver(grid_solved, 0))
-    {
-        dialog_error(interface->ui.window, GTK_MESSAGE_ERROR,
-                "Unable to Solve Grid");
-        return;
-    }
-
-    dialog_error(interface->ui.window, GTK_MESSAGE_OTHER,
-                "Grid Resolution");
-
     pixbuf = gdk_pixbuf_new_from_file("img/empty.png", NULL);
     pixbuf = gdk_pixbuf_add_alpha(pixbuf, FALSE, 0, 0, 0);
 
@@ -462,20 +583,28 @@ void on_step(GtkModelButton *button, gpointer user_data)
     int src_height = (int)gdk_pixbuf_get_height(pixbuf);
 
     pixbuf = gdk_pixbuf_scale_simple(pixbuf,
-            src_width * DEST_IMG_SIZE / src_height, DEST_IMG_SIZE, GDK_INTERP_BILINEAR);
+            src_width * DEST_IMG_SIZE / src_height, DEST_IMG_SIZE,
+            GDK_INTERP_BILINEAR);
 
     uint32 *pixels = (uint32 *)gdk_pixbuf_get_pixels(pixbuf);
 
-    generate_output(grid, grid_solved, pixels);
+    generate_output(interface->data.grid, interface->data.grid, pixels);
+
+    interface->data.processed = true;
 
     gtk_image_set_from_pixbuf(interface->ui.s_image, pixbuf);
+
+    dialog_error(interface->ui.window, GTK_MESSAGE_OTHER,
+                "Character Recognition");
 }
 
 void on_train(GtkModelButton *button, gpointer user_data)
 {
     Interface *interface = user_data;
 
-    // TODO: Train the neural network
+    train();
+    load("save", interface->data.hw, interface->data.hb,
+            interface->data.ow, interface->data.ob);
 
     interface->data.trained = true;
 }
@@ -484,8 +613,45 @@ void on_load(GtkModelButton *button, gpointer user_data)
 {
     Interface *interface = user_data;
 
-    // TODO: Load neural network weights
-    
+    GtkWidget *dialog;
+    GtkFileChooserAction action = GTK_FILE_CHOOSER_ACTION_OPEN;
+    gint res;
+
+    dialog = gtk_file_chooser_dialog_new ("Open File",
+            interface->ui.window,
+            action,
+            "_Cancel",
+            GTK_RESPONSE_CANCEL,
+            "_Open",
+            GTK_RESPONSE_ACCEPT,
+            NULL);
+
+    GtkFileFilter *filter_save = gtk_file_filter_new();
+    gtk_file_filter_add_pattern(filter_save, "save*");
+    gtk_file_filter_set_name(filter_save, "Save files");
+
+    GtkFileFilter *filter_none = gtk_file_filter_new();
+    gtk_file_filter_add_pattern(filter_none, "*");
+    gtk_file_filter_set_name(filter_none, "All Files");
+
+    gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(dialog), filter_save);
+    gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(dialog), filter_none);
+
+    res = gtk_dialog_run(GTK_DIALOG(dialog));
+    if (res == GTK_RESPONSE_ACCEPT)
+    {
+        char *filename;
+        GtkFileChooser *chooser = GTK_FILE_CHOOSER(dialog);
+        filename = gtk_file_chooser_get_filename(chooser);
+
+        load(filename, interface->data.hw, interface->data.hb,
+                interface->data.ow, interface->data.ob);
+
+        g_free(filename);
+    }
+
+    gtk_widget_destroy (dialog); 
+
     interface->data.trained = true;
 }
 
@@ -540,7 +706,6 @@ void on_save(GtkModelButton *button, gpointer user_data)
         char *filename;
 
         filename = gtk_file_chooser_get_filename (chooser);
-        //save_to_file (filename);
         GdkPixbuf *pixbuf = gtk_image_get_pixbuf(interface->ui.s_image);
         pixbuf = gdk_pixbuf_add_alpha(pixbuf, FALSE, 0, 0, 0);
         gdk_pixbuf_save(pixbuf, to_png(filename), "png", NULL, NULL);
@@ -568,13 +733,6 @@ void on_rotate(GtkModelButton *button, gdouble v, gpointer user_data)
 
     rotate(&interface->data.img, &img, v);
     gtk_image_set_from_pixbuf(interface->ui.s_image, pixbuf);
-    // TODO: display dialog for rotation
-}
-
-
-void on_autorot(GtkModelButton *button, gpointer user_data)
-{
-    // TODO: automatic rotation
 }
 
 int main()
@@ -599,8 +757,8 @@ int main()
         GTK_MODEL_BUTTON(gtk_builder_get_object(builder, "_Open"));
     GtkModelButton *save_button =
         GTK_MODEL_BUTTON(gtk_builder_get_object(builder, "_Save"));
-    GtkModelButton *solve_button =
-        GTK_MODEL_BUTTON(gtk_builder_get_object(builder, "_Solve"));
+    GtkModelButton *preproc_button =
+        GTK_MODEL_BUTTON(gtk_builder_get_object(builder, "_Preprocess"));
     GtkModelButton *step_button =
         GTK_MODEL_BUTTON(gtk_builder_get_object(builder, "_Step"));
     GtkModelButton *train_button =
@@ -609,18 +767,18 @@ int main()
         GTK_MODEL_BUTTON(gtk_builder_get_object(builder, "_Load"));
     GtkScaleButton *rotate_button =
         GTK_SCALE_BUTTON(gtk_builder_get_object(builder, "_Rotate1"));
-    GtkModelButton *autorot_button =
-        GTK_MODEL_BUTTON(gtk_builder_get_object(builder, "_AutoRot"));
+    GtkToolButton *solve_button =
+        GTK_TOOL_BUTTON(gtk_builder_get_object(builder, "_Solve"));
 
     UI ui = {
         .window = window,
         .s_image = sudoku_image,
         .file_chooser = open_button,
         .save_button = save_button,
-        .solve_button = solve_button,
+        .preproc_button = preproc_button,
         .step_button = step_button,
         .rotate_button = rotate_button,
-        .autorot_button = autorot_button
+        .solve_button = solve_button,
     };
 
     Data data = {
@@ -628,6 +786,12 @@ int main()
         .angle = 0.0f,
         .trained = false,
         .solved = false,
+        .grid = {},
+
+        .hw = calloc(1, sizeof(Matrix)),
+        .hb = calloc(1, sizeof(Matrix)),
+        .ow = calloc(1, sizeof(Matrix)),
+        .ob = calloc(1, sizeof(Matrix)),
     };
 
     Interface interface = {
@@ -637,13 +801,13 @@ int main()
 
     g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
     g_signal_connect(open_button, "clicked", G_CALLBACK(file_set), &interface);
-    g_signal_connect(solve_button, "clicked", G_CALLBACK(on_solve), &interface);
+    g_signal_connect(preproc_button, "clicked", G_CALLBACK(on_preproc), &interface);
     g_signal_connect(step_button, "clicked", G_CALLBACK(on_step), &interface);
     g_signal_connect(train_button, "clicked", G_CALLBACK(on_train), &interface);
     g_signal_connect(load_button, "clicked", G_CALLBACK(on_load), &interface);
     g_signal_connect(save_button, "clicked", G_CALLBACK(on_save), &interface);
     g_signal_connect(rotate_button, "value-changed", G_CALLBACK(on_rotate), &interface);
-
+    g_signal_connect(solve_button, "clicked", G_CALLBACK(on_solve), &interface);
 
     gtk_main();
 
