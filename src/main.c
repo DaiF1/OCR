@@ -24,6 +24,10 @@
 #include "solver.h"
 #include "saver.h"
 
+#include "digit_network.h"
+#include "convert.h"
+#include "result_network.h"
+
 gpointer thread_progress(gpointer user_data)
 {
     Progress *progress = user_data;
@@ -216,8 +220,6 @@ void on_preproc(GtkModelButton *button, gpointer user_data)
 
     isolate_label(&copy, labels, max_label);
 
-    // TODO: grid detection
-
     get_corners(&copy, &copy);
 
     t_bounds bounds = {
@@ -280,8 +282,9 @@ void on_preproc(GtkModelButton *button, gpointer user_data)
             save_and_crop_image(&result, x * DEST_TILE_SIZE, y * DEST_TILE_SIZE,
                     DEST_TILE_SIZE, DEST_TILE_SIZE, buffer);
 
-            // TODO: number recognition
-            int number = -1;
+            Image image = SDL_Surface_to_Image(load_image(buffer));
+            int number = neural_network_execute(&image);
+            free_Image(&image);
 
             interface->data.grid[y][x] = number;
         }
@@ -293,6 +296,22 @@ void on_preproc(GtkModelButton *button, gpointer user_data)
         dialog_error(interface->ui.window, GTK_MESSAGE_WARNING,
                 "Unable to delete tiles");
     }
+
+    pixbuf = gdk_pixbuf_new_from_file("img/empty.png", NULL);
+    pixbuf = gdk_pixbuf_add_alpha(pixbuf, FALSE, 0, 0, 0);
+
+    int src_width = (int)gdk_pixbuf_get_width(pixbuf);
+    int src_height = (int)gdk_pixbuf_get_height(pixbuf);
+
+    pixbuf = gdk_pixbuf_scale_simple(pixbuf,
+            src_width * DEST_IMG_SIZE / src_height, DEST_IMG_SIZE,
+            GDK_INTERP_BILINEAR);
+
+    uint32 *pixels = (uint32 *)gdk_pixbuf_get_pixels(pixbuf);
+
+    generate_output(interface->data.grid, interface->data.grid, pixels);
+
+    interface->data.processed = true;
 
     gtk_image_set_from_pixbuf(interface->ui.s_image, pixbuf);
 }
@@ -497,8 +516,9 @@ void on_step(GtkModelButton *button, gpointer user_data)
             save_and_crop_image(&result, x * DEST_TILE_SIZE, y * DEST_TILE_SIZE,
                     DEST_TILE_SIZE, DEST_TILE_SIZE, buffer);
 
-            // TODO: number recognition
-            int number = -1;
+            Image image = SDL_Surface_to_Image(load_image(buffer));
+            int number = neural_network_execute(&image);
+            free_Image(&image);
 
             interface->data.grid[y][x] = number;
         }
@@ -511,17 +531,33 @@ void on_step(GtkModelButton *button, gpointer user_data)
                 "Unable to delete tiles");
     }
 
-    dialog_error(interface->ui.window, GTK_MESSAGE_OTHER,
-                "Character Recognition");
+    pixbuf = gdk_pixbuf_new_from_file("img/empty.png", NULL);
+    pixbuf = gdk_pixbuf_add_alpha(pixbuf, FALSE, 0, 0, 0);
+
+    int src_width = (int)gdk_pixbuf_get_width(pixbuf);
+    int src_height = (int)gdk_pixbuf_get_height(pixbuf);
+
+    pixbuf = gdk_pixbuf_scale_simple(pixbuf,
+            src_width * DEST_IMG_SIZE / src_height, DEST_IMG_SIZE,
+            GDK_INTERP_BILINEAR);
+
+    uint32 *pixels = (uint32 *)gdk_pixbuf_get_pixels(pixbuf);
+
+    generate_output(interface->data.grid, interface->data.grid, pixels);
+
+    interface->data.processed = true;
 
     gtk_image_set_from_pixbuf(interface->ui.s_image, pixbuf);
+
+    dialog_error(interface->ui.window, GTK_MESSAGE_OTHER,
+                "Character Recognition");
 }
 
 void on_train(GtkModelButton *button, gpointer user_data)
 {
     Interface *interface = user_data;
 
-    // TODO: Train the neural network
+    train();
 
     interface->data.trained = true;
 }
