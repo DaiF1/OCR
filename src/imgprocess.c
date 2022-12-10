@@ -79,7 +79,7 @@ double get_vertical_angle(t_image img)
     vertical = norm(vertical);
     left_side = norm(left_side);
     double a = (vertical.x * left_side.x) + (vertical.y * left_side.y);
-    double b = (sqrt(pow(vertical.x, 2) + pow(vertical.y, 2))) * (sqrt(pow(left_side.x, 2)) + sqrt(pow(left_side.y, 2)));
+    double b = (mag(vertical) * mag(left_side));
     printf("a = %f, b = %f\n", a, b);
 
     angle = acos(a/b);
