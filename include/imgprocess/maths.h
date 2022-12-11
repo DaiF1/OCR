@@ -21,7 +21,7 @@ typedef struct
  *
  * param a: a float
  * param b: a float
- * param w: a float between 0 and 1. A value of 0 will return a, 
+ * param w: a float between 0 and 1. A value of 0 will return a,
  *  a value of 1 will return b
 */
 float lerp(float a, float b, float w);
@@ -31,7 +31,7 @@ float lerp(float a, float b, float w);
  *
  * param a: xy coordinates
  * param b: xy coordinates
- * param w: a float between 0 and 1. A value of 0 will return a, 
+ * param w: a float between 0 and 1. A value of 0 will return a,
  *  a value of 1 will return b
 */
 t_vector lerp_v(t_vector a, t_vector b, float w);
@@ -82,7 +82,8 @@ void normalize(t_vector a);
 float dot(t_vector a, t_vector b);
 
 /*
- * get_normal(a, b): get the normal vector of the line represented by the dots 'a' and 'b'
+ * get_normal(a, b): get the normal vector of the line represented by
+ * the dots 'a' and 'b'
  *
  * param a: dot belonging to the line
  * param b: dot belonging to the line

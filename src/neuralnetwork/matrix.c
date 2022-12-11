@@ -158,7 +158,7 @@ Matrix *m_subtract(Matrix *a, Matrix *b)
     }
     else
     {
-        printf("Cannot subtract matrices: not same dimensions.\n");      
+        printf("Cannot subtract matrices: not same dimensions.\n");
         exit(1);
     }
 }
@@ -169,7 +169,7 @@ Matrix *m_hadamard(Matrix *a, Matrix *b)
     if (a->rows != b->rows || a->cols != b->cols)
     {
         printf("Cannot Hadamard product matrices: Mismatched dimensions.\n");
-       
+
      exit(1);
     }
     for (int i = 0; i < a->rows; i++)
@@ -408,7 +408,7 @@ int max_mat(Matrix *a){
 
 double max_mat_value(Matrix *a){
     double max = m_get(a, 0, 0);
-    
+
     for (int i = 0; i < a->rows; i++)
     {
         for (int j = 0; j < a->cols; j++)
@@ -417,7 +417,7 @@ double max_mat_value(Matrix *a){
             if (val > max)
             {
                 max = val;
-                
+
             }
         }
     }

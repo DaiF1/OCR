@@ -53,16 +53,16 @@ double get_vertical_angle(t_image img)
     }
 
     t_vector vertical_tl = {
-       corner_b.x,
-      0 
+        corner_b.x,
+        0
     };
 
     t_vector vertical_bl = {
-       corner_b.x,
-       corner_b.y 
+        corner_b.x,
+        corner_b.y
     };
 
-    t_vector left_side = build(corner_t, corner_b); 
+    t_vector left_side = build(corner_t, corner_b);
     t_vector vertical = build(vertical_tl, vertical_bl);
 
 #if DEBUG
@@ -75,7 +75,7 @@ double get_vertical_angle(t_image img)
 
     DEBUG_draw_bounds(&img, hihi);
 #endif
-    
+
     vertical = norm(vertical);
     left_side = norm(left_side);
     double a = (vertical.x * left_side.x) + (vertical.y * left_side.y);
@@ -84,7 +84,7 @@ double get_vertical_angle(t_image img)
 
     angle = acos(a/b);
     angle *= (180/PI); // convert radian to degree
-    
+
     return angle;
 }
 
@@ -158,7 +158,7 @@ int *fill_label(int *label, int w, int h, int id)
 
         }
     }
-   return mask; 
+    return mask;
 }
 
 void isolate_label(t_image *img, int *labels, int id)
@@ -178,13 +178,13 @@ void isolate_label(t_image *img, int *labels, int id)
             }
         }
     }
-    
+
 }
 
 void remove_background(t_image *img, int *labels, int id)
 {
-    // we fill the label with a mask 
-    int *mask = fill_label(labels, img->width, img->height, id); 
+    // we fill the label with a mask
+    int *mask = fill_label(labels, img->width, img->height, id);
     // we isolate this mask from the image
     isolate_label(img, mask, 1);
     for (int i=0; i < img->height; i++)
@@ -210,9 +210,9 @@ void merge_label_neighbour(int *labels, int i, int j, int w, int h)
      *  param j: y position of the pixel to check
      *  param w: the width of labels
      *  param h: the height of label
-    */
+     */
 
-    // radius around the current position to determine if the neighbours 
+    // radius around the current position to determine if the neighbours
     // have the lowest label
 
     int radius = 1;
@@ -225,7 +225,8 @@ void merge_label_neighbour(int *labels, int i, int j, int w, int h)
             {
                 if (i+a >= 0 && i+a < h && j+b >= 0 && j+b < w)
                 {
-                    if (labels[(i+a)*w+(j+b)] < lowest_label && labels[(i+a)*w+(j+b)] != 0)
+                    if (labels[(i+a)*w+(j+b)] < lowest_label
+                            && labels[(i+a)*w+(j+b)] != 0)
                         lowest_label = labels[(i+a)*w+(j+b)];
                 }
             }
@@ -237,7 +238,8 @@ void merge_label_neighbour(int *labels, int i, int j, int w, int h)
             {
                 if (i+a >= 0 && i+a < h && j+b >= 0 && j+b < w)
                 {
-                    if (labels[(i+a)*w+(j+b)] != 0 && labels[(i+a)*w+(j+b)] != lowest_label)
+                    if (labels[(i+a)*w+(j+b)] != 0
+                            && labels[(i+a)*w+(j+b)] != lowest_label)
                     {
                         labels[(i+a)*w+(j+b)] = lowest_label;
                         merge_label_neighbour(labels, i+a, j+b, w, h);
@@ -275,7 +277,7 @@ int *component_analysis(t_image *img)
             current_label = (labels+(i*w+j));
             left = (i*w)+(j-1);
             top  = ((i-1)*w)+j;
-            
+
 
             if (current_color == color_to_find)
             {
@@ -283,10 +285,11 @@ int *component_analysis(t_image *img)
                 if (i > 0 && j > 0)
                 {
                     // verifie la couleur du pixel du gauche et du haut
-                    if ((uint8) (img->pixels[left] / 255) == (uint8) (img->pixels[top] / 255)
+                    if ((uint8) (img->pixels[left] / 255) ==
+                            (uint8) (img->pixels[top] / 255)
                             && (uint8)(img->pixels[left]/255) == current_color)
                     {
-                        // on prend le plus petit label du haut et de gauche et on
+                        // on prend le plus petit label du haut et de gauche et
                         // l'assigne au 3 (gauche, current, haut)
                         /* merge_component_neighbour(labels, i, j, w, h); */
 
@@ -310,7 +313,7 @@ int *component_analysis(t_image *img)
                     // pour prendre son label
                     if ((uint8) (img->pixels[left] / 255) == color_to_find)
                         *current_label = labels[left];
-                    // verifie si le pixel du haut et actuel ont la meme couleur et
+                    // verifie si le pixel du haut et actuel ont la meme couleur
                 }
 
                 // gere les erreurs de sortie de matrice
@@ -359,7 +362,7 @@ int *get_size_of_labels(int *labels, int size)
     for (int i = 0; i < size; i++)
     {
         if (labels[i] >= 0)
-            size_of_labels[labels[i]]++; 
+            size_of_labels[labels[i]]++;
     }
     return size_of_labels;
 }
@@ -373,11 +376,12 @@ int get_max_label(int *size_of_labels, int nb_label)
             max_label = i;
     }
     return max_label;
-    
+
 }
 
 #if DEBUG
-void DEBUG_color_component(int *component, t_image *img, int label, uint32 color)
+void DEBUG_color_component(int *component, t_image *img, int label,
+        uint32 color)
 {
     for (int i=0; i < img->width*img->height; i++)
         if (*(component+i) == label)
@@ -406,7 +410,7 @@ void get_corners(const t_image *src, t_image *dest)
     {
         dest->pixels[i] = dx.pixels[i] & dy.pixels[i];
     }
-    
+
     free(dx.pixels);
     free(dy.pixels);
 }
@@ -414,7 +418,7 @@ void get_corners(const t_image *src, t_image *dest)
 void otsu(t_image *img)
 {
 
-	float threshold = 0;
+    float threshold = 0;
     unsigned long histogramme[256] = {0};
     for (int i = 0; i < img->width*img->height; i++)
     {
@@ -424,18 +428,18 @@ void otsu(t_image *img)
         /* printf("%u\n", img->pixels[i]); */
     }
 
-	int total = img->width*img->height;
+    int total = img->width*img->height;
 
 
 
-	float varMax = 0;
+    float varMax = 0;
 
-	int wB = 0;
-	int wF = 0;
+    int wB = 0;
+    int wF = 0;
     float sum = 0;
     float sumB = 0;
 
-	for (int t=0 ; t<256 ; t++) sum += t * histogramme[t];
+    for (int t=0 ; t<256 ; t++) sum += t * histogramme[t];
 
     for (int i = 0; i < 256; i++)
     {
@@ -450,18 +454,18 @@ void otsu(t_image *img)
         sumB += (float) (i * histogramme[i]);
 
 
-	   float mB = sumB / wB;            // Mean Background
-	   float mF = (sum - sumB) / wF;    // Mean Foreground
-       
+        float mB = sumB / wB;            // Mean Background
+        float mF = (sum - sumB) / wF;    // Mean Foreground
 
-	   // Calculate Between Class Variance
-	   float varBetween = (float)wB * (float)wF * (mB - mF) * (mB - mF);
 
-	   // Check if new maximum found
-	   if (varBetween > varMax) {
-		  varMax = varBetween;
-		  threshold = i;
-	   }
+        // Calculate Between Class Variance
+        float varBetween = (float)wB * (float)wF * (mB - mF) * (mB - mF);
+
+        // Check if new maximum found
+        if (varBetween > varMax) {
+            varMax = varBetween;
+            threshold = i;
+        }
     }
 
     for (int i = 0; i < img->width * img->height; i++)
@@ -470,7 +474,7 @@ void otsu(t_image *img)
         float grey_level = (float)((uint8)(img->pixels[i] >> 16));
 
         // binary_color contain black or white value
-        uint32 binary_color = grey_level < threshold ? 0 : 255; 
+        uint32 binary_color = grey_level < threshold ? 0 : 255;
 
         //apply
         img->pixels[i] = 0xff000000 + (binary_color << 16) +
@@ -517,7 +521,7 @@ void black_and_white(t_image *img)
         float grey_level = (float)((uint8)(img->pixels[i] >> 16)) / 255.0;
 
         // binary_color contain black or white value
-        uint32 binary_color = grey_level < treshold ? 0 : 255; 
+        uint32 binary_color = grey_level < treshold ? 0 : 255;
         //apply
         img->pixels[i] = 0xff000000 + (binary_color << 16) +
             (binary_color << 8) + binary_color;
@@ -592,7 +596,8 @@ void rotate(t_image *src, t_image *dest, float angle)
             cx = max(min(cx, src->width - 1), 0);
             cy = max(min(cy, src->height - 1), 0);
 
-            dest->pixels[y * src->width + x] = src->pixels[cy * src->width + (src->width - cx)];
+            dest->pixels[y * src->width + x] =
+                src->pixels[cy * src->width + (src->width - cx)];
         }
     }
 }

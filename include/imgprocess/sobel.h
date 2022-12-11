@@ -22,13 +22,14 @@
  * param dy: derivative order on y axis
  *
  * NOTE(daif): Please don't put 1, 1 or more than 1 in the derivative order.
- * It will always do a second order derivative and I don't want to make matrix calculations
- * to support the others.
+ * It will always do a second order derivative and I don't want to make
+ * matrix calculations to support the others.
 */
 void sobel(const t_image *src, t_image *dest, const int8 dx, const int8 dy);
 
 /*
- * extract_hv(src, dest_v, dest_h): extract vertical and horizontal ligns from image
+ * extract_hv(src, dest_v, dest_h): extract vertical and horizontal ligns
+ * from image
  *
  * param src: source image
  * param dest_v: destination image for vertical ligns

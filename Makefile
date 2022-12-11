@@ -61,9 +61,7 @@ solver: src/solver/main_solver
 # clean
 
 clean:
-	${RM} ${OBJ}
-	${RM} ${OBJ_TEST}
-	${RM} ${OBJ_N}
+	${RM} $(wildcard src/*.o) $(wildcard src/*/*.o)
 	${RM} main
 	${RM} network
 	${RM} test

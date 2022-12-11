@@ -1,6 +1,6 @@
 /*
  * interface.h in include/
- * 
+ *
  * Made by julie.fiadino
  *
  * Classes and functions for GUI

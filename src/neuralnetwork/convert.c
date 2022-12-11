@@ -59,7 +59,7 @@ Image SDL_Surface_to_Image(SDL_Surface *image_surface)
 
             Pixel pixel = {values.r, values.g, values.b};
 
-            double c_avg = (values.r + values.g + values.b) / 3;
+            double c_avg = (double)(values.r + values.g + values.b) / 3;
 
             image.average_color += c_avg / pnum;
 

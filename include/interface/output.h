@@ -24,7 +24,8 @@ typedef struct s_color
 } t_color;
 
 // Prints a number on a given surface
-void print_number(SDL_Surface *surface, char number[], int x, int y, t_color color);
+void print_number(SDL_Surface *surface, char number[], int x, int y,
+        t_color color);
 
 // Generate output image
 void generate_output(int grid[9][9], int solved[9][9], uint32 *dest);

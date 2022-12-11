@@ -13,4 +13,5 @@
 #pragma once
 #include <stdio.h>
 
-int evident_solver(int grill[9][9], size_t* x, size_t* y, int possibilities[9][9][9]);
+int evident_solver(int grill[9][9], size_t* x, size_t* y,
+        int possibilities[9][9][9]);

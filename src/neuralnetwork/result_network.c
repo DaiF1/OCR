@@ -36,7 +36,7 @@ int result_network(
             count++;
         }
     }
-   
+
     // result of the hidden layer
     Matrix result_hidden;
     m_mult(&input, hw, &result_hidden);

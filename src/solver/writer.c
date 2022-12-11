@@ -35,13 +35,15 @@ int write_sudoku(int grill[9][9], char name[], int debug)
             if (grill[y][x] > 0)
             {
                 if (debug)
-                    printf("write_sudoku: 0 (%zu, %zu) %d\n", x, y, grill[y][x]);
+                    printf("write_sudoku: 0 (%zu, %zu) %d\n",
+                            x, y, grill[y][x]);
                 fprintf(file,"%d", grill[y][x]);
             }
             else
             {
                 if (debug)
-                    printf("write_sudoku: n (%zu, %zu) %i\n", x, y, grill[y][x]);
+                    printf("write_sudoku: n (%zu, %zu) %i\n",
+                            x, y, grill[y][x]);
                 fprintf(file, ".");
             }
             x++;

@@ -32,7 +32,8 @@ void print_number(SDL_Surface *surface, char number[],
         return;
 
     int tile_size = DEST_IMG_SIZE / 9;
-    SDL_Rect numpos = {x * tile_size + 8, y * tile_size + 2, tile_size - 16, tile_size - 4};
+    SDL_Rect numpos = {x * tile_size + 8, y * tile_size + 2, tile_size - 16,
+        tile_size - 4};
     SDL_BlitSurface(num, NULL, surface, &numpos);
 
     SDL_FreeSurface(num);
@@ -62,7 +63,8 @@ void generate_output(int grid[9][9], int solved[9][9], uint32 *dest)
         for (int x = 0; x < 9; x++)
         {
             char number[2] = {0};
-            number[0] = (grid[y][x] == -1) ? '0' + solved[y][x] : '0' + grid[y][x];
+            number[0] = (grid[y][x] == -1) ? '0' + solved[y][x] : '0' +
+                grid[y][x];
             t_color color = (grid[y][x] == -1) ?
                 COLOR_COMPLETED : COLOR_DEFAULT;
 

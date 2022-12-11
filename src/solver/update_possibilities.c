@@ -15,7 +15,8 @@
 
 
 /*
- * update_possibilities(grill[9][9], x, y, possibilities[9][9][9]): update the possible number on a case for a line.
+ * update_possibilities(grill[9][9], x, y, possibilities[9][9][9]):
+ * update the possible number on a case for a line.
  *
  * param grill[9][9]: the sudoku grill
  * param x: the x coordinate of the case
@@ -39,7 +40,8 @@ int update_line(int grill[9][9], size_t x, size_t y, int possibilities[9][9][9])
 }
 
 /*
- * update_possibilities(grill[9][9], x, y, possibilities[9][9][9]): update the possible number on a case for column.
+ * update_possibilities(grill[9][9], x, y, possibilities[9][9][9]):
+ * update the possible number on a case for column.
  *
  * param grill[9][9]: the sudoku grill
  * param x: the x coordinate of the case
@@ -48,7 +50,8 @@ int update_line(int grill[9][9], size_t x, size_t y, int possibilities[9][9][9])
  *
  * return: if there is an update
  */
-int update_column(int grill[9][9], size_t x, size_t y, int possibilities[9][9][9])
+int update_column(int grill[9][9], size_t x, size_t y,
+        int possibilities[9][9][9])
 {
     int r = 0;
     for (int i = 0; i < 9; ++i)
@@ -63,7 +66,8 @@ int update_column(int grill[9][9], size_t x, size_t y, int possibilities[9][9][9
 }
 
 /*
- * update_possibilities(grill[9][9], x, y, possibilities[9][9][9]): update the possible number on a case for a square.
+ * update_possibilities(grill[9][9], x, y, possibilities[9][9][9]):
+ * update the possible number on a case for a square.
  *
  * param grill[9][9]: the sudoku grill
  * param x: the x coordinate of the case
@@ -72,7 +76,8 @@ int update_column(int grill[9][9], size_t x, size_t y, int possibilities[9][9][9
  *
  * return: if there is an update
  */
-int update_square(int grill[9][9], size_t x, size_t y, int possibilities[9][9][9])
+int update_square(int grill[9][9], size_t x, size_t y,
+        int possibilities[9][9][9])
 {
     int r = 0;
     for (size_t i = y % 3 * 3; i < (y % 3 + 1) * 3; i++) {
@@ -87,7 +92,8 @@ int update_square(int grill[9][9], size_t x, size_t y, int possibilities[9][9][9
 }
 
 /*
- * update_possibilities(grill[9][9], x, y, possibilities[9][9][9]): update the possible number on a case.
+ * update_possibilities(grill[9][9], x, y, possibilities[9][9][9]):
+ * update the possible number on a case.
  *
  * param grill[9][9]: the sudoku grill
  * param x: the x coordinate of the case
@@ -96,7 +102,8 @@ int update_square(int grill[9][9], size_t x, size_t y, int possibilities[9][9][9
  *
  * return: if there is an update
  */
-int update_possibilities(int grill[9][9], size_t x, size_t y, int possibilities[9][9][9], int debug)
+int update_possibilities(int grill[9][9], size_t x, size_t y,
+        int possibilities[9][9][9], int debug)
 {
     if(grill[y][x] > 0)
     {
@@ -133,14 +140,16 @@ int update_possibilities(int grill[9][9], size_t x, size_t y, int possibilities[
     return 0;
 }
 /*
- * update_all_possibilities(grill[9][9], possibilities[9][9][9]): update all the cases.
+ * update_all_possibilities(grill[9][9], possibilities[9][9][9]):
+ * update all the cases.
  *
  * param grill[9][9]: the sudoku grill
  * param possibilities[9][9][9]: the possibilities of the grill
  *
  * return: if there is an update
  */
-int update_all_possibilities(int grill[9][9], int possibilities[9][9][9], int debug)
+int update_all_possibilities(int grill[9][9], int possibilities[9][9][9],
+        int debug)
 {
     int v = 0;
     for (size_t i = 0; i < 9; ++i)
@@ -154,12 +163,14 @@ int update_all_possibilities(int grill[9][9], int possibilities[9][9][9], int de
                     possibilities[j][i][k] = 0;
                 }
                 if (debug)
-                    printf("solver:update_all_possibilities:full (%zu, %zu) %i\n", i, j, grill[j][i]);
+                    printf("solver:update_all_possibilities:full \
+                            (%zu, %zu) %i\n", i, j, grill[j][i]);
                 continue;
             }
             int v2 = update_possibilities(grill, i, j, possibilities, debug);
             if(debug)
-                printf("solver:update_all_possibilities:empty (%zu, %zu) %i %i\n", i, j, grill[j][i], v2);
+                printf("solver:update_all_possibilities:empty \
+                        (%zu, %zu) %i %i\n", i, j, grill[j][i], v2);
             v = v || v2;
         }
     }

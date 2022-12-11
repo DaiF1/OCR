@@ -46,7 +46,8 @@ int read_sudoku(int grill[9][9], char name[], int debug)
                 if (debug)
                     printf("read_sudoku: lr '%c' (%zu)\n", c, y);
                 if(c != '\n')
-                    errx(EXIT_FAILURE, "read_sudoku: format wrong (no end of line).\n");
+                    errx(EXIT_FAILURE,
+                            "read_sudoku: format wrong (no end of line).\n");
                 c = fgetc(file);
             }
             c = fgetc(file);

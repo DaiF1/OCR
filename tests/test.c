@@ -59,7 +59,7 @@ int coni_test()
     /* int32 *ce = malloc(sizeof(int32) * precision * precision); */
     /* t_image *closing = malloc(sizeof(t_image)); */
     /* closing->pixels = malloc(sizeof(uint32) * img->width * img->height); */
-    /* closing->width = img->width; */ 
+    /* closing->width = img->width; */
     /* closing->height = img->height; */
 
     /* morpho_dilation(img, closing, ce, 5); */
@@ -70,7 +70,7 @@ int coni_test()
     black_and_white(closing);
 
     int *labels = component_analysis(closing);
-    int nb_labels = get_nb_of_labels(labels, closing->height*closing->width); 
+    int nb_labels = get_nb_of_labels(labels, closing->height*closing->width);
     int *size_of_labels = get_size_of_labels(labels, closing->height*closing->width);
     int max_label = get_max_label(size_of_labels, nb_labels);
 
@@ -263,7 +263,7 @@ int demo_test()
             img->width * img->height * sizeof(uint32));
 
     int *labels = component_analysis(img);
-    int nb_labels = get_nb_of_labels(labels, img->height*img->width); 
+    int nb_labels = get_nb_of_labels(labels, img->height*img->width);
     int *size_of_labels = get_size_of_labels(labels, img->height*img->width);
     int max_label = get_max_label(size_of_labels, nb_labels);
 
@@ -459,7 +459,7 @@ int main(int argc, char **argv)
 {
     if (argc != 2)
         return EXIT_SUCCESS;
-    
+
     if (!strcmp(argv[1], "demo"))
         demo_test();
 
