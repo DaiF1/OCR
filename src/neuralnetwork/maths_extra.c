@@ -57,11 +57,10 @@ double relu(double x)
 
 double d_relu(double x)
 {
-    /*if(x >= 0){
-        return 1;
+    if(x >= 0){
+        return 0.01;
     }
     else{
         return 0.01;
-    }*/
-    return 0.01;
+    }
 }

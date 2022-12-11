@@ -28,6 +28,8 @@
 #include "convert.h"
 #include "result_network.h"
 
+#define UNUSED(x) (void)(x)
+
 gpointer thread_progress(gpointer user_data)
 {
     Progress *progress = user_data;
@@ -60,6 +62,7 @@ void dialog_error(GtkWindow *window, GtkMessageType type, char *msg)
 
 void file_set(GtkFileChooserButton *button, gpointer user_data)
 {
+    UNUSED(button);
     Interface *interface = user_data;
 
     GtkWidget *dialog;
@@ -169,6 +172,7 @@ void file_set(GtkFileChooserButton *button, gpointer user_data)
 
 void on_preproc(GtkModelButton *button, gpointer user_data)
 {
+    UNUSED(button);
     Interface *interface = user_data;
 
     if (gtk_image_get_storage_type(interface->ui.s_image) ==
@@ -343,6 +347,7 @@ void on_preproc(GtkModelButton *button, gpointer user_data)
 
 void on_solve(GtkToolButton *button, gpointer user_data)
 {
+    UNUSED(button);
     Interface *interface = user_data;
 
     if (interface->data.solved)
@@ -392,6 +397,7 @@ void on_solve(GtkToolButton *button, gpointer user_data)
 
 void on_step(GtkModelButton *button, gpointer user_data)
 {
+    UNUSED(button);
     Interface *interface = user_data;
 
     if (gtk_image_get_storage_type(interface->ui.s_image) ==
@@ -616,6 +622,7 @@ void on_step(GtkModelButton *button, gpointer user_data)
 
 void on_train(GtkModelButton *button, gpointer user_data)
 {
+    UNUSED(button);
     Interface *interface = user_data;
 
     train();
@@ -627,6 +634,7 @@ void on_train(GtkModelButton *button, gpointer user_data)
 
 void on_load(GtkModelButton *button, gpointer user_data)
 {
+    UNUSED(button);
     Interface *interface = user_data;
 
     GtkWidget *dialog;
@@ -695,6 +703,7 @@ char* to_png(const char* filename)
 
 void on_save(GtkModelButton *button, gpointer user_data)
 {
+    UNUSED(button);
     Interface *interface = user_data;
 
     GtkWidget *dialog;
@@ -733,6 +742,7 @@ void on_save(GtkModelButton *button, gpointer user_data)
 
 void on_rotate(GtkModelButton *button, gdouble v, gpointer user_data)
 {
+    UNUSED(button);
     v = v * 3.6;
     Interface *interface = user_data;
     if (v < 0)
